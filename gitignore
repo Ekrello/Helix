@@ -1,3 +1,5 @@
 key
-logmein
+logmein.py
 gateway.py
+data/
+audio_cache/

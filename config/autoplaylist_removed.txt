@@ -1,0 +1,232 @@
+# Entry removed Fri Nov 11 08:37:06 2016
+# Reason: ERROR: _xAWiV4drB4: YouTube said: This video is no longer available because the YouTube account associated with this video has been terminated.
+https://youtube.com/watch?v=_xAWiV4drB4
+
+################################
+
+# Entry removed Fri Nov 11 09:32:48 2016
+# Reason: ERROR: YouTube said: This video is available in Canada, Japan, United States only
+https://youtube.com/watch?v=i3MXiTeH_Pg
+
+################################
+
+# Entry removed Fri Nov 11 11:07:50 2016
+# Reason: ERROR: YouTube said: This video is available in American Samoa, Puerto Rico, United States Minor Outlying Islands, United States, Virgin Islands, U.S. only
+https://youtube.com/watch?v=4fWyzwo1xg0
+
+################################
+
+# Entry removed Fri Nov 11 11:09:39 2016
+# Reason: ERROR: jFi2ZM_7FnM: YouTube said: This video is not available.
+https://youtube.com/watch?v=jFi2ZM_7FnM
+
+################################
+
+# Entry removed Fri Nov 11 12:15:51 2016
+# Reason: ERROR: 1M8r2eGiYpU: YouTube said: This video contains content from VISO Music, who has blocked it on copyright grounds.
+https://youtube.com/watch?v=1M8r2eGiYpU
+
+################################
+
+# Entry removed Fri Nov 11 13:00:48 2016
+# Reason: ERROR: LFQMk6WWcoM: YouTube said: This video is not available.
+https://youtube.com/watch?v=LFQMk6WWcoM
+
+################################
+
+# Entry removed Fri Nov 11 14:57:43 2016
+# Reason: ERROR: SvqXQHuO88Q: YouTube said: This video does not exist.
+https://youtube.com/watch?v=SvqXQHuO88Q
+
+################################
+
+# Entry removed Fri Nov 11 15:57:33 2016
+# Reason: ERROR: 247erXKEabg: YouTube said: This video is no longer available because the YouTube account associated with this video has been terminated.
+https://youtube.com/watch?v=247erXKEabg
+
+################################
+
+# Entry removed Fri Nov 11 16:34:08 2016
+# Reason: ERROR: yNnH1sN0dw8: YouTube said: This video is not available.
+https://youtube.com/watch?v=yNnH1sN0dw8
+
+################################
+
+# Entry removed Fri Nov 11 16:45:43 2016
+# Reason: ERROR: rwYU8jq6Qw0: YouTube said: This video is not available.
+https://youtube.com/watch?v=rwYU8jq6Qw0
+
+################################
+
+# Entry removed Fri Nov 11 16:50:21 2016
+# Reason: ERROR: 8WyWsW43tcg: YouTube said: This video contains content from SME, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=8WyWsW43tcg
+
+################################
+
+# Entry removed Fri Nov 11 17:02:26 2016
+# Reason: ERROR: YouTube said: This video is available in American Samoa, Canada, Puerto Rico, United States Minor Outlying Islands, United States, Virgin Islands, U.S. only
+https://youtube.com/watch?v=mjwV5w0IrcA
+
+################################
+
+# Entry removed Fri Nov 11 18:19:07 2016
+# Reason: ERROR: lZiNtbgm9oM: YouTube said: This video contains content from Pathe, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=lZiNtbgm9oM
+
+################################
+
+# Entry removed Fri Nov 11 18:19:43 2016
+# Reason: ERROR: LcMSFZZ-erw: YouTube said: This video is not available.
+https://youtube.com/watch?v=LcMSFZZ-erw
+
+################################
+
+# Entry removed Fri Nov 11 18:45:23 2016
+# Reason: ERROR: ltGltaUs_S4: YouTube said: "Drake - 4pm ..."
+#          This video is no longer available due to a copyright claim by Warner Music Group.
+https://youtube.com/watch?v=ltGltaUs_S4
+
+################################
+
+# Entry removed Fri Nov 11 18:50:33 2016
+# Reason: ERROR: ydtnURKT2KQ: YouTube said: This video contains content from Believe Music, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=ydtnURKT2KQ
+
+################################
+
+# Entry removed Fri Nov 11 18:52:57 2016
+# Reason: ERROR: CtRbEgoTqQs: YouTube said: "Eminem - I..."
+#          This video is no longer available due to a copyright claim by F.B.T. Productions, Eight Mile Style, & Martin Affiliated.
+https://youtube.com/watch?v=CtRbEgoTqQs
+
+################################
+
+# Entry removed Fri Nov 11 19:42:19 2016
+# Reason: ERROR: VAybGW3DI9Q: YouTube said: The uploader has not made this video available in your country.
+https://youtube.com/watch?v=VAybGW3DI9Q
+
+################################
+
+# Entry removed Fri Nov 11 20:20:42 2016
+# Reason: ERROR: fJT3b4urwcU: YouTube said: This video is not available.
+https://youtube.com/watch?v=fJT3b4urwcU
+
+################################
+
+# Entry removed Fri Nov 11 20:21:50 2016
+# Reason: ERROR: A9nz5UxBZNc: YouTube said: This video is not available.
+https://youtube.com/watch?v=A9nz5UxBZNc
+
+################################
+
+# Entry removed Fri Nov 11 20:44:48 2016
+# Reason: ERROR: RVJiwyg0iDM: YouTube said: This video is not available.
+https://youtube.com/watch?v=RVJiwyg0iDM
+
+################################
+
+# Entry removed Fri Nov 11 22:38:57 2016
+# Reason: ERROR: QSb46QzHlWg: YouTube said: This video contains content from Spinnin' Records, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=QSb46QzHlWg
+
+################################
+
+# Entry removed Fri Nov 11 23:15:06 2016
+# Reason: ERROR: W-5OUle-U3c: YouTube said: This video has been removed by the user.
+https://youtube.com/watch?v=W-5OUle-U3c
+
+################################
+
+# Entry removed Sat Nov 12 00:22:31 2016
+# Reason: ERROR: waLhF-tFv-Q: YouTube said: This video is not available.
+https://youtube.com/watch?v=waLhF-tFv-Q
+
+################################
+
+# Entry removed Sat Nov 12 01:21:01 2016
+# Reason: ERROR: Ig8m_BdKuC0: YouTube said: "Headhunterz & KSHMR -..."
+#          The YouTube account associated with this video has been terminated due to multiple third-party notifications of copyright infringement.
+https://youtube.com/watch?v=Ig8m_BdKuC0
+
+################################
+
+# Entry removed Sat Nov 12 02:02:45 2016
+# Reason: ERROR: F0uBAB0i1uY: YouTube said: This video contains content from [Merlin] IDOL Distribution, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=F0uBAB0i1uY
+
+################################
+
+# Entry removed Sat Nov 12 02:50:42 2016
+# Reason: ERROR: u29zDDwXf8g: YouTube said: This video does not exist.
+https://youtube.com/watch?v=u29zDDwXf8g
+
+################################
+
+# Entry removed Sat Nov 12 03:28:42 2016
+# Reason: ERROR: 3MutXUvS37k: YouTube said: This video is not available.
+https://youtube.com/watch?v=3MutXUvS37k
+
+################################
+
+# Entry removed Sat Nov 12 04:05:37 2016
+# Reason: ERROR: hQsozlJv20k: YouTube said: This video contains content from Believe Music, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=hQsozlJv20k
+
+################################
+
+# Entry removed Sat Nov 12 04:22:02 2016
+# Reason: ERROR: tNcpMqz6KvY: YouTube said: This video is no longer available because the YouTube account associated with this video has been terminated.
+https://youtube.com/watch?v=tNcpMqz6KvY
+
+################################
+
+# Entry removed Sat Nov 12 04:57:01 2016
+# Reason: ERROR: vul33J96JJk: YouTube said: This video has been removed by the user.
+https://youtube.com/watch?v=vul33J96JJk
+
+################################
+
+# Entry removed Sat Nov 12 04:59:10 2016
+# Reason: ERROR: LAoZSikvqz8: YouTube said: This video contains content from [Merlin] IDOL Distribution, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=LAoZSikvqz8
+
+################################
+
+# Entry removed Sat Nov 12 05:04:13 2016
+# Reason: ERROR: 1XHcPYorSJw: YouTube said: This video contains content from WMG, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=1XHcPYorSJw
+
+################################
+
+# Entry removed Sat Nov 12 05:06:36 2016
+# Reason: ERROR: iIe-ooyp2BA: YouTube said: "Drapht - Don Quixote feat ..."
+#          This video is no longer available due to a copyright claim by SME.
+https://youtube.com/watch?v=iIe-ooyp2BA
+
+################################
+
+# Entry removed Sat Nov 12 05:19:12 2016
+# Reason: ERROR: nEIcTstEmnQ: YouTube said: This video contains content from SME, who has blocked it in your country on copyright grounds.
+https://youtube.com/watch?v=nEIcTstEmnQ
+
+################################
+
+# Entry removed Sat Nov 12 05:26:56 2016
+# Reason: ERROR: YouTube said: This video is available in Andorra, United Arab Emirates, Afghanistan, Antigua and Barbuda, Anguilla, Albania, Armenia, Angola, Antarctica, Argentina, American Samoa, Austria, Australia, Aruba, Åland Islands, Azerbaijan, Bosnia and Herzegovina, Barbados, Bangladesh, Belgium, Burkina Faso, Bulgaria, Bahrain, Burundi, Benin, Saint Barthélemy, Bermuda, Brunei Darussalam, Bolivia, Plurinational State of, Bonaire, Sint Eustatius and Saba, Brazil, Bahamas, Bhutan, Bouvet Island, Botswana, Belarus, Belize, Canada, Cocos (Keeling) Islands, Congo, the Democratic Republic of the, Central African Republic, Congo, Switzerland, Côte d'Ivoire, Cook Islands, Chile, Cameroon, China, Colombia, Costa Rica, Cuba, Cape Verde, Curaçao, Christmas Island, Cyprus, Czech Republic, Germany, Djibouti, Denmark, Dominica, Dominican Republic, Algeria, Ecuador, Estonia, Egypt, Western Sahara, Eritrea, Spain, Ethiopia, Finland, Fiji, Falkland Islands (Malvinas), Micronesia, Federated States of, Faroe Islands, Gabon, United Kingdom, Grenada, Georgia, Guernsey, Ghana, Gibraltar, Greenland, Gambia, Guinea, Equatorial Guinea, Greece, South Georgia and the South Sandwich Islands, Guatemala, Guam, Guinea-Bissau, Guyana, Hong Kong, Heard Island and McDonald Islands, Honduras, Croatia, Haiti, Hungary, Indonesia, Ireland, Israel, Isle of Man, India, British Indian Ocean Territory, Iraq, Iran, Islamic Republic of, Iceland, Italy, Jersey, Jamaica, Jordan, Japan, Kenya, Kyrgyzstan, Cambodia, Kiribati, Comoros, Saint Kitts and Nevis, Korea, Democratic People's Republic of, Korea, Republic of, Kuwait, Cayman Islands, Kazakhstan, Lao People's Democratic Republic, Lebanon, Saint Lucia, Liechtenstein, Sri Lanka, Liberia, Lesotho, Lithuania, Luxembourg, Latvia, Libya, Morocco, Moldova, Republic of, Montenegro, Saint Martin (French part), Madagascar, Marshall Islands, Macedonia, the Former Yugoslav Republic of, Mali, Myanmar, Mongolia, Macao, Northern Mariana Islands, Mauritania, Montserrat, Malta, Mauritius, Maldives, Malawi, Mexico, Malaysia, Mozambique, Namibia, New Caledonia, Niger, Norfolk Island, Nigeria, Nicaragua, Netherlands, Norway, Nepal, Nauru, Niue, New Zealand, Oman, Panama, Peru, French Polynesia, Papua New Guinea, Philippines, Pakistan, Poland, Saint Pierre and Miquelon, Pitcairn, Puerto Rico, Palestine, State of, Portugal, Palau, Paraguay, Qatar, Romania, Serbia, Russian Federation, Rwanda, Saudi Arabia, Solomon Islands, Seychelles, Sudan, Sweden, Singapore, Saint Helena, Ascension and Tristan da Cunha, Slovenia, Svalbard and Jan Mayen, Slovakia, Sierra Leone, San Marino, Senegal, Somalia, Suriname, South Sudan, Sao Tome and Principe, El Salvador, Sint Maarten (Dutch part), Syrian Arab Republic, Swaziland, Turks and Caicos Islands, Chad, French Southern Territories, Togo, Thailand, Tajikistan, Tokelau, Timor-Leste, Turkmenistan, Tunisia, Tonga, Turkey, Trinidad and Tobago, Tuvalu, Taiwan, Province of China, Tanzania, United Republic of, Ukraine, Uganda, United States Minor Outlying Islands, United States, Uruguay, Uzbekistan, Holy See (Vatican City State), Saint Vincent and the Grenadines, Venezuela, Bolivarian Republic of, Virgin Islands, British, Virgin Islands, U.S., Viet Nam, Vanuatu, Wallis and Futuna, Samoa, Yemen, Mayotte, South Africa, Zambia, Zimbabwe only
+https://youtube.com/watch?v=ofmzX1nI7SE
+
+################################
+
+# Entry removed Sat Nov 12 05:42:36 2016
+# Reason: ERROR: XKc7z-enzmA: YouTube said: This video is not available.
+https://youtube.com/watch?v=XKc7z-enzmA
+
+################################
+
+# Entry removed Sat Nov 12 07:45:28 2016
+# Reason: ERROR: byODfQUUsEI: YouTube said: This video is not available.
+https://youtube.com/watch?v=byODfQUUsEI
+
+################################
+

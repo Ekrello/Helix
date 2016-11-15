@@ -3,4 +3,6 @@ logmein.py
 gateway.py
 data/
 audio_cache/
-logs/
+discord.log
+musicbot.log
+musicbot.log.last

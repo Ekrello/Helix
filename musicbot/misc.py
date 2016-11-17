@@ -404,6 +404,11 @@ The only good thing to pull itself out of your mom's vagina was your dad's dick.
 I doubt that you could drown: fat floats.
 Whats the difference between breathing in paint and talking to you? Breathing in paint kills less brain cells
 Youre like meat at a butcher shop: you could use a good hanging
+You clearly have not been burdened by an overabundance of education
+You will be utterly forgotten
+“Bless your heart.” Southern code for “you’re a fucking retard.”
+What doesn’t kill you…disappoints me.
+The best part of you ran down your mother’s legs
 """
     text = insults.splitlines()
     message = (text[random.randint(0,(len(text))-1)])

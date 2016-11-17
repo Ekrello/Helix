@@ -182,3 +182,71 @@ def create(number1, number2):
     url = url + n1 + "/" + n1 + "." + n2 + ext
     print (url)
     return (url)
+
+def capture():
+        import random
+    import time
+
+    hpmax = input("What is the pokemons maximum health? ")
+    hpmax = hpmax.lower()
+    hpmax = hpmax.replace("hp","")
+    hpmax = hpmax.replace(" ","")
+    try:
+        hpmax = int(hpmax)
+    except:
+        print("unexpected characters in input")
+        time.sleep(3)
+        exit()
+        
+    hpcurrent = input("What is its current health? ")
+    hpcurrent = hpcurrent.lower()
+    hpcurrent = hpcurrent.replace("hp","")
+    hpcurrent = hpcurrent.replace(" ","")
+    try:
+        hpcurrent = int(hpcurrent)
+    except:
+        print("unexpected characters in input")
+        time.sleep(3)
+        exit()
+    if hpcurrent > hpmax:
+        print("Your current health is greater than your max health")
+        time.sleep(3)
+        exit()
+    if hpcurrent < 1:
+        print("I'm sorry to tell you this but your pokemon is dead")
+        time.sleep(3)
+        exit()
+
+    ball = input("Do you have a pokeball(a), a great ball(b) or an ultra ball(c)? ")
+    ball = ball.lower()
+    ball = ball.replace(" ","")
+    if ball == "c":
+        ball = random.randint(0, 150)
+    elif ball == "b":
+        ball = random.randint(0,200)
+    elif ball == "a":
+        ball = random.randint(0,255)
+    elif ball == "42":
+        print("MAAAAAAAAAAAAAAASTA BALL")
+        ball = 1
+    else:
+        print("thats not a ball")
+        time.sleep(3)
+        exit()
+
+    bonus = input("Is the pokemon frozen or asleep? (y or n) " )
+    bonus = bonus.lower
+    if bonus == "y":
+        bonus = 10
+    else:
+        bonus = 0
+
+    prob = str(int((round((3 *hpmax -2 *hpcurrent) *ball / (3 *hpmax))+bonus)))
+    prob = prob + "/255"
+    frac = prob.split("/")
+    num = float(frac[0]) / float(frac[1])
+    num = num * 100
+    num = int(num)
+    num = str(int(round(num)))
+    print(num + "% chance of capture")
+

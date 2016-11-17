@@ -3117,12 +3117,18 @@ class MusicBot(discord.Client):
             {command_prefix}loop 50
         repeats the current song a set amount of time (max  = 50)
         """
+        msgs = message
         message = message.content.strip()
         message = message.lower()
         message = message.replace("/loop","")
         message = message.replace(" ","")
         print(message)
         song_url = player.current_entry.url
+        await self.safe_send_message(channel, "Looping song")
+        try:
+            await self.delete_message(msgs)
+        except:
+            pass
         try:
             loops = int(message)
             if loops > 50:

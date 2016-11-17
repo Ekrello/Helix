@@ -3110,6 +3110,37 @@ class MusicBot(discord.Client):
         message = musicbot.misc.shitpost()
         return Response(message)
     
+    async def cmd_loop(self, channel, player, message):
+        """
+        Usage:
+            {command_prefix}loop [how many loops]
+            {command_prefix}loop 50
+        repeats the current song a set amount of time (max  = 50)
+        """
+        message = message.content.strip()
+        message = message.lower()
+        message = message.replace("/loop","")
+        message = message.repalce(" ","")
+        print(message)
+        song_url = player.current_entry.url
+        try:
+            loops = int(message)
+            if loops > 50:
+                return Response("50 is the maximum times you can loop at once")
+        except:
+            await self.safe_send_message(channel, "Loop count not found... Defaulting to 20")
+            loops = 20
+        for i in range(loops):
+            try:
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            except:
+                return Response("**CRITICAL ERROR** type /bug asap")
+            try:
+                await player.playlist.add_entry(song_url, channel=None, author=None)
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e)
+                return Response("**CRITICAL ERROR** type /bug asap")
+            
     async def cmd_add(self, channel, player, message):
         """
         Usage:

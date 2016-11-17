@@ -3120,7 +3120,7 @@ class MusicBot(discord.Client):
         message = message.content.strip()
         message = message.lower()
         message = message.replace("/loop","")
-        message = message.repalce(" ","")
+        message = message.replace(" ","")
         print(message)
         song_url = player.current_entry.url
         try:

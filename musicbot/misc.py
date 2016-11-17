@@ -19,6 +19,7 @@ def helpmusic():
     helpmsg1 += "/retro           <--Creates a playlist of retro songs\n"
     helpmsg1 += "/metal           <--Creates a playlist of metal songs\n"
     helpmsg1 += "/add             <--Create a playlist made from urls on your pastebin\n"
+    helpmsg1 += "/loop [number]   <--Loop a set song a set amount of times\n"
     helpmsg1 += "```"
     return helpmsg1
     

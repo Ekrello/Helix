@@ -248,5 +248,5 @@ def capture():
     num = num * 100
     num = int(num)
     num = str(int(round(num)))
-    print(num + "% chance of capture")
+    print(num + "% chance of capture :)")
 

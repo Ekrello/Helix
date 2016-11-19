@@ -2759,21 +2759,23 @@ class MusicBot(discord.Client):
         if author not in bugger: 
             try:
                 inv = await self.create_invite(server, max_uses=1, xkcd=True)
+                inv = str(inv)
+                inv = inv.replace("http","https")
             except:
                 return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
             print('bug Command on Server: {}'.format(server.name))
             server = str(server.name)
             message = "Help Requested in " + server
             try:
-                await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
-                await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
+                msg = message + "\n" + inv
+                await self.safe_send_message((discord.Object(id='215202022260080640')), (msg))
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + author
             bugged.write(text)
             print (bugged)
             bugged.close()
-            return Response('Well shit. Ive told the devs the toaster broke, theyre sending a replacement toaster, itll be here at some point', reply=True)
+            return Response('Well shit, ive messaged my devs. One of them will begin working on the issue. They may appear here to ask you a question or two as well. ^-^', reply=True)
         else:
             return Response('Youve already used that once mate, one is enough')
 

@@ -3052,8 +3052,20 @@ class MusicBot(discord.Client):
         file_size = str(file_size)
         file_size = file_size.replace('/mnt/data/Toasty/audio_cache', '')
         file_size = "All songs total to " + file_size + "\n"
+        guild_id = server.id
+        num_shards = 4
+        shard_id = (guild_id >> 22) % num_shards
+        if shard_id == 0:
+            shard = "You are using shard Alpha"
+        if shard_id == 1:
+            shard = "You are using shard Beta"
+        if shard_id == 2:
+            shard = "You are using shard Gamma"
+        if shard_id == 3:
+            shard = "You are using shard Delta"
+        shard += "\n"
         servercount = str(len(self.servers))
-        servercount = "I am currently in " + servercount + " servers \n"
+        servercount = "This shard is in " + servercount + " servers \n"
         if gotversion == True:
             message = "Toasty version " + version +  " by DNA#6750"
             await self.safe_send_message(channel, message)
@@ -3071,6 +3083,7 @@ class MusicBot(discord.Client):
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
         infomsg += file_count
         infomsg += file_size
+        infosmg += shard
         infomsg += servercount
         infomsg += num
         if uptime == False:

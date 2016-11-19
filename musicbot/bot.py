@@ -705,7 +705,7 @@ class MusicBot(discord.Client):
         if self.user.bot:
             activeplayers = sum(1 for p in self.players.values() if p.is_playing)
             if activeplayers > 1:
-                game = discord.Game(name=" with toast in %s servers" % activeplayers)
+                game = discord.Game(name="with 4 shards" % activeplayers)
                 entry = None
 
             elif activeplayers == 1:

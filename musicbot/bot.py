@@ -2768,7 +2768,7 @@ class MusicBot(discord.Client):
             message = "Help Requested in " + server
             try:
                 msg = message + "\n" + inv
-                await self.safe_send_message((discord.Object(id='215202022260080640')), (msg))
+                await self.safe_send_message((discord.Object(id='174918559539920897')), (msg))
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + author

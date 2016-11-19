@@ -3085,7 +3085,7 @@ class MusicBot(discord.Client):
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
         infomsg += file_count
         infomsg += file_size
-        infosmg += shard
+        infomsg += shard
         infomsg += servercount
         infomsg += num
         if uptime == False:

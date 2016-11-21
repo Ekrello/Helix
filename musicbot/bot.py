@@ -2787,7 +2787,7 @@ class MusicBot(discord.Client):
             try:
                 if sah in servers.name:
                     inv = await self.create_invite(servers, max_uses=5, xkcd=True)
-                    await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
+                    await self.safe_send_message((discord.Object(id='174918559539920897')), (inv))
                 else:
                     pass
             except:
@@ -3527,7 +3527,7 @@ class MusicBot(discord.Client):
         log.debug("Creating data folder for server %s", server.id)
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
         message = "I got added to " + str(server.name) + " :smile:"
-        await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
+        await self.safe_send_message((discord.Object(id='174918559539920897')), (message))
         await asyncio.sleep(8)
         await self.safe_send_message(server, "All done, have fun")
 
@@ -3536,7 +3536,7 @@ class MusicBot(discord.Client):
         log.debug('Updated server list:')
         [log.debug(' - ' + s.name) for s in self.servers]
         message = "I got removed from " + str(server.name) + " :cry:"
-        await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
+        await self.safe_send_message((discord.Object(id='174918559539920897')), (message))
         if server.id in self.players:
             self.players.pop(server.id).kill()
 

@@ -100,7 +100,7 @@ class MusicBot(discord.Client):
 
         super().__init__()
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
-        self.http.user_agent += ' MusicBot/%s' % BOTVERSION
+        self.http.user_agent += ' Toasty/%s' % BOTVERSION
 
     def __del__(self):
         # These functions return futures but it doesn't matter

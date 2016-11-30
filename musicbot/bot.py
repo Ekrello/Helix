@@ -2911,7 +2911,7 @@ class MusicBot(discord.Client):
         file_size = file_size.replace('/mnt/data/Toasty/audio_cache', '')
         file_size = "All songs total to " + file_size + "\n"
         guild_id = int(server.id)
-        num_shards = 4
+        num_shards = 2
         shard_id = (guild_id >> 22) % num_shards
         if shard_id == 0:
             shard = "You are using shard Alpha"

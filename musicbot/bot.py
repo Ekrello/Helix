@@ -2726,7 +2726,7 @@ class MusicBot(discord.Client):
         if author.id == "174918559539920897":
             await self.safe_send_message(channel, "Hold on")
             await self.send_typing(channel)
-            os.system("git pull origin master")
+            os.system("git pull origin dev")
             await asyncio.sleep(2)
             try:
                 reload(musicbot.misc)

@@ -3127,7 +3127,10 @@ class MusicBot(discord.Client):
         message = message.content.strip() 
         message = message[5:]      
         link = musicbot.misc.patebin(message)
-        link = link.splitlines()
+        try:
+            link = link.splitlines()
+        except:
+            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
         count = int(0)
         if link == None:
             return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")

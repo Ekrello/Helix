@@ -424,7 +424,9 @@ def uptime():
 
 def update():
     update = ""
-    update += "There are now 2 Toastys, each one takes half the load\n"
-    update += "Toasty knows how long her server has been running for\n"
+    update += "current player count is now in /info\n"
+    update += "/bug has been disabled\n"
+    update += "/add now shows how many songs it managed to add\n"
+    update += "Some commands can be used in dm now\n"
     return update
 

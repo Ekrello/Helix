@@ -3071,7 +3071,7 @@ class MusicBot(discord.Client):
             pass
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = str(activeplayers)
-        p = "This shard is currently playing music in " + activeplayers + " servers"
+        p = "This shard is currently playing music in " + activeplayers + " servers\n"
         print("commands complete, sending messages")
         infomsg = "Type /donate to help run the bot\n"
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"

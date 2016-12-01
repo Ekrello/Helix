@@ -701,26 +701,28 @@ class MusicBot(discord.Client):
 
     async def update_now_playing_status(self, entry=None, is_paused=False):
         game = None
-
-        if self.user.bot:
-            activeplayers = sum(1 for p in self.players.values() if p.is_playing)
-            if activeplayers > 1:
-                game = "with 4/4 shards"
-                entry = None
-
-            elif activeplayers == 1:
-                player = discord.utils.get(self.players.values(), is_playing=True)
-                entry = player.current_entry
-
-        if entry:
-            prefix = u'\u275A\u275A ' if is_paused else ''
-
-            name = u'{}{}'.format(prefix, entry.title)[:128]
-            game = discord.Game(name=name)
+        game = """music somewhere
+        with code
+        something, idk
+        some really messed up stuff
+        with /help
+        with commands
+        porn
+        VIDEO GAMES
+        stuff
+        with too many servers
+        with life of my dev
+        dicks
+        Civ 5
+        Civ 6
+        Besiege
+        with code
+        Mass Effect
+        bangin tunes"""
+        text = game.splitlines()
+        game = (game[random.randint(0,(len(text)))])
         await self.change_presence(game = game)
-
                 
-
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']
         m = None
@@ -1682,9 +1684,10 @@ class MusicBot(discord.Client):
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = int(activeplayers)
         if activeplayers == 32:
-            return Response("This shard is under its maximum load. Shards are limited to only be able to play in 32 servers at any single time.")
+            return Response("Unable to join voice channel. Because of server load my maximum voice channel limit is 32. Any higher will degrade audio quality. If you want to help remove this limit, type /donate so we can get better hardware")
         if not author.voice_channel:
             raise exceptions.CommandError('You are not in a voice channel!')
+
         voice_client = self.voice_client_in(server)
         if voice_client and server == author.voice_channel.server:
             await voice_client.move_to(author.voice_channel)
@@ -1710,6 +1713,12 @@ class MusicBot(discord.Client):
         if self.config.auto_playlist:
             await self.on_player_finished_playing(player)
 
+    async def cmd_whosyourdaddy(self, author, owner):
+        if author == owner:
+            return Repsonse("You're my creator")
+        else:
+            return Reponse("DNA")
+    
     async def cmd_pause(self, player):
         """
         Usage:
@@ -1720,7 +1729,7 @@ class MusicBot(discord.Client):
 
         if player.is_playing:
             player.pause()
-            return Response(":pause_button:")
+
         else:
             raise exceptions.CommandError('Player is not playing.', expire_in=30)
 
@@ -1734,7 +1743,7 @@ class MusicBot(discord.Client):
 
         if player.is_paused:
             player.resume()
-            return Response(":arrow_forward:")
+
         else:
             raise exceptions.CommandError('Player is not paused.', expire_in=30)
 
@@ -1745,11 +1754,15 @@ class MusicBot(discord.Client):
 
         Shuffles the playlist.
         """
+
         player.playlist.shuffle()
+
         cards = [':white_circle:',':black_circle:',':red_circle:',':large_blue_circle:']
         random.shuffle(cards)
+
         hand = await self.send_message(channel, ' '.join(cards))
         await asyncio.sleep(0.6)
+
         for x in range(5):
             random.shuffle(cards)
             await self.safe_edit_message(hand, ' '.join(cards))
@@ -1765,6 +1778,7 @@ class MusicBot(discord.Client):
 
         Clears the playlist.
         """
+
         player.playlist.clear()
         return Response('\N{PUT LITTER IN ITS PLACE SYMBOL}', delete_after=20)
 
@@ -1828,17 +1842,24 @@ class MusicBot(discord.Client):
 
         if skips_remaining <= 0:
             player.skip()  # check autopause stuff here
-            return Response(":track_next:")
-        reply=True
-        delete_after=20
-        if skips_remaining >= 0:
+            return Response(
+                'your skip for **{}** was acknowledged.'
+                '\nThe vote to skip has been passed.{}'.format(
+                    player.current_entry.title,
+                    ' Next song coming up!' if player.playlist.peek() else ''
+                ),
+                reply=True,
+                delete_after=20
+            )
+
+        else:
             # TODO: When a song gets skipped, delete the old x needed to skip messages
             return Response(
-                'You want to skip **{}**.'
-                '\n**{}** more {} need to agree to skip.'.format(
+                'your skip for **{}** was acknowledged.'
+                '\n**{}** more {} required to vote to skip this song.'.format(
                     player.current_entry.title,
                     skips_remaining,
-                    'person' if skips_remaining == 1 else 'people'
+                    'person is' if skips_remaining == 1 else 'people are'
                 ),
                 reply=True,
                 delete_after=20
@@ -1855,7 +1876,7 @@ class MusicBot(discord.Client):
         """
 
         if not new_volume:
-            return Response('Volume: `%s%%`' % int(player.volume * 100), reply=True, delete_after=20)
+            return Response('Current volume: `%s%%`' % int(player.volume * 100), reply=True, delete_after=20)
 
         relative = False
         if new_volume[0] in '+-':
@@ -1874,12 +1895,11 @@ class MusicBot(discord.Client):
 
         old_volume = int(player.volume * 100)
 
-        if -1 < new_volume <= 100:
+        if 0 < new_volume <= 100:
             player.volume = new_volume / 100.0
-            if new_volume == 0:
-                return Response(":mute:")
-            else:
-                return Response('volume changed... from %d to %d' % (old_volume, new_volume), reply=True, delete_after=20)
+
+            return Response('volume  changed... from %d to %d' % (old_volume, new_volume), reply=True, delete_after=20)
+
         else:
             if relative:
                 raise exceptions.CommandError(
@@ -1892,7 +1912,7 @@ class MusicBot(discord.Client):
     async def cmd_playlist(self, channel, player):
         """
         Usage:
-            {command_prefix}playlist
+            {command_prefix}queue
 
         Prints the current song queue.
         """
@@ -1994,7 +2014,52 @@ class MusicBot(discord.Client):
                     except discord.HTTPException:
                         pass
 
-        return Response('Deleted {} message{} relating to me.'.format(deleted, 's' * bool(deleted)), delete_after=6)
+        return Response('Cleaned up {} message{}.'.format(deleted, 's' * bool(deleted)), delete_after=6)
+
+    async def cmd_pldump(self, channel, song_url):
+        """
+        Usage:
+            {command_prefix}pldump url
+
+        Dumps the individual urls of a playlist
+        """
+
+        try:
+            info = await self.downloader.extract_info(self.loop, song_url.strip('<>'), download=False, process=False)
+        except Exception as e:
+            raise exceptions.CommandError("Could not extract info from input url\n%s\n" % e, expire_in=25)
+
+        if not info:
+            raise exceptions.CommandError("Could not extract info from input url, no data.", expire_in=25)
+
+        if not info.get('entries', None):
+            # TODO: Retarded playlist checking
+            # set(url, webpageurl).difference(set(url))
+
+            if info.get('url', None) != info.get('webpage_url', info.get('url', None)):
+                raise exceptions.CommandError("This does not seem to be a playlist.", expire_in=25)
+            else:
+                return await self.cmd_pldump(channel, info.get(''))
+
+        linegens = defaultdict(lambda: None, **{
+            "youtube":    lambda d: 'https://www.youtube.com/watch?v=%s' % d['id'],
+            "soundcloud": lambda d: d['url'],
+            "bandcamp":   lambda d: d['url']
+        })
+
+        exfunc = linegens[info['extractor'].split(':')[0]]
+
+        if not exfunc:
+            raise exceptions.CommandError("Could not extract info from input url, unsupported playlist type.", expire_in=25)
+
+        with BytesIO() as fcontent:
+            for item in info['entries']:
+                fcontent.write(exfunc(item).encode('utf8') + b'\n')
+
+            fcontent.seek(0)
+            await self.send_file(channel, fcontent, filename='playlist.txt', content="Here's the url dump for <%s>" % song_url)
+
+        return Response("\N{OPEN MAILBOX WITH RAISED FLAG}", delete_after=20)
 
     async def cmd_listids(self, server, author, leftover_args, cat='all'):
         """
@@ -2119,17 +2184,43 @@ class MusicBot(discord.Client):
 
         return Response("\N{OK HAND SIGN}", delete_after=20)
 
+    @owner_only
+    async def cmd_setavatar(self, message, url=None):
+        """
+        Usage:
+            {command_prefix}setavatar [url]
+
+        Changes the bot's avatar.
+        Attaching a file and leaving the url parameter blank also works.
+        """
+
+        if message.attachments:
+            thing = message.attachments[0]['url']
+        else:
+            thing = url.strip('<>')
+
+        try:
+            with aiohttp.Timeout(10):
+                async with self.aiosession.get(thing) as res:
+                    await self.edit_profile(avatar=await res.read())
+
+        except Exception as e:
+            raise exceptions.CommandError("Unable to change avatar: {}".format(e), expire_in=20)
+
+        return Response("\N{OK HAND SIGN}", delete_after=20)
+
+
     async def cmd_getout(self, server):
         await self.disconnect_voice_client(server)
         return Response("BYE", delete_after=20)
 
     async def cmd_restart(self, channel):
-        await self.safe_send_message(channel, "brb")
+        await self.safe_send_message(channel, "\N{WAVING HAND SIGN}")
         await self.disconnect_all_voice_clients()
         raise exceptions.RestartSignal()
 
     async def cmd_shutdown(self, channel):
-        await self.safe_send_message(channel, "Gnight")
+        await self.safe_send_message(channel, "\N{WAVING HAND SIGN}")
         await self.disconnect_all_voice_clients()
         raise exceptions.TerminateSignal()
 
@@ -2166,7 +2257,7 @@ class MusicBot(discord.Client):
 
         return Response(data, codeblock='py')
 
-    async def cmd_debug(self, author, message, _player, *, data):
+    async def cmd_debug(self, message, _player, *, data):
         if author == "174918559539920897":
             pass
         else:
@@ -2194,6 +2285,8 @@ class MusicBot(discord.Client):
 
         return Response(codeblock.format(result))
 
+
+    
     async def cmd_leave(self, server, channel, message, author):
         perms = author.permissions_in(channel)
         for role in author.roles:
@@ -2208,8 +2301,9 @@ class MusicBot(discord.Client):
             except:
                 await self.safe_send_message(channel, "Failed to find administrator or manage server role")
                 await self.safe_send_message(channel, perms)
-            await self.safe_send_message(channel, "**Leaving server**... asshole")
+            await self.safe_send_message(channel, "**KYS**")
             await self.leave_server(server)
+
 
     async def cmd_ping(self, channel):
         choice = random.randint(1,6)
@@ -2266,10 +2360,12 @@ class MusicBot(discord.Client):
             except:
                 return Response("I... I can't do that... Did you change my permissions?")
                 
+
     async def cmd_join(self, channel, message, server_link=None):
         """
         Get toasty's links
         """
+
         if self.user.bot:
             msg = "**Here is the link to add the bot**:\n"
             inv = "https://bit.ly/2e0ma2h"
@@ -2420,12 +2516,13 @@ class MusicBot(discord.Client):
                         msg = "**No results**"
             return Response(msg)
 
+    
     async def cmd_pokefuse(self, channel, author, message):
         message = message.content.strip()
-        message = message.lower()
+        message = lower()
         message = message.split(",")
-        n1 = message[0]
-        n2 = message[1]
+        n1 = message[1]
+        n2 = message[2]
         n1 = poke.convert(n1)
         n2 = poke.convert(n2)
         url = poke.create(n1,n2)
@@ -2439,7 +2536,7 @@ class MusicBot(discord.Client):
         text_channels = len([x for x in server.channels if str(x.type) == "text"])
         voice_channels = len(server.channels) - text_channels
 
-        data = "```py\n"
+        data = "```python\n"
         data += "Name: {}\n".format(server.name)
         data += "ID: {}\n".format(server.id)
         data += "Region: {}\n".format(server.region)
@@ -2459,7 +2556,9 @@ class MusicBot(discord.Client):
         await self.safe_send_message(channel,data)
     
     async def cmd_flip(self, author, channel, user_mentions):
-        """Flips a coin
+        """Flips a coin... or a user.
+
+        Defaults to coin.
         """
         num =  random.randint(1,100)
         if num == 73:
@@ -2529,10 +2628,26 @@ class MusicBot(discord.Client):
         await self.safe_send_message(channel, "I use YoutubeDL to get the songs, if they support it, so do I:")
         await self.safe_send_message(channel, "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes")
         return Response("https://rg3.github.io/youtube-dl/supportedsites.html   <---- The YouTubeDL supported website list")
+    
+    async def cmd_sans(self, channel):
+        await self.safe_send_message(channel,"**EASTER EGG**")
+        return Response("https://media.giphy.com/media/JspiYI9JsQM24/giphy.gif")
+        
+    async def cmd_genocide(self, channel):
+        await self.safe_send_message(channel,"**EASTER EGG**")
+        return Response("http://orig07.deviantart.net/d173/f/2015/296/5/3/undertale_genocide_by_kawaii_chibi_kotou-d9e2uoc.jpg")
+        
+    async def cmd_papyrus(self, channel):
+        await self.safe_send_message(channel,"**EASTER EGG**")
+        return Response("https://media.giphy.com/media/xyS5dt9CpleN2/giphy.gif")
+        
+    async def cmd_mum(self, channel):
+        await self.safe_send_message(channel,"**EASTER EGG**")
+        return Response("http://orig09.deviantart.net/006a/f/2016/025/1/7/_undertale____goat_mom_by_the_drawing_weirdo-d9pc854.jpg")
 
     async def cmd_update(self, channel, author):
         await self.safe_send_message(channel, "Better start coding then, hold on a sec :computer:")
-        os.system("git pull origin master")
+        os.system("git pull origin dev")
         servercount = str(len(self.servers))
         message = "update downloaded, notifying " + servercount + " servers"
         await self.send_message(channel, message)
@@ -2573,10 +2688,35 @@ class MusicBot(discord.Client):
                     pass
             return Response("Priority Message Sent")
 
+    async def cmd_crash(self, channel):
+        message = "**CRITICAL ERROR** "
+        await self.send_message(channel,(message + "....wHere A-m Iy??"))
+        await asyncio.sleep(1)
+        await self.send_message(channel,(message + "**AI CRITICAL MALFUNCTION**"))
+        await asyncio.sleep(2)
+        await self.send_message(channel,(message + "Time module failure"))
+        await self.send_message(channel,(message + "Response module failure"))
+        await self.send_message(channel,(message + "Giphy module failure"))
+        await self.send_message(channel,(message + "Player module failure"))
+        await self.send_message(channel,(message + "Tempo module failure"))
+        await self.send_message(channel,(message + "coax module failure"))
+        await self.send_message(channel,(message + "Randint module failure"))
+        await self.send_message(channel,(message + "Loader module failure"))
+        await self.send_message(channel,(message + "dexi module failure"))
+        await self.send_message(channel,(message + "EDI module failure"))
+        await self.send_message(channel,(message + "Spam module failure"))
+        await self.send_message(channel,(message + "c4xy module failure"))
+        await self.send_message(channel,(message + "h264x module failure"))
+        await self.send_message(channel,(message + "python route module failure"))
+        await self.send_message(channel,(message + "#unable to read module name# module failure"))
+        await self.send_message(channel,(message + "error handler module failure"))
+        await self.send_message(channel,(message + "Discord api module fai"))
+        raise exceptions.TerminateSignal
+
     async def cmd_silentupdate(self, channel, author):
         if author.id == "174918559539920897":
             await self.safe_send_message(channel, "Better start coding then, hold on a sec :computer:")
-            os.system("git pull origin master")
+            os.system("git pull origin dev")
             await self.disconnect_all_voice_clients()
             raise exceptions.TerminateSignal
         else:
@@ -2598,10 +2738,17 @@ class MusicBot(discord.Client):
                 await self.safe_send_message(channel, "**Playlist generation commands updated**")
             except:
                 await self.safe_send_message(channel, "**GENRE.PY FAILED TO UPDATE**")
+            #try:
+            #    reload(musicbot.extremist)
+            #except:
+            #    await self.safe_send_message(channel, "**EXTREMIST.PY FAILED TO UPDATE**")
+            #    lockdown(musicbot.extremist)
+            #await self.safe_send_message(channel, "**EXTREMIST RELOADED**")
         else:
             return Response("You arent my developer")
 
     async def cmd_bug(self,channel,server,author):
+        return Response("/bug is broken because of sharding, my dev is trying to find the fix, in the mean time type /join to join my server, and mention tech support and tell them what issue you're having")
         author = author.id
         print (author)
         try:
@@ -2615,23 +2762,21 @@ class MusicBot(discord.Client):
         if author not in bugger: 
             try:
                 inv = await self.create_invite(server, max_uses=1, xkcd=True)
-                inv = str(inv)
-                inv = inv.replace("http","https")
             except:
                 return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
             print('bug Command on Server: {}'.format(server.name))
             server = str(server.name)
             message = "Help Requested in " + server
             try:
-                msg = message + "\n" + inv
-                await self.safe_send_message((discord.Object(id='174918559539920897')), (msg))
+                await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
+                await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + author
             bugged.write(text)
             print (bugged)
             bugged.close()
-            return Response('Well shit, ive messaged my devs. One of them will begin working on the issue. They may appear here to ask you a question or two as well. ^-^', reply=True)
+            return Response('Well shit. Ive told the devs the toaster broke, theyre sending a replacement toaster, itll be here at some point', reply=True)
         else:
             return Response('Youve already used that once mate, one is enough')
 
@@ -2910,20 +3055,8 @@ class MusicBot(discord.Client):
         file_size = str(file_size)
         file_size = file_size.replace('/mnt/data/Toasty/audio_cache', '')
         file_size = "All songs total to " + file_size + "\n"
-        guild_id = int(server.id)
-        num_shards = 2
-        shard_id = (guild_id >> 22) % num_shards
-        if shard_id == 0:
-            shard = "You are using shard Alpha"
-        if shard_id == 1:
-            shard = "You are using shard Beta"
-        if shard_id == 2:
-            shard = "You are using shard Gamma"
-        if shard_id == 3:
-            shard = "You are using shard Delta"
-        shard += "\n"
         servercount = str(len(self.servers))
-        servercount = "This shard is in " + servercount + " servers \n"
+        servercount = "I am currently in " + servercount + " servers \n"
         if gotversion == True:
             message = "Toasty version " + version +  " by DNA#6750"
             await self.safe_send_message(channel, message)
@@ -2936,13 +3069,16 @@ class MusicBot(discord.Client):
         except:
             uptime = False
             pass
+        activeplayers = sum(1 for p in self.players.values() if p.is_playing)
+        activeplayers = str(activeplayers)
+        p = "This shard is currently playing music in " + activeplayers + " servers"
         print("commands complete, sending messages")
         infomsg = "Type /donate to help run the bot\n"
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
         infomsg += file_count
         infomsg += file_size
-        infomsg += shard
         infomsg += servercount
+        infomsg += p
         infomsg += num
         if uptime == False:
             pass
@@ -2981,43 +3117,6 @@ class MusicBot(discord.Client):
         message = musicbot.misc.shitpost()
         return Response(message)
     
-    async def cmd_loop(self, channel, player, message):
-        """
-        Usage:
-            {command_prefix}loop [how many loops]
-            {command_prefix}loop 50
-        repeats the current song a set amount of time (max  = 50)
-        """
-        msgs = message
-        message = message.content.strip()
-        message = message.lower()
-        message = message.replace("/loop","")
-        message = message.replace(" ","")
-        print(message)
-        song_url = player.current_entry.url
-        await self.safe_send_message(channel, "Looping song")
-        try:
-            await self.delete_message(msgs)
-        except:
-            pass
-        try:
-            loops = int(message)
-            if loops > 50:
-                return Response("50 is the maximum times you can loop at once")
-        except:
-            await self.safe_send_message(channel, "Loop count not found... Defaulting to 20")
-            loops = 20
-        for i in range(loops):
-            try:
-                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
-            except:
-                return Response("**CRITICAL ERROR** type /bug asap")
-            try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
-            except exceptions.ExtractionError as e:
-                print("Error adding song from autoplaylist:", e)
-                return Response("**CRITICAL ERROR** type /bug asap")
-            
     async def cmd_add(self, channel, player, message):
         """
         Usage:
@@ -3025,21 +3124,27 @@ class MusicBot(discord.Client):
             
         Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
         """
+        if link == None:
+            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
         await self.safe_send_message(channel, "**IM PROCCESSING YOUR LINK HANG ON FAM**")
         message = message.content.strip() 
         message = message[5:]      
         link = musicbot.misc.patebin(message)
-        if link == None:
-            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
         link = link.splitlines()
+        count = int(0)
         for line in link:
             song_url = line
             print (line)
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=None, author=None)
+                count = count + 1
             except exceptions.ExtractionError as e:
-                print("Error adding song from autoplaylist:", e)        
+                print("Error adding song from autoplaylist:", e) 
+                msg = "Failed to add" + line
+                await self.safe_send_message(channel,msg)
+        msg = "Added " + count + " songs"
+        return Response(msg)
         
     async def cmd_electronic(self, channel, player):
         size = int(20)
@@ -3123,8 +3228,8 @@ class MusicBot(discord.Client):
             return
 
         if message.channel.is_private:
-            if not (message.author.id == self.config.owner_id and command == 'joinserver'):
-                await self.send_message(message.channel, 'You cannot use this bot in private messages.')
+            if not (message.author.id == self.config.owner_id and command == 'joinserver' or 'savage' or 'shitpost' or 'urban' or 'google' or 'lmgtfy' or 'cat' or 'feature' or 'supported' or 'gif' or 'ping' or 'vicky' or 'flip' or '8ball' or 'toast' or 'donate' or 'join' or 'id'):
+                await self.send_message(message.channel, 'https://goo.gl/rdbPKI')
                 return
 
         if message.author.id in self.blacklist and message.author.id != self.config.owner_id:
@@ -3383,7 +3488,7 @@ class MusicBot(discord.Client):
         log.debug("Creating data folder for server %s", server.id)
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
         message = "I got added to " + str(server.name) + " :smile:"
-        await self.safe_send_message((discord.Object(id='174918559539920897')), (message))
+        await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
         await asyncio.sleep(8)
         await self.safe_send_message(server, "All done, have fun")
 
@@ -3392,7 +3497,7 @@ class MusicBot(discord.Client):
         log.debug('Updated server list:')
         [log.debug(' - ' + s.name) for s in self.servers]
         message = "I got removed from " + str(server.name) + " :cry:"
-        await self.safe_send_message((discord.Object(id='174918559539920897')), (message))
+        await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
         if server.id in self.players:
             self.players.pop(server.id).kill()
 

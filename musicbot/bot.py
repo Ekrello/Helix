@@ -3146,6 +3146,7 @@ class MusicBot(discord.Client):
                 print("Error adding song from autoplaylist:", e) 
                 msg = "Failed to add" + line
                 await self.safe_send_message(channel,msg)
+        count = str(count)
         msg = "Added " + count + " songs"
         return Response(msg)
         

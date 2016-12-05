@@ -3071,7 +3071,7 @@ class MusicBot(discord.Client):
             pass
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = str(activeplayers)
-        p = "This shard is currently playing music in " + activeplayers + " servers"
+        p = "This shard is currently playing music in " + activeplayers + " servers\n"
         print("commands complete, sending messages")
         infomsg = "**Type /donate to help run the bot**\n"
         infomsg += "```py"
@@ -3081,14 +3081,13 @@ class MusicBot(discord.Client):
         infomsg += servercount
         infomsg += p
         infomsg += num
-        infomsg += "\n"
         if uptime == False:
             pass
         else:
             infomsg += uptime
         infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
-        infomsg += "https://discord.gg/UBeKGns"
+        infomsg += "https://discord.gg/fy5cemn"
         await self.safe_send_message(channel, infomsg)
         
     async def cmd_shitpost(self, channel):

@@ -3082,11 +3082,11 @@ class MusicBot(discord.Client):
         infomsg += p
         infomsg += num
         infomsg += "\n"
-        infomsg += "```"
         if uptime == False:
             pass
         else:
             infomsg += uptime
+        infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/UBeKGns"
         await self.safe_send_message(channel, infomsg)

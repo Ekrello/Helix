@@ -2370,7 +2370,7 @@ class MusicBot(discord.Client):
             msg = "**Here is the link to add the bot**:\n"
             inv = "https://bit.ly/2e0ma2h"
             msg1 = "\n**And here is the link to my server:\n**"
-            sinv = "https://discord.gg/fy5cemn"
+            sinv = "https://discord.gg/6K5JkF5"
             msg2 = "\n**And here is the link to my twitter:\n**"
             tinv = "https://twitter.com/mtoastyofficial"
             msg = msg + inv + msg1 + sinv + msg2 + tinv 
@@ -3087,7 +3087,7 @@ class MusicBot(discord.Client):
             infomsg += uptime
         infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
-        infomsg += "https://discord.gg/fy5cemn"
+        infomsg += "https://discord.gg/6K5JkF5"
         await self.safe_send_message(channel, infomsg)
         
     async def cmd_shitpost(self, channel):
@@ -3458,7 +3458,7 @@ class MusicBot(discord.Client):
                 bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels, name='bot-testing') or server
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368")) # also fake abal
                 return
-        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/fy5cemn** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
+        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/6K5JkF5** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
         await self.safe_send_message(server, "Give me about 10 seconds to prepare some data for your server so when i have updates your playlists dont get deleted")
         log.debug("Creating data folder for server %s", server.id)
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)

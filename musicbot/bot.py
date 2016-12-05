@@ -2726,7 +2726,7 @@ class MusicBot(discord.Client):
         if author.id == "174918559539920897":
             await self.safe_send_message(channel, "Hold on")
             await self.send_typing(channel)
-            os.system("git pull origin dev")
+            os.system("git pull origin master")
             await asyncio.sleep(2)
             try:
                 reload(musicbot.misc)
@@ -3071,15 +3071,18 @@ class MusicBot(discord.Client):
             pass
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = str(activeplayers)
-        p = "This shard is currently playing music in " + activeplayers + " servers\n"
+        p = "This shard is currently playing music in " + activeplayers + " servers"
         print("commands complete, sending messages")
-        infomsg = "Type /donate to help run the bot\n"
-        infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
+        infomsg = "**Type /donate to help run the bot**\n"
+        infomsg += "```py"
+        infomsg += "\nLogo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
         infomsg += file_count
         infomsg += file_size
         infomsg += servercount
         infomsg += p
         infomsg += num
+        infomsg += "\n"
+        infomsg += "```"
         if uptime == False:
             pass
         else:
@@ -3087,31 +3090,6 @@ class MusicBot(discord.Client):
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/UBeKGns"
         await self.safe_send_message(channel, infomsg)
-
-    async def cmd_awake(self):
-        """Displays bot's total running time"""
-
-        seconds = int(time.time() - self.bot.start_time)
-        minutes, seconds = divmod(seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        days, hours = divmod(hours, 24)
-
-        #takes a numerical time and what it corresponds to e.g. hours and return a string
-        def parse_time(time, time_type):
-            if time > 1:
-                return ' ' + str(time) + ' ' + time_type
-            elif time == 1:
-                return ' ' + str(time) + ' ' + time_type[:-1]
-            else:
-                return ''
-
-        seconds = parse_time(seconds, 'seconds')
-        minutes = parse_time(minutes, 'minutes')
-        hours = parse_time(hours, 'hours')
-        days = parse_time(days, 'days')
-
-        output = ":sleeping: I've been awake for{}{}{}{}".format(days, hours, minutes, seconds)
-        return Response(output)
         
     async def cmd_shitpost(self, channel):
         message = musicbot.misc.shitpost()
@@ -3124,17 +3102,14 @@ class MusicBot(discord.Client):
             
         Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
         """
-        message = message.content.strip() 
-        message = message[5:]      
-        link = musicbot.misc.patebin(message)
-        try:
-            link = link.splitlines()
-        except:
-            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-        count = int(0)
         if link == None:
             return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
         await self.safe_send_message(channel, "**IM PROCCESSING YOUR LINK HANG ON FAM**")
+        message = message.content.strip() 
+        message = message[5:]      
+        link = musicbot.misc.patebin(message)
+        link = link.splitlines()
+        count = int(0)
         for line in link:
             song_url = line
             print (line)
@@ -3146,7 +3121,6 @@ class MusicBot(discord.Client):
                 print("Error adding song from autoplaylist:", e) 
                 msg = "Failed to add" + line
                 await self.safe_send_message(channel,msg)
-        count = str(count)
         msg = "Added " + count + " songs"
         return Response(msg)
         
@@ -3477,8 +3451,6 @@ class MusicBot(discord.Client):
         log.info("Bot has been joined server: {}".format(server.name))
 
         if not self.user.bot:
-            alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
-
             if server.id == "81384788765712384" and not server.unavailable: # Discord API
                 playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels, name='playground') or server
                 await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368")) # fake abal

@@ -2771,8 +2771,8 @@ class MusicBot(discord.Client):
             shard_id = (guild_id >> 22) % num_shards
             try:
                 if shard_id == 0:
-                    await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
-                    await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
+                    await self.safe_send_message((discord.Object(id='255781145717768192')), (message))
+                    await self.safe_send_message((discord.Object(id='255781145717768192')), (inv))
                 if shard_id == 1:
                     await self.safe_send_message((discord.Object(id='255778524789473290')), (message))
                     await self.safe_send_message((discord.Object(id='255778524789473290')), (inv))                    

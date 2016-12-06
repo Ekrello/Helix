@@ -2370,7 +2370,7 @@ class MusicBot(discord.Client):
             msg = "**Here is the link to add the bot**:\n"
             inv = "https://bit.ly/2e0ma2h"
             msg1 = "\n**And here is the link to my server:\n**"
-            sinv = "https://discord.gg/6K5JkF5"
+            sinv = "https://discord.gg/UBeKGns"
             msg2 = "\n**And here is the link to my twitter:\n**"
             tinv = "https://twitter.com/mtoastyofficial"
             msg = msg + inv + msg1 + sinv + msg2 + tinv 
@@ -2767,9 +2767,16 @@ class MusicBot(discord.Client):
             print('bug Command on Server: {}'.format(server.name))
             server = str(server.name)
             message = "Help Requested in " + server
+            guild_id = int(server.id)
+            num_shards = 2
+            shard_id = (guild_id >> 22) % num_shards
             try:
-                await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
-                await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
+                if shard_id == 0:
+                    await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
+                    await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
+                if shard_id == 1:
+                    await self.safe_send_message((discord.Object(id='255778524789473290')), (message))
+                    await self.safe_send_message((discord.Object(id='255778524789473290')), (inv))                    
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + author
@@ -3071,11 +3078,10 @@ class MusicBot(discord.Client):
             pass
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = str(activeplayers)
-        p = "This shard is currently playing music in " + activeplayers + " servers\n"
+        p = "This shard is currently playing music in " + activeplayers + " servers"
         print("commands complete, sending messages")
-        infomsg = "**Type /donate to help run the bot**\n"
-        infomsg += "```py"
-        infomsg += "\nLogo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
+        infomsg = "Type /donate to help run the bot\n"
+        infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
         infomsg += file_count
         infomsg += file_size
         infomsg += servercount
@@ -3085,10 +3091,34 @@ class MusicBot(discord.Client):
             pass
         else:
             infomsg += uptime
-        infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
-        infomsg += "https://discord.gg/6K5JkF5"
+        infomsg += "https://discord.gg/UBeKGns"
         await self.safe_send_message(channel, infomsg)
+
+    async def cmd_awake(self):
+        """Displays bot's total running time"""
+
+        seconds = int(time.time() - self.bot.start_time)
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+
+        #takes a numerical time and what it corresponds to e.g. hours and return a string
+        def parse_time(time, time_type):
+            if time > 1:
+                return ' ' + str(time) + ' ' + time_type
+            elif time == 1:
+                return ' ' + str(time) + ' ' + time_type[:-1]
+            else:
+                return ''
+
+        seconds = parse_time(seconds, 'seconds')
+        minutes = parse_time(minutes, 'minutes')
+        hours = parse_time(hours, 'hours')
+        days = parse_time(days, 'days')
+
+        output = ":sleeping: I've been awake for{}{}{}{}".format(days, hours, minutes, seconds)
+        return Response(output)
         
     async def cmd_shitpost(self, channel):
         message = musicbot.misc.shitpost()
@@ -3450,6 +3480,8 @@ class MusicBot(discord.Client):
         log.info("Bot has been joined server: {}".format(server.name))
 
         if not self.user.bot:
+            alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
+
             if server.id == "81384788765712384" and not server.unavailable: # Discord API
                 playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels, name='playground') or server
                 await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368")) # fake abal
@@ -3458,7 +3490,7 @@ class MusicBot(discord.Client):
                 bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels, name='bot-testing') or server
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368")) # also fake abal
                 return
-        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/6K5JkF5** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
+        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/UBeKGns** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
         await self.safe_send_message(server, "Give me about 10 seconds to prepare some data for your server so when i have updates your playlists dont get deleted")
         log.debug("Creating data folder for server %s", server.id)
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)

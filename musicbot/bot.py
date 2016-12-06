@@ -2764,8 +2764,8 @@ class MusicBot(discord.Client):
             except:
                 return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
             print('bug Command on Server: {}'.format(server.name))
-            server = str(server.name)
-            message = "Help Requested in " + server
+            servers = str(server.name)
+            message = "Help Requested in " + servers
             guild_id = int(server.id)
             num_shards = 2
             shard_id = (guild_id >> 22) % num_shards

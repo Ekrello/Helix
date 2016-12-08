@@ -1196,7 +1196,7 @@ class MusicBot(discord.Client):
             usr = user_mentions[0]
             return Response("%s's id is `%s`" % (usr.name, usr.id), reply=True, delete_after=35)
 
-    async def cmd_play(self, player, channel, author, permissions, leftover_args, song_url):
+    async def cmd_play(self, player, channel, author, permissions, leftover_args, song_url, message):
         """
         Usage:
             {command_prefix}play song_link
@@ -1205,7 +1205,33 @@ class MusicBot(discord.Client):
         Adds the song to the playlist.  If a link is not provided, the first
         result from a youtube search is added to the queue.
         """
-
+        msg =  message.content.strip()
+            if "pastebin" in msg:
+                try:
+                message = msg[5:]
+                link = musicbot.misc.pastebin.message
+                link = link.splitlines()
+                lines = len(link.split('\n'))
+                if link = None:
+                    return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
+                except:
+                    return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
+            mesg = lines
+            mesg = "**Proccessing " + mesg + " URLS"
+            count = int(0)
+            for line in link:
+                song_url = line
+                print (line)
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=None, author=None)
+                    count = count + 1
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e) 
+                    msg = "Failed to add" + line
+                    await self.safe_send_message(channel,msg)
+            msg = "Added " + count + " songs"
+            return Response(msg)
         song_url = song_url.strip('<>')
 
         if permissions.max_songs and player.playlist.count_for_user(author) >= permissions.max_songs:
@@ -3125,38 +3151,6 @@ class MusicBot(discord.Client):
     async def cmd_shitpost(self, channel):
         message = musicbot.misc.shitpost()
         return Response(message)
-    
-    async def cmd_add(self, channel, player, message):
-        """
-        Usage:
-            {command_prefix}add http://pastebin.com/5upGeSzX
-            
-        Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
-        """
-        try:
-            message = message.content.strip() 
-            message = message[5:]      
-            link = musicbot.misc.patebin(message)
-            link = link.splitlines()
-            if link == None:
-                return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-        except:
-            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-        await self.safe_send_message(channel, "**IM PROCCESSING YOUR LINK HANG ON FAM**")
-        count = int(0)
-        for line in link:
-            song_url = line
-            print (line)
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
-            try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
-                count = count + 1
-            except exceptions.ExtractionError as e:
-                print("Error adding song from autoplaylist:", e) 
-                msg = "Failed to add" + line
-                await self.safe_send_message(channel,msg)
-        msg = "Added " + count + " songs"
-        return Response(msg)
         
     async def cmd_electronic(self, channel, player):
         size = int(20)

@@ -2370,7 +2370,7 @@ class MusicBot(discord.Client):
             msg = "**Here is the link to add the bot**:\n"
             inv = "https://bit.ly/2e0ma2h"
             msg1 = "\n**And here is the link to my server:\n**"
-            sinv = "https://discord.gg/UBeKGns"
+            sinv = "https://discord.gg/6K5JkF5"
             msg2 = "\n**And here is the link to my twitter:\n**"
             tinv = "https://twitter.com/mtoastyofficial"
             msg = msg + inv + msg1 + sinv + msg2 + tinv 
@@ -3064,7 +3064,7 @@ class MusicBot(discord.Client):
         servercount = str(len(self.servers))
         servercount = "I am currently in " + servercount + " servers \n"
         if gotversion == True:
-            message = "Toasty version " + version +  " by DNA#6750"
+            message = "Toasty version " + version +  " by DNA#6750 \n"
             await self.safe_send_message(channel, message)
         else:
             await self.safe_send_message(channel, "Toasty by DNA#6750")
@@ -3077,10 +3077,11 @@ class MusicBot(discord.Client):
             pass
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = str(activeplayers)
-        p = "This shard is currently playing music in " + activeplayers + " servers"
+        p = "This shard is currently playing music in " + activeplayers + " servers \n"
         print("commands complete, sending messages")
         infomsg = "Type /donate to help run the bot\n"
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
+        infomsg += "```py "
         infomsg += file_count
         infomsg += file_size
         infomsg += servercount
@@ -3090,8 +3091,9 @@ class MusicBot(discord.Client):
             pass
         else:
             infomsg += uptime
+        infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
-        infomsg += "https://discord.gg/UBeKGns"
+        infomsg += "https://discord.gg/6K5JkF5"
         await self.safe_send_message(channel, infomsg)
 
     async def cmd_awake(self):
@@ -3492,7 +3494,7 @@ class MusicBot(discord.Client):
                 bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels, name='bot-testing') or server
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368")) # also fake abal
                 return
-        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/UBeKGns** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
+        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/6K5JkF5** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
         await self.safe_send_message(server, "Give me about 10 seconds to prepare some data for your server so when i have updates your playlists dont get deleted")
         log.debug("Creating data folder for server %s", server.id)
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)

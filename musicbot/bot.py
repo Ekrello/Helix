@@ -3052,7 +3052,7 @@ class MusicBot(discord.Client):
             for member in server.members:
                 num = num + 1
         num = str(num)
-        num = "I see " + num + " people\n"
+        num = "This shard can see " + num + " people\n"
         process = await asyncio.create_subprocess_shell(
             'du /mnt/data/Toasty/audio_cache -h',
             stdout=asyncio.subprocess.PIPE)
@@ -3062,7 +3062,7 @@ class MusicBot(discord.Client):
         file_size = file_size.replace('/mnt/data/Toasty/audio_cache', '')
         file_size = "All songs total to " + file_size + "\n"
         servercount = str(len(self.servers))
-        servercount = "I am currently in " + servercount + " servers \n"
+        servercount = "This shard is currently in " + servercount + " servers \n"
         if gotversion == True:
             message = "Toasty version " + version +  " by DNA#6750 \n"
             await self.safe_send_message(channel, message)
@@ -3081,7 +3081,8 @@ class MusicBot(discord.Client):
         print("commands complete, sending messages")
         infomsg = "Type /donate to help run the bot\n"
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
-        infomsg += "```py "
+        infomsg += "```py"
+        infomsg += "\n"
         infomsg += file_count
         infomsg += file_size
         infomsg += servercount

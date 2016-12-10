@@ -1113,7 +1113,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}help
-
         a help message.
         """
         await self.safe_send_message(author,"**Commands**\n")
@@ -1140,7 +1139,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}blacklist [ + | - | add | remove ] @UserName [@UserName2 ...]
-
         Add or remove users to the blacklist.
         Blacklisted users are forbidden from using bot commands.
         """
@@ -1187,7 +1185,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}id [@user]
-
         Tells the user their id or the id of another user.
         """
         if not user_mentions:
@@ -1196,42 +1193,15 @@ class MusicBot(discord.Client):
             usr = user_mentions[0]
             return Response("%s's id is `%s`" % (usr.name, usr.id), reply=True, delete_after=35)
 
-    async def cmd_play(self, player, channel, author, permissions, leftover_args, song_url, message):
+    async def cmd_play(self, player, channel, author, permissions, leftover_args, song_url):
         """
         Usage:
             {command_prefix}play song_link
             {command_prefix}play text to search for
-
         Adds the song to the playlist.  If a link is not provided, the first
         result from a youtube search is added to the queue.
         """
-        msg =  message.content.strip()
-            if "pastebin" in msg:
-                try:
-                message = msg[5:]
-                link = musicbot.misc.pastebin.message
-                link = link.splitlines()
-                lines = len(link.split('\n'))
-                if link = None:
-                    return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-                except:
-                    return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-            mesg = lines
-            mesg = "**Proccessing " + mesg + " URLS"
-            count = int(0)
-            for line in link:
-                song_url = line
-                print (line)
-                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
-                try:
-                    await player.playlist.add_entry(song_url, channel=None, author=None)
-                    count = count + 1
-                except exceptions.ExtractionError as e:
-                    print("Error adding song from autoplaylist:", e) 
-                    msg = "Failed to add" + line
-                    await self.safe_send_message(channel,msg)
-            msg = "Added " + count + " songs"
-            return Response(msg)
+
         song_url = song_url.strip('<>')
 
         if permissions.max_songs and player.playlist.count_for_user(author) >= permissions.max_songs:
@@ -1657,7 +1627,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}np
-
         Displays the current song in chat.
         """
 
@@ -1704,7 +1673,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}summon
-
         Call the bot to the summoner's voice channel.
         """
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
@@ -1749,7 +1717,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}pause
-
         Pauses playback of the current song.
         """
 
@@ -1763,7 +1730,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}resume
-
         Resumes playback of a paused song.
         """
 
@@ -1777,7 +1743,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}shuffle
-
         Shuffles the playlist.
         """
 
@@ -1801,7 +1766,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}clear
-
         Clears the playlist.
         """
 
@@ -1812,7 +1776,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}skip
-
         Skips the current song when enough votes are cast, or by the bot owner.
         """
 
@@ -1896,7 +1859,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}volume (+/-)[volume]
-
         Sets the playback volume. Accepted values are from 1 to 100.
         Putting + or - before the volume will make the volume change relative to the current volume.
         """
@@ -1939,7 +1901,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}queue
-
         Prints the current song queue.
         """
 
@@ -1988,7 +1949,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}clean [range]
-
         Removes up to [range] messages the bot has posted in chat. Default: 50, Max: 1000
         """
 
@@ -2046,7 +2006,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}pldump url
-
         Dumps the individual urls of a playlist
         """
 
@@ -2091,7 +2050,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}listids [categories]
-
         Lists the ids for various things.  Categories are:
            all, users, roles, channels
         """
@@ -2149,7 +2107,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}perms
-
         Sends the user a list of their permissions.
         """
 
@@ -2170,7 +2127,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}setname name
-
         Changes the bot's username.
         Note: This operation is limited by discord to twice per hour.
         """
@@ -2194,7 +2150,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}setnick nick
-
         Changes the bot's nickname.
         """
 
@@ -2215,7 +2170,6 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}setavatar [url]
-
         Changes the bot's avatar.
         Attaching a file and leaving the url parameter blank also works.
         """
@@ -2583,7 +2537,6 @@ class MusicBot(discord.Client):
     
     async def cmd_flip(self, author, channel, user_mentions):
         """Flips a coin... or a user.
-
         Defaults to coin.
         """
         num =  random.randint(1,100)
@@ -3151,6 +3104,38 @@ class MusicBot(discord.Client):
     async def cmd_shitpost(self, channel):
         message = musicbot.misc.shitpost()
         return Response(message)
+    
+    async def cmd_add(self, channel, player, message):
+        """
+        Usage:
+            {command_prefix}add http://pastebin.com/5upGeSzX
+            
+        Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
+        """
+        try:
+            message = message.content.strip() 
+            message = message[5:]      
+            link = musicbot.misc.patebin(message)
+            link = link.splitlines()
+            if link == None:
+                return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
+        except:
+            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
+        await self.safe_send_message(channel, "**IM PROCCESSING YOUR LINK HANG ON FAM**")
+        count = int(0)
+        for line in link:
+            song_url = line
+            print (line)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            try:
+                await player.playlist.add_entry(song_url, channel=None, author=None)
+                count = count + 1
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e) 
+                msg = "Failed to add" + line
+                await self.safe_send_message(channel,msg)
+        msg = "Added " + count + " songs"
+        return Response(msg)
         
     async def cmd_electronic(self, channel, player):
         size = int(20)

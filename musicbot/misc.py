@@ -424,9 +424,8 @@ def uptime():
 
 def update():
     update = ""
-    update += "current player count is now in /info\n"
-    update += "/bug has been disabled\n"
-    update += "/add now shows how many songs it managed to add\n"
-    update += "Some commands can be used in dm now\n"
+    update += "Updated /info\n"
+    update += "New message style\n"
+    update += "More preperations for 2.0\n"
     return update
 

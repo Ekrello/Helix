@@ -720,7 +720,7 @@ class MusicBot(discord.Client):
         Mass Effect
         bangin tunes"""
         text = game.splitlines()
-        game = (game[random.randint(0,(len(text)))])
+        game = str((game[random.randint(0,(len(text)))]))
         await self.change_presence(game = game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):

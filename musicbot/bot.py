@@ -1135,8 +1135,7 @@ class MusicBot(discord.Client):
         content = "Ive sent my commands to you ^-^"
         em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
         em.set_author(name='Help:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        msg = await self.send_message(dest, embed=em)
-        return msg
+        await self.send_message(channel, embed=em)
         
     async def cmd_blacklist(self, message, user_mentions, option, something):
         """
@@ -2833,8 +2832,7 @@ class MusicBot(discord.Client):
                 em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
                 em.set_author(name='GIF:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
                 em.set_image(img.url)
-                msg = await self.send_message(dest, embed=em)
-                return msg
+                await self.send_message(channel, embed=em)
             except:
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
 
@@ -2851,8 +2849,7 @@ class MusicBot(discord.Client):
         em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
         em.set_author(name='Cats :3:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         em.set_image(text)
-        msg = await self.send_message(dest, embed=em)
-        return msg
+        await self.send_message(channel, embed=em)
 
             
     async def cmd_feature(self, channel):
@@ -3092,8 +3089,7 @@ class MusicBot(discord.Client):
         await self.safe_send_message(channel, infomsg)
         em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
         em.set_author(name='Info:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        msg = await self.send_message(dest, embed=em)
-        return msg
+        await self.send_message(channel, embed=em)
 
     async def cmd_awake(self):
         """Displays bot's total running time"""

@@ -2600,13 +2600,18 @@ class MusicBot(discord.Client):
         if j["result_type"] == "no_results":
             msg = "No results for "
             msg = msg + terms
-            await self.safe_send_message(channel,msg)
+            em = discord.Embed(description=msg, colour= 16711680)
+            em.set_author(name = 'Urban', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+            await self.send_message(channel, embed=em)
             return
         elif j["result_type"] == "exact":
             word = j["list"][0]
-            await self.safe_send_message(channel,"**%s** - Urban Dictionary" % word["word"])
-        await self.safe_send_message(channel,"```%s```" % word["definition"])
-
+        definerer = ("```%s```" % word["definition"])
+        n = ("**%s** - Urban Dictionary" % word["word"])
+        em = discord.Embed(description=definerer, colour= (random.randint(0,16777215)))
+        em.set_author(name = n, icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        await self.send_message(channel, embed=em)
+        
     async def cmd_supported(self, channel):
         await self.safe_send_message(channel, "I use YoutubeDL to get the songs, if they support it, so do I:")
         await self.safe_send_message(channel, "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes")

@@ -2606,8 +2606,8 @@ class MusicBot(discord.Client):
             return
         elif j["result_type"] == "exact":
             word = j["list"][0]
-        definerer = ("```%s```" % word["definition"])
-        n = ("**%s** - Urban Dictionary" % word["word"])
+        definerer = (word["definition"])
+        n = ("%s - Urban Dictionary" % word["word"])
         em = discord.Embed(description=definerer, colour= (random.randint(0,16777215)))
         em.set_author(name = n, icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(channel, embed=em)

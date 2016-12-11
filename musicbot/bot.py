@@ -2500,7 +2500,7 @@ class MusicBot(discord.Client):
                         em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
                         await self.send_message(channel, embed=em)
                     else:
-                        msg = "No results
+                        msg = "No results"
                         em = discord.Embed(description=msg, colour= 16711680)
                         em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
                         await self.send_message(channel, embed=em)

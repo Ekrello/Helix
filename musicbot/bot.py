@@ -1947,8 +1947,7 @@ class MusicBot(discord.Client):
         message = '\n'.join(lines)
         em = discord.Embed(description=message, colour= (random.randint(0,16777215)))
         em.set_author(name='Playlist:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        msg = await self.send_message(dest, embed=em)
-        return msg
+        await self.send_message(channel, embed=em)
 
     async def cmd_clean(self, message, channel, server, author, search_range=50):
         """

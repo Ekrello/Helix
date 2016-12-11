@@ -3501,21 +3501,20 @@ class MusicBot(discord.Client):
                 bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels, name='bot-testing') or server
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368")) # also fake abal
                 return
-        await self.safe_send_message(server, "Hi there, Im Toasty... in case youre too stupid to realise that. Type /help to see what i can do, and remember to join my server for news and updates: **https://discord.gg/6K5JkF5** or follow my official twitter: **https://twitter.com/mtoastyofficial**")
-        await self.safe_send_message(server, "Give me about 10 seconds to prepare some data for your server so when i have updates your playlists dont get deleted")
-        log.debug("Creating data folder for server %s", server.id)
+        msg = ("Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
+        msg = msg + "Give me about 10 seconds to prepare some data for your server"
+        em = discord.Embed(description=msg, colour= 65280)
+        em.set_author(name = 'I just joined :3', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        await self.send_message(channel, embed=em)
+
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
-        message = "I got added to " + str(server.name) + " :smile:"
-        await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
         await asyncio.sleep(8)
-        await self.safe_send_message(server, "All done, have fun")
+        await self.safe_send_message(server, "All done ^-^")
 
     async def on_server_remove(self, server: discord.Server):
         log.info("Bot has been removed from server: {}".format(server.name))
         log.debug('Updated server list:')
         [log.debug(' - ' + s.name) for s in self.servers]
-        message = "I got removed from " + str(server.name) + " :cry:"
-        await self.safe_send_message((discord.Object(id='215202022260080640')), (message))
         if server.id in self.players:
             self.players.pop(server.id).kill()
 

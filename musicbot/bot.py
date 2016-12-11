@@ -2475,7 +2475,7 @@ class MusicBot(discord.Client):
 
         return entries
 
-    async def cmd_google(self, message):
+    async def cmd_google(self, channel, message):
         """Searches google and gives you top result."""
         message = message.content.strip() 
         message = message.lower()

@@ -1132,9 +1132,12 @@ class MusicBot(discord.Client):
        # else:
             #donators dont get asked to donate
         await self.safe_send_message(author, "Rememer to donate (**/donate**) it really helps us out")
-        await self.safe_send_message(channel, "Ive sent my commands to your dm :smile:")
+        content = "Ive sent my commands to you ^-^"
+        em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
+        em.set_author(name='Help:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        msg = await self.send_message(dest, embed=em)
+        return msg
         
-
     async def cmd_blacklist(self, message, user_mentions, option, something):
         """
         Usage:
@@ -1943,7 +1946,10 @@ class MusicBot(discord.Client):
                 'no songs queued! Queue something with {}play.'.format(self.config.command_prefix))
 
         message = '\n'.join(lines)
-        return Response(message, delete_after=30)
+        em = discord.Embed(description=message, colour= (random.randint(0,16777215)))
+        em.set_author(name='Playlist:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        msg = await self.send_message(dest, embed=em)
+        return msg
 
     async def cmd_clean(self, message, channel, server, author, search_range=50):
         """
@@ -2824,7 +2830,11 @@ class MusicBot(discord.Client):
         else:
             try:
                 img = giphypop.translate(message)
-                return Response(img.url)
+                em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
+                em.set_author(name='GIF:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+                em.set_image(img.url)
+                msg = await self.send_message(dest, embed=em)
+                return msg
             except:
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
 
@@ -2838,6 +2848,11 @@ class MusicBot(discord.Client):
         text = text.replace('\/',"/")
         text = text.replace('"}',"")
         return Response(text)
+        em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
+        em.set_author(name='Cats :3:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        em.set_image(text)
+        msg = await self.send_message(dest, embed=em)
+        return msg
 
             
     async def cmd_feature(self, channel):
@@ -3075,6 +3090,10 @@ class MusicBot(discord.Client):
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/6K5JkF5"
         await self.safe_send_message(channel, infomsg)
+        em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
+        em.set_author(name='Info:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        msg = await self.send_message(dest, embed=em)
+        return msg
 
     async def cmd_awake(self):
         """Displays bot's total running time"""

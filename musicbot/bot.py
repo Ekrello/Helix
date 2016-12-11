@@ -3085,7 +3085,6 @@ class MusicBot(discord.Client):
         infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/6K5JkF5"
-        await self.safe_send_message(channel, infomsg)
         em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
         em.set_author(name='Info:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(channel, embed=em)

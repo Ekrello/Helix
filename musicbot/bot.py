@@ -2496,9 +2496,17 @@ class MusicBot(discord.Client):
                 except IndexError:
                     if query == "porn" or "nsfw" or "naked" or "sex" or "lesbian":
                         msg = "This command has been legally limited to block explicit searches, sorry"
+                        em = discord.Embed(description=msg, colour= 16711680)
+                        em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
+                        await self.send_message(channel, embed=em)
                     else:
-                        msg = "**No results**"
-            return Response(msg)
+                        msg = "No results
+                        em = discord.Embed(description=msg, colour= 16711680)
+                        em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
+                        await self.send_message(channel, embed=em)
+            em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
+            em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
+            await self.send_message(channel, embed=em)
 
     
     async def cmd_pokefuse(self, channel, author, message):
@@ -2601,7 +2609,7 @@ class MusicBot(discord.Client):
             msg = "No results for "
             msg = msg + terms
             em = discord.Embed(description=msg, colour= 16711680)
-            em.set_author(name = 'Urban', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+            em.set_author(name = 'Urban', icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
             await self.send_message(channel, embed=em)
             return
         elif j["result_type"] == "exact":
@@ -2609,7 +2617,7 @@ class MusicBot(discord.Client):
         definerer = (word["definition"])
         n = ("%s - Urban Dictionary" % word["word"])
         em = discord.Embed(description=definerer, colour= (random.randint(0,16777215)))
-        em.set_author(name = n, icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        em.set_author(name = n, icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
         await self.send_message(channel, embed=em)
         
     async def cmd_supported(self, channel):

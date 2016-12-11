@@ -3502,7 +3502,7 @@ class MusicBot(discord.Client):
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368")) # also fake abal
                 return
         msg = ("Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
-        msg = msg + "Give me about 10 seconds to prepare some data for your server"
+        msg = msg + "  Give me about 10 seconds to prepare some data for your server"
         em = discord.Embed(description=msg, colour= 65280)
         em.set_author(name = 'I just joined :3', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(server, embed=em)

@@ -1,6 +1,12 @@
-discord.py[voice] ~= 0.12.0
+discord.py[voice]
 youtube_dl
 pip
+giphypop
+cleverbot
+python.twitter
+bs4
+colorlog
+lxml
 cffi==1.6.0; sys_platform == 'win32'
 giphypop
 cleverbot

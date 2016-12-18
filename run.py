@@ -140,16 +140,16 @@ log.addHandler(tfh)
 
 
 def finalize_logging():
-    if os.path.isfile("logs/musicbot.log"):
-        log.info("Moving old musicbot log")
+    if os.path.isfile("logs/bot.log"):
+        log.info("Moving old bot log")
         try:
-            if os.path.isfile("logs/musicbot.log.last"):
-                os.unlink("logs/musicbot.log.last")
-            os.rename("logs/musicbot.log", "logs/musicbot.log.last")
+            if os.path.isfile("logs/bot.log.last"):
+                os.unlink("logs/bot.log.last")
+            os.rename("logs/bot.log", "logs/bot.log.last")
         except:
             pass
 
-    with open("logs/musicbot.log", 'w', encoding='utf8') as f:
+    with open("logs/bot.log", 'w', encoding='utf8') as f:
         tmpfile.seek(0)
         f.write(tmpfile.read())
         tmpfile.close()
@@ -162,7 +162,7 @@ def finalize_logging():
     log.removeHandler(tfh)
     del tfh
 
-    fh = logging.FileHandler("logs/musicbot.log", mode='a')
+    fh = logging.FileHandler("logs/bot.log", mode='a')
     fh.setFormatter(logging.Formatter(
         fmt="[%(relativeCreated).9f] %(name)s-%(levelname)s: %(message)s"
     ))
@@ -277,10 +277,10 @@ def req_ensure_env():
 
     try:
         assert os.path.isdir('config'), 'folder "config" not found'
-        assert os.path.isdir('musicbot'), 'folder "musicbot" not found'
-        assert os.path.isfile('musicbot/__init__.py'), 'musicbot folder is not a python module'
+        assert os.path.isdir('code'), 'folder "code" not found'
+        assert os.path.isfile('code/__init__.py'), 'code folder is not a python module'
 
-        assert importlib.util.find_spec('musicbot'), "musicbot module is not importable"
+        assert importlib.util.find_spec('code'), "code module is not importable"
     except AssertionError as e:
         log.critical("Failed environment check, %s", e)
         bugger_off()
@@ -342,7 +342,7 @@ def main():
 
         m = None
         try:
-            from musicbot import MusicBot
+            from code import MusicBot
             m = MusicBot()
 
             sh.terminator = ''

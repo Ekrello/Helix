@@ -2626,7 +2626,7 @@ class MusicBot(discord.Client):
         msg += " \n"
         msg += "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes"
         em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
-        em.set_author(name='Supported Links:', icon_url=http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        em.set_author(name='Supported Links:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
     
     async def cmd_sans(self, channel):

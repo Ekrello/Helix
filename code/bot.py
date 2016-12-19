@@ -723,55 +723,6 @@ class MusicBot(discord.Client):
         text = game.splitlines()
         game = str((game[random.randint(0,(len(text)))]))
         await self.change_presence(game = game)
-=======
-with code
-something, idk
-some really messed up stuff
-with /help
-with commands
-porn
-VIDEO GAMES
-stuff
-with too many servers
-with life of my dev
-dicks
-Civ 5
-Civ 6
-Besiege
-with code
-Mass Effect
-bangin tunes
-with children
-with jews
-on a new server
-^-^
-with something
-the violin
-For cuddles
-the harmonica
-With dicks
-With a gas chamber
-Nazi simulator 2K17
-Rodina
-Gas bills
-Memes
-Darkness
-With some burnt toast
-Jepus Crist
-With my devs nipples    
-SOMeBODY ONCE TOLD ME
-With Hitler's dick"""
-        text = game.splitlines()
-        size = len(text)
-        try:
-            null = str((text[random.randint(0,(len(text)))]))
-        except IndexError:
-            null = text[1]
-        if null == None or null == "":
-            null = text[2]
-        Game= str(null)
-        self.change_status(Game = Game)
->>>>>>> refs/remotes/origin/Testing:code/bot.py
                 
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']

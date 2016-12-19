@@ -2621,11 +2621,11 @@ class MusicBot(discord.Client):
         await self.send_message(channel, embed=em)
         
     async def cmd_supported(self, channel):
-		msg = "I use YoutubeDL to get the songs, if they support it, so do I:\n"
-		msg += "https://rg3.github.io/youtube-dl/supportedsites.html"
-		msg += " \n"
-		msg += "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes"
-		em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
+        msg = "I use YoutubeDL to get the songs, if they support it, so do I:\n"
+        msg += "https://rg3.github.io/youtube-dl/supportedsites.html"
+        msg += " \n"
+        msg += "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes"
+        em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
         em.set_author(name='Supported Links:', icon_url=http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
     
@@ -3069,12 +3069,12 @@ class MusicBot(discord.Client):
             await self.safe_send_message(channel, "Toasty by DNA#6750")
             print("unable to obtain version number")
         try:
-			process = await asyncio.create_subprocess_shell(
-				"cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
-			stdout=asyncio.subprocess.PIPE)
-			stdout, stderr = await process.communicate()
-			uptime = stdout.decode().strip()
-			uptime = str(file_count)
+            process = await asyncio.create_subprocess_shell(
+                "cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
+            stdout=asyncio.subprocess.PIPE)
+            stdout, stderr = await process.communicate()
+            uptime = stdout.decode().strip()
+            uptime = str(file_count)
             uptime = code.misc.uptime()
             uptime = "My host has been running for " + uptime + "\n"
         except:

@@ -2621,9 +2621,13 @@ class MusicBot(discord.Client):
         await self.send_message(channel, embed=em)
         
     async def cmd_supported(self, channel):
-        await self.safe_send_message(channel, "I use YoutubeDL to get the songs, if they support it, so do I:")
-        await self.safe_send_message(channel, "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes")
-        return Response("https://rg3.github.io/youtube-dl/supportedsites.html   <---- The YouTubeDL supported website list")
+		msg = "I use YoutubeDL to get the songs, if they support it, so do I:\n"
+		msg += "https://rg3.github.io/youtube-dl/supportedsites.html"
+		msg += " \n"
+		msg += "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes"
+		em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
+        em.set_author(name='Supported Links:', icon_url=http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        await self.send_message(channel, embed=em)
     
     async def cmd_sans(self, channel):
         await self.safe_send_message(channel,"**EASTER EGG**")
@@ -3044,7 +3048,7 @@ class MusicBot(discord.Client):
         except:
             gotversion = False
         process = await asyncio.create_subprocess_shell(
-            'find /mnt/data/Toasty/audio_cache -type f | wc -l',
+            'find /root/Toasty/audio_cache -type f | wc -l',
             stdout=asyncio.subprocess.PIPE)
         stdout, stderr = await process.communicate()
         file_count = stdout.decode().strip()
@@ -3065,6 +3069,12 @@ class MusicBot(discord.Client):
             await self.safe_send_message(channel, "Toasty by DNA#6750")
             print("unable to obtain version number")
         try:
+			process = await asyncio.create_subprocess_shell(
+				"cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
+			stdout=asyncio.subprocess.PIPE)
+			stdout, stderr = await process.communicate()
+			uptime = stdout.decode().strip()
+			uptime = str(file_count)
             uptime = code.misc.uptime()
             uptime = "My host has been running for " + uptime + "\n"
         except:
@@ -3090,7 +3100,7 @@ class MusicBot(discord.Client):
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/6K5JkF5"
         em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
-        em.set_author(name='Info:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
 
     async def cmd_awake(self):

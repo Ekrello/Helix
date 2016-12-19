@@ -702,7 +702,6 @@ class MusicBot(discord.Client):
     async def update_now_playing_status(self, entry=None, is_paused=False):
         game = None
         game = """music somewhere
-<<<<<<< HEAD:musicbot/bot.py
         with code
         something, idk
         some really messed up stuff
@@ -2768,13 +2767,8 @@ class MusicBot(discord.Client):
             shard_id = (guild_id >> 22) % num_shards
             try:
                 if shard_id == 0:
-<<<<<<< HEAD:musicbot/bot.py
                     await self.safe_send_message((discord.Object(id='255781145717768192')), (message))
                     await self.safe_send_message((discord.Object(id='255781145717768192')), (inv))
-=======
-                    await self.safe_send_message((discord.Object(id='259800563137511424')), (message))
-                    await self.safe_send_message((discord.Object(id='259800563137511424')), (inv))
->>>>>>> refs/remotes/origin/Testing:code/bot.py
                 if shard_id == 1:
                     await self.safe_send_message((discord.Object(id='255778524789473290')), (message))
                     await self.safe_send_message((discord.Object(id='255778524789473290')), (inv))                    
@@ -3062,17 +3056,6 @@ class MusicBot(discord.Client):
                 num = num + 1
         num = str(num)
         num = "This shard can see " + num + " people\n"
-<<<<<<< HEAD:musicbot/bot.py
-        process = await asyncio.create_subprocess_shell(
-            'du /mnt/data/Toasty/audio_cache -h',
-            stdout=asyncio.subprocess.PIPE)
-        stdout, stderr = await process.communicate()
-        file_size = stdout.decode().strip()
-        file_size = str(file_size)
-        file_size = file_size.replace('/mnt/data/Toasty/audio_cache', '')
-        file_size = "All songs total to " + file_size + "\n"
-=======
->>>>>>> refs/remotes/origin/Testing:code/bot.py
         servercount = str(len(self.servers))
         servercount = "This shard is currently in " + servercount + " servers \n"
         if gotversion == True:
@@ -3089,11 +3072,7 @@ class MusicBot(discord.Client):
             pass
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = str(activeplayers)
-<<<<<<< HEAD:musicbot/bot.py
-        p = "This shard is currently playing music in " + activeplayers + " servers \n"
-=======
         p = "This shard is playing music in " + activeplayers + " servers \n"
->>>>>>> refs/remotes/origin/Testing:code/bot.py
         print("commands complete, sending messages")
         infomsg = "Type /donate to help run the bot\n"
         infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
@@ -3153,11 +3132,7 @@ class MusicBot(discord.Client):
         try:
             message = message.content.strip() 
             message = message[5:]      
-<<<<<<< HEAD:musicbot/bot.py
-            link = musicbot.misc.patebin(message)
-=======
             link = code.misc.patebin(message)
->>>>>>> refs/remotes/origin/Testing:code/bot.py
             link = link.splitlines()
             if link == None:
                 return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")

@@ -3,7 +3,7 @@
 Toasty aims to be one of the biggest music enabled bots on discord, and we are well on our way to achieving this
 
 #DISCLAIMER
-Toasty was origionally based on this -> https://github.com/Just-Some-Bots/MusicBot
+Toasty was origionally based on [this](https://github.com/Just-Some-Bots/MusicBot) 
 All credit to the basic music system goes to them. I just forked and modified their code. However all non-music stuff was all me
 
 ##So... if you didnt make Toasty, why are you its "dev"

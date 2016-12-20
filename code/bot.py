@@ -106,9 +106,7 @@ class MusicBot(discord.Client):
         super().__init__()
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
         self.http.user_agent += ' Toasty/%s' % BOTVERSION
-        s = sched.scheduler(time.time, time.sleep)
-        s.enter(60, 1, task(self, player), (s,))
-        s.run()
+        
 
     def __del__(self):
         # These functions return futures but it doesn't matter
@@ -3665,3 +3663,6 @@ With Hitler's dick"""
         em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
         
+    s = sched.scheduler(time.time, time.sleep)
+    s.enter(60, 1, task(self, player), (s,))
+    s.run()

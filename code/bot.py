@@ -2810,6 +2810,7 @@ With Hitler's dick"""
                 return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
             print('bug Command on Server: {}'.format(server.name))
             servers = str(server.name)
+            inv = str(inv)
             msg = "Help Requested in " + servers + "\n " + inv
             guild_id = int(server.id)
             num_shards = 2

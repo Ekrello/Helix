@@ -745,7 +745,6 @@ Jepus Crist
 With my devs nipples    
 SOMeBODY ONCE TOLD ME
 With Hitler's dick"""
-        game = game.lower()
         text = game.splitlines()
         size = len(text)
         try:
@@ -757,7 +756,7 @@ With Hitler's dick"""
             null = text[2]
         name = str(null)
         game = discord.Game(name)
-        await self.change_presence(game)
+        await self.change_status(game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']

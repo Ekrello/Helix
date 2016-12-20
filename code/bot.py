@@ -1137,6 +1137,23 @@ class MusicBot(discord.Client):
         em.set_author(name='Help:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(channel, embed=em)
         
+    async def cmd_loop(self, message, player, channel, author):
+        await self.send_typing(channel)
+        message = message.content.strip() 
+        message = message.replace("/loop","")
+        message = message.replace(" ","")
+        try:
+            count = int(message)
+            msg = "Looping song, " + str(count) + " times"
+            await self.safe_send_message("channel, msg)
+        except:
+            await self.safe_send_message(channel, "You didn't specify how many times i should loop \n I'll assume you wanted 20 times")
+            count = int(20)
+        song_url = player.current_entry.url
+        for i in range(count):
+            await player.playlist.add_entry(song_url, channel=channel, author=author)
+        return_response(":thumbsup:")
+
     async def cmd_blacklist(self, message, user_mentions, option, something):
         """
         Usage:
@@ -2626,7 +2643,7 @@ class MusicBot(discord.Client):
         msg += " \n"
         msg += "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes"
         em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
-        em.set_author(name='Supported Links:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        em.set_author(name='Supported Links:', icon_url=http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
     
     async def cmd_sans(self, channel):
@@ -2765,17 +2782,15 @@ class MusicBot(discord.Client):
                 return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
             print('bug Command on Server: {}'.format(server.name))
             servers = str(server.name)
-            message = "Help Requested in " + servers
+            msg = "Help Requested in " + servers + "\n " + inv
             guild_id = int(server.id)
             num_shards = 2
             shard_id = (guild_id >> 22) % num_shards
             try:
                 if shard_id == 0:
-                    await self.safe_send_message((discord.Object(id='255781145717768192')), (message))
-                    await self.safe_send_message((discord.Object(id='255781145717768192')), (inv))
+                    await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))
                 if shard_id == 1:
-                    await self.safe_send_message((discord.Object(id='255778524789473290')), (message))
-                    await self.safe_send_message((discord.Object(id='255778524789473290')), (inv))                    
+                    await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))                    
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + author
@@ -3132,7 +3147,7 @@ class MusicBot(discord.Client):
         message = code.misc.shitpost()
         return Response(message)
     
-    async def cmd_add(self, channel, player, message):
+    async def cmd_add(self, channel, player, message, author):
         """
         Usage:
             {command_prefix}add http://pastebin.com/5upGeSzX
@@ -3155,7 +3170,7 @@ class MusicBot(discord.Client):
             print (line)
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
                 count = count + 1
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e) 
@@ -3165,14 +3180,14 @@ class MusicBot(discord.Client):
         msg = "Added " + count + " songs"
         return Response(msg)
         
-    async def cmd_electronic(self, channel, player):
+    async def cmd_electronic(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
         for i in range(size):
             song_url = code.genre.electronic()
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
@@ -3182,7 +3197,7 @@ class MusicBot(discord.Client):
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")
         for i in range(size):
             song_url = code.genre.rock()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
             try:
                 await player.playlist.add_entry(song_url, channel=None, author=None)
             except exceptions.ExtractionError as e:
@@ -3196,7 +3211,7 @@ class MusicBot(discord.Client):
             song_url = code.genre.metal()
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
@@ -3208,7 +3223,7 @@ class MusicBot(discord.Client):
             song_url = code.genre.retro()
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
@@ -3220,7 +3235,7 @@ class MusicBot(discord.Client):
             song_url = code.hiphop()
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")

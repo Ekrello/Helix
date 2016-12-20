@@ -702,26 +702,52 @@ class MusicBot(discord.Client):
     async def update_now_playing_status(self, entry=None, is_paused=False):
         game = None
         game = """music somewhere
-        with code
-        something, idk
-        some really messed up stuff
-        with /help
-        with commands
-        porn
-        VIDEO GAMES
-        stuff
-        with too many servers
-        with life of my dev
-        dicks
-        Civ 5
-        Civ 6
-        Besiege
-        with code
-        Mass Effect
-        bangin tunes"""
-        game = game.splitlines()
-        game = str((game[random.randint(0,(len(text)))]))
-        game = discord.Game(name = game)
+with code
+something, idk
+some really messed up stuff
+with /help
+with commands
+porn
+VIDEO GAMES
+stuff
+with too many servers
+with life of my dev
+dicks
+Civ 5
+Civ 6
+Besiege
+with code
+Mass Effect
+bangin tunes
+with children
+with jews
+on a new server
+^-^
+with something
+the violin
+For cuddles
+the harmonica
+With dicks
+With a gas chamber
+Nazi simulator 2K17
+Rodina
+Gas bills
+Memes
+Darkness
+With some burnt toast
+Jepus Crist
+With my devs nipples	
+SOMeBODY ONCE TOLD ME
+With Hitler's dick"""
+        text = game.splitlines()
+        size = len(text)
+        try:
+            null = str((text[random.randint(0,(len(text)))]))
+        except IndexError:
+            null = text[1]
+        if null == None or null == "":
+            null = text[2]
+        game = discord.Game(name = str(null))
         await self.change_status(game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):
@@ -3193,7 +3219,7 @@ class MusicBot(discord.Client):
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
     
-    async def cmd_rock(self, channel, player):
+    async def cmd_rock(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")
         for i in range(size):
@@ -3205,7 +3231,7 @@ class MusicBot(discord.Client):
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
 
-    async def cmd_metal(self, channel, player):
+    async def cmd_metal(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a metal playlist")
         for i in range(size):
@@ -3217,7 +3243,7 @@ class MusicBot(discord.Client):
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
 
-    async def cmd_retro(self, channel, player):
+    async def cmd_retro(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a retro playlist")
         for i in range(size):
@@ -3229,7 +3255,7 @@ class MusicBot(discord.Client):
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
 
-    async def cmd_hiphop(self, channel, player):
+    async def cmd_hiphop(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
         for i in range(size):

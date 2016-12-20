@@ -1145,7 +1145,7 @@ class MusicBot(discord.Client):
         try:
             count = int(message)
             msg = "Looping song, " + str(count) + " times"
-            await self.safe_send_message("channel, msg)
+            await self.safe_send_message(channel, msg)
         except:
             await self.safe_send_message(channel, "You didn't specify how many times i should loop \n I'll assume you wanted 20 times")
             count = int(20)

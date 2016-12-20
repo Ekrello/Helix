@@ -739,6 +739,7 @@ Jepus Crist
 With my devs nipples	
 SOMeBODY ONCE TOLD ME
 With Hitler's dick"""
+        game = game.lower()
         text = game.splitlines()
         size = len(text)
         try:

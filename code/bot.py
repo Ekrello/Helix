@@ -749,7 +749,7 @@ With Hitler's dick"""
         if null == None or null == "":
             null = text[2]
         game = discord.Game(name = str(null))
-        await self.change_status(game)
+        await self.change_presence(game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']

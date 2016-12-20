@@ -742,7 +742,8 @@ With Hitler's dick"""
         text = game.splitlines()
         size = len(text)
         try:
-            null = str((text[random.randint(0,(len(text)))]))
+            null = text[random.randint(0,size)]
+            null = str(null)
         except IndexError:
             null = text[1]
         if null == None or null == "":

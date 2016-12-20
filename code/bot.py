@@ -742,7 +742,7 @@ Memes
 Darkness
 With some burnt toast
 Jepus Crist
-With my devs nipples	
+With my devs nipples    
 SOMeBODY ONCE TOLD ME
 With Hitler's dick"""
         game = game.lower()
@@ -2841,7 +2841,7 @@ With Hitler's dick"""
         x = True
         while x == True:
             channel = discord.Object(id='259802981262688267')
-			await self.purge_from(channel, limit=99999999999999)
+            await self.purge_from(channel, limit=99999999999999)
             try:
                 getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
                 getversion = getversion.read()
@@ -2900,7 +2900,7 @@ With Hitler's dick"""
                 pass
             else:
                 infomsg += uptime
-			infomsg += "```"
+            infomsg += "```"
             em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
             em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
             await self.send_message(channel, embed=em)

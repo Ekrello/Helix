@@ -722,7 +722,7 @@ class MusicBot(discord.Client):
         game = game.splitlines()
         game = str((game[random.randint(0,(len(text)))]))
         game = discord.Game(name = game)
-        await self.change_presence(game)
+        await self.change_status(game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']

@@ -49,10 +49,15 @@ import logmein
 from .constants import VERSION as BOTVERSION
 from .constants import DISCORD_MSG_CHAR_LIMIT, AUDIO_CACHE_PATH
 
-
 load_opus_lib()
 
 log = logging.getLogger(__name__)
+
+import sched, time
+
+
+
+
 
 
 class MusicBot(discord.Client):
@@ -101,6 +106,9 @@ class MusicBot(discord.Client):
         super().__init__()
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
         self.http.user_agent += ' Toasty/%s' % BOTVERSION
+        s = sched.scheduler(time.time, time.sleep)
+        s.enter(60, 1, task(self, player), (s,))
+        s.run()
 
     def __del__(self):
         # These functions return futures but it doesn't matter
@@ -3591,3 +3599,69 @@ With Hitler's dick"""
             log.debug("Pausing player in \"{}\" due to unavailability.".format(server.name))
             self.server_specific_data[server]['availability_paused'] = True
             player.pause()
+
+    async def task(self, player):
+        channel = 259802981262688267
+        try:
+            getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
+            getversion = getversion.read()
+            version = getversion.split('|')
+            version = str(version[2])
+            version = version.strip()
+            gotversion = True
+        except:
+            gotversion = False
+        process = await asyncio.create_subprocess_shell(
+            'find /root/Toasty/audio_cache -type f | wc -l',
+            stdout=asyncio.subprocess.PIPE)
+        stdout, stderr = await process.communicate()
+        file_count = stdout.decode().strip()
+        file_count = str(file_count)
+        file_count = file_count + " songs cached \n"
+        num = int(0)
+        for server in self.servers:
+            for member in server.members:
+                num = num + 1
+        num = str(num)
+        num = "This shard can see " + num + " people\n"
+        servercount = str(len(self.servers))
+        servercount = "This shard is currently in " + servercount + " servers \n"
+        if gotversion == True:
+            message = "Toasty version " + version +  " by DNA#6750 \n"
+            await self.safe_send_message(channel, message)
+        else:
+            await self.safe_send_message(channel, "Toasty by DNA#6750")
+            print("unable to obtain version number")
+        try:
+            process = await asyncio.create_subprocess_shell(
+                "cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
+            stdout=asyncio.subprocess.PIPE)
+            stdout, stderr = await process.communicate()
+            uptime = stdout.decode().strip()
+            uptime = str(file_count)
+            uptime = code.misc.uptime()
+            uptime = "My host has been running for " + uptime + "\n"
+        except:
+            uptime = False
+            pass
+        activeplayers = sum(1 for p in self.players.values() if p.is_playing)
+        activeplayers = str(activeplayers)
+        p = "This shard is playing music in " + activeplayers + " servers \n"
+        print("commands complete, sending messages")
+        infomsg = "Type /donate to help run the bot\n"
+        infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
+        infomsg += "```py"
+        infomsg += "\n"
+        infomsg += file_count
+        infomsg += servercount
+        infomsg += p
+        infomsg += num
+        if uptime == False:
+            pass
+        else:
+            infomsg += uptime
+        await self.purge_from(channel, limit=99999999999999)
+        em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
+        em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        await self.send_message(channel, embed=em)
+        

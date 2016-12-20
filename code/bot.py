@@ -3197,9 +3197,9 @@ class MusicBot(discord.Client):
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")
         for i in range(size):
             song_url = code.genre.rock()
-                await player.playlist.add_entry(song_url, channel=channel, author=author)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
-                await player.playlist.add_entry(song_url, channel=None, author=None)
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")

@@ -2840,7 +2840,7 @@ With Hitler's dick"""
     async def cmd_status(self, player):
         x = True
         while x == True:
-            channel = 259802981262688267
+            channel = discord.Object(id='259802981262688267')
             try:
                 getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
                 getversion = getversion.read()

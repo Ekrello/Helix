@@ -719,7 +719,7 @@ class MusicBot(discord.Client):
         with code
         Mass Effect
         bangin tunes"""
-        text = game.splitlines()
+        game = game.splitlines()
         game = str((game[random.randint(0,(len(text)))]))
         game = discord.Game(name = game)
         await self.change_presence(game)

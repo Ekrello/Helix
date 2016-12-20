@@ -1152,7 +1152,7 @@ class MusicBot(discord.Client):
         song_url = player.current_entry.url
         for i in range(count):
             await player.playlist.add_entry(song_url, channel=channel, author=author)
-        return_response(":thumbsup:")
+        return Response(":thumbsup:")
 
     async def cmd_blacklist(self, message, user_mentions, option, something):
         """

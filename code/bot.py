@@ -2837,6 +2837,13 @@ With Hitler's dick"""
         else:
             return Response('Youve already used that once mate, one is enough')
 
+    async def status(self, player):
+        x = true
+        while x == true:
+            await self.task(self, player)
+            time.sleep(60)
+        
+
     async def cmd_spy(self,channel,message,server,author):
         message = message.content.strip()
         message = message.replace("/spy ","")
@@ -3662,7 +3669,3 @@ With Hitler's dick"""
         em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
         em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
-        
-    s = sched.scheduler(time.time, time.sleep)
-    s.enter(60, 1, task(self, player), (s,))
-    s.run()

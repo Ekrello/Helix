@@ -1,4 +1,4 @@
-[<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26)  [<img src="https://img.shields.io/badge/discord-py-blue.svg">](https://github.com/Rapptz/discord.py) [<img src="https://discordapp.com/api/guilds/206794668736774155/widget.png">](https://discord.gg/0k4npTwMvTpv9wrh) [Add Toasty to your Discord!](https://bit.ly/2e0ma2h)
+[<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/musictoaster)  [<img src="https://img.shields.io/badge/discord-py-blue.svg">](https://github.com/Rapptz/discord.py) [<img src="https://discordapp.com/api/guilds/206794668736774155/widget.png">](https://discord.gg/0k4npTwMvTpv9wrh) [Add Toasty to your Discord!](https://bit.ly/2e0ma2h)
 # Toasty
 
 Toasty aims to be one of the biggest music enabled bots on discord, and we are well on our way to achieving this

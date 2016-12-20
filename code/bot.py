@@ -2838,8 +2838,8 @@ With Hitler's dick"""
             return Response('Youve already used that once mate, one is enough')
 
     async def cmd_status(self, player):
-        x = true
-        while x == true:
+        x = True
+        while x == True:
             await self.task(self, player)
             time.sleep(60)
         

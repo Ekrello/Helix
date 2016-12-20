@@ -750,12 +750,14 @@ With Hitler's dick"""
         try:
             null = text[random.randint(0,size)]
             null = str(null)
+            print(null)
         except IndexError:
             null = text[1]
         if null == None or null == "":
             null = text[2]
         name = str(null)
         game = discord.Game(name)
+        print(game)
         await self.change_status(game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):

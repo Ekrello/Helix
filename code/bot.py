@@ -756,8 +756,7 @@ With Hitler's dick"""
         if null == None or null == "":
             null = text[2]
         name = str(null)
-        game = discord.Game(name)
-        print(game)
+        game = discord.Game(name=name)
         await self.change_status(game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):

@@ -721,7 +721,7 @@ class MusicBot(discord.Client):
         bangin tunes"""
         text = game.splitlines()
         game = str((game[random.randint(0,(len(text)))]))
-		game = discord.game(name = str(game), type = int(1))
+        game = discord.game(name = str(game), type = int(1))
         await self.change_presence(game = game)
                 
     async def update_now_playing_message(self, server, message, *, channel=None):

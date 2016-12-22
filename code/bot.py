@@ -2801,7 +2801,7 @@ With Hitler's dick"""
             return Response("You arent my developer")
 
     async def cmd_bug(self,channel,server,author):
-        author = author.id
+        server = server.id
         print (author)
         try:
             bugged = open("bugged.txt", "r+")
@@ -2811,7 +2811,7 @@ With Hitler's dick"""
             bugged.close()
             bugged = open("bugged.txt", "r+")
         bugger = str(bugged.read())
-        if author not in bugger: 
+        if server not in bugger: 
             try:
                 inv = await self.create_invite(server, max_uses=1, xkcd=True)
             except:
@@ -2830,13 +2830,13 @@ With Hitler's dick"""
                     await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))                    
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
-            text = " " + author
+            text = " " + server.id
             bugged.write(text)
             print (bugged)
             bugged.close()
-            return Response('Well shit. Ive told the devs the toaster broke, theyre sending a replacement toaster, itll be here at some point', reply=True)
+            return Response('Bug reported. A dev will join your server to help soon')
         else:
-            return Response('Youve already used that once mate, one is enough')
+            return Response('Someoneone in your server has already reported a bug, you have to wait until they clear it.')
 
     async def cmd_status(self, player):
         x = True
@@ -2923,8 +2923,14 @@ With Hitler's dick"""
                 pass
         return Response("**failed**")
 
-    async def cmd_clearbug(self):
+    async def cmd_clearbug(self, message):
         open('bugged.txt', 'w').close()
+        try:
+            await self.delete_message(message)
+        except:
+            pass
+        return Response("Bug file cleared :thumbsup:")
+        
 
     async def cmd_imgur(self, author, channel, message):
         await self.send_typing(channel)

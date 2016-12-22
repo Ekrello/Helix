@@ -3039,6 +3039,7 @@ With Hitler's dick"""
             await self.purge_from(channel, limit=100, check=is_user)
     
     async def cmd_purge(self, author, channel, message):
+        perms = author.permissions_in(channel)
         for role in author.roles:
             try:
                 if perms.administrator or perms.manage_server or perms.manage.messages:
@@ -3054,11 +3055,15 @@ With Hitler's dick"""
         try:
             num = int(message)
         except:
-            return Response("Unable to convert message into a number")
+            await self.safe_send_message("Unable to convert message into a number, using default value.")
+            num = 20
         try:
             await self.purge_from(channel, limit=num)
+            num = str(num)
+            msg = "Purged " + num + " messages"
+            return Response(msg)
         except:
-            return Response("I can't do it, did you change my permissions?")
+            return Response("I can't purge, did you change my permissions?")
 
     async def cmd_donate(self, author):
         await self.safe_send_message(author, "Thanks for considering donating to this project")

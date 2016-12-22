@@ -1180,6 +1180,8 @@ With Hitler's dick"""
         message = message.replace(" ","")
         try:
             count = int(message)
+            if count > 100:
+                return Response("Now why would i let you spam that much?")
             msg = "Looping song, " + str(count) + " times"
             await self.safe_send_message(channel, msg)
         except:

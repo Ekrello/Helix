@@ -184,9 +184,8 @@ def create(number1, number2):
     return (url)
 
 def capture():
-        import random
+    import random
     import time
-
     hpmax = input("What is the pokemons maximum health? ")
     hpmax = hpmax.lower()
     hpmax = hpmax.replace("hp","")

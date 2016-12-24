@@ -22,7 +22,8 @@ def helpmusic():
     helpmsg1 += "/loop [number]   <--Loop a set song a set amount of times\n"
     helpmsg1 += "```"
     return helpmsg1
-    
+
+
 def helputility():
     helpmsg2 = "```"
     helpmsg2 += "===Utility===\n"
@@ -41,8 +42,9 @@ def helputility():
     helpmsg2 += "/gif[word        <--Giphy\n"
     helpmsg2 += "/cat             <--I want to see cats, and i want them now\n"
     helpmsg2 += "/server          <--Server Info\n"
-    helpmsg2 += "```"    
+    helpmsg2 += "```"
     return helpmsg2
+
 
 def helpadmin():
     helpmsg3 = "```"
@@ -52,9 +54,10 @@ def helpadmin():
     helpmsg3 += "/clean           <--Remove all Toaster related spam\n"
     helpmsg3 += "/kick            <--Kick a mentioned user\n"
     helpmsg3 += "/ban             <--Ban a mentioned user\n"
-    helpmsg3 += "/leave           <--Make the bot leave the server\n"
+    helpmsg3 += "/leaveserver     <--Make the bot leave the server\n"
     helpmsg3 += "```"
     return helpmsg3
+
 
 def helpchat():
     helpmsg4 = "```"
@@ -68,26 +71,29 @@ def helpchat():
     helpmsg4 += "```"
     return helpmsg4
 
+
 def helpdonate():
     helpmsg5 = "**Oh cool youre a donator ^-^**\n **Soon youll get awesome features that only donators can use**"
+
 
 def patebin(link):
     import urllib.request
     from bs4 import BeautifulSoup
-    link = link.replace(".com/",".com/raw/")
+    link = link.replace(".com/", ".com/raw/")
     try:
         text = urllib.request.urlopen(link).read()
         soup = BeautifulSoup(text, "html.parser")
     except:
         return
     text = soup.get_text()
-    text = text.replace("<bound method Tag.get_text of ","")
-    text = text.replace(">","")
+    text = text.replace("<bound method Tag.get_text of ", "")
+    text = text.replace(">", "")
     print("")
     print("")
     print("")
     return text
-    
+
+
 def shitpost():
     import random
     text = """UNROLL THE TADPOLE OSfrog UNCLOG THE FROG OSfrog UNLOAD THE TOAD OSfrog UNINHIBIT THE RIBBIT OSfrog UNSTICK THE LICK OSfrog UNIMPRISON THE AMPHIBIAN OSfrog UNMUTE THE NEWT OSfrog UNBENCH THE KENCH OSfrog PERMIT THE KERMIT OSfrog DEFOG THE POLLIWOG OSfrog
@@ -378,8 +384,9 @@ Europoors hating on USA ? on a American website ? with American computers ? on t
 MrDestructoid VIEW BOT MrDestructoid O N L I N E MrDestructoid INITIATING PRAISE SCRIPT MrDestructoid WOW NICE PLAY AMAZ MrDestructoid
 """
     text = text.splitlines()
-    message = (text[random.randint(0,(len(text)))])
+    message = (text[random.randint(0, (len(text)))])
     return message
+
 
 def savage():
     import random
@@ -409,23 +416,25 @@ You clearly have not been burdened by an overabundance of education
 You will be utterly forgotten
 “Bless your heart.” Southern code for “you’re a fucking retard.”
 What doesn’t kill you…disappoints me.
-The best part of you ran down your mother’s legs
-"""
+The best part of you ran down your mother’s legs"""
     text = insults.splitlines()
-    message = (text[random.randint(0,(len(text))-1)])
+    message = (text[random.randint(0, (len(text)) - 1)])
     return message
+
 
 def uptime():
     from datetime import timedelta
     with open('/proc/uptime', 'r') as f:
         uptime_seconds = float(f.readline().split()[0])
-        uptime_string = str(timedelta(seconds = uptime_seconds))
-    return(uptime_string)
+        uptime_string = str(timedelta(seconds=uptime_seconds))
+    return (uptime_string)
+
 
 def update():
     update = ""
     update += "Updated /info\n"
+    update += "Updated /bug\n"
+    update += "Debugged certain commands\n"
     update += "New message style\n"
-    update += "More preperations for 2.0\n"
+    update += "Shutdown 3 shards so we only use 1 now\n"
     return update
-

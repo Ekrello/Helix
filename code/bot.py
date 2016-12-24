@@ -1,6 +1,4 @@
 allow_requests = True
-import requests
-from cleverbot import Cleverbot
 import asyncio
 import inspect
 import logging
@@ -10,52 +8,48 @@ import random
 import shlex
 import shutil
 import sys
-import traceback
-import giphypop
-import discord
-import twitter
-import urllib.request
-import aiohttp
-import logmein
 import time
-
-from random import randint
-from bs4 import BeautifulSoup
-from io import BytesIO, StringIO
-from functools import wraps
-from textwrap import dedent
-from datetime import timedelta
+import traceback
+import urllib.request
 from collections import defaultdict
+from datetime import timedelta
+from functools import wraps
+from imp import reload
+from io import BytesIO, StringIO
+from random import randint
+from textwrap import dedent
+from urllib.parse import parse_qs
+
+import aiohttp
+import code.genre
+import code.misc
+import discord
+import giphypop
+import logmein
+import requests
+import twitter
+from bs4 import BeautifulSoup
+from cleverbot import Cleverbot
 from discord.enums import ChannelType
 from discord.ext.commands.bot import _get_variable
 from discord.http import _func_
-from imp import reload
-from urllib.parse import parse_qs
 from lxml import etree
-from . import exceptions
-from . import downloader
 
-from .playlist import Playlist
-from .player import MusicPlayer
+from . import downloader
+from . import exceptions
+from .config import Config, ConfigDefaults
+from .constants import DISCORD_MSG_CHAR_LIMIT, AUDIO_CACHE_PATH
+from .constants import VERSION as BOTVERSION
+from .constructs import SkipState, Response, VoiceStateUpdate
 from .entry import StreamPlaylistEntry
 from .opus_loader import load_opus_lib
-from .config import Config, ConfigDefaults
 from .permissions import Permissions, PermissionsDefaults
-from .constructs import SkipState, Response, VoiceStateUpdate
+from .player import MusicPlayer
+from .playlist import Playlist
 from .utils import load_file, write_file, sane_round_int, fixg, ftimedelta
-import code.misc
-import code.genre
-from .constants import VERSION as BOTVERSION
-from .constants import DISCORD_MSG_CHAR_LIMIT, AUDIO_CACHE_PATH
 
 load_opus_lib()
 log = logging.getLogger(__name__)
-
-
-
-
-
-
 
 
 class MusicBot(discord.Client):
@@ -93,7 +87,6 @@ class MusicBot(discord.Client):
         if self.blacklist:
             log.debug("Loaded blacklist with {} entries".format(len(self.blacklist)))
 
-        # TODO: Do these properly
         ssd_defaults = {
             'last_np_msg': None,
             'auto_paused': False,
@@ -105,14 +98,17 @@ class MusicBot(discord.Client):
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
         self.http.user_agent += ' Toasty/%s' % BOTVERSION
 
-
     def __del__(self):
         # These functions return futures but it doesn't matter
-        try:    self.http.session.close()
-        except: pass
+        try:
+            self.http.session.close()
+        except:
+            pass
 
-        try:    self.aiosession.close()
-        except: pass
+        try:
+            self.aiosession.close()
+        except:
+            pass
 
     # TODO: Add some sort of `denied` argument for a message to send when someone else tries to use it
     def owner_only(func):
@@ -153,10 +149,10 @@ class MusicBot(discord.Client):
         return wrapper
 
     def _get_owner(self, *, server=None, voice=False):
-            return discord.utils.find(
-                lambda m: m.id == self.config.owner_id and (m.voice_channel if voice else True),
-                server.members if server else self.get_all_members()
-            )
+        return discord.utils.find(
+            lambda m: m.id == self.config.owner_id and (m.voice_channel if voice else True),
+            server.members if server else self.get_all_members()
+        )
 
     def _delete_old_audiocache(self, path=AUDIO_CACHE_PATH):
         try:
@@ -182,7 +178,7 @@ class MusicBot(discord.Client):
         import colorlog
         shandler = logging.StreamHandler(stream=sys.stdout)
         shandler.setFormatter(colorlog.LevelFormatter(
-            fmt = {
+            fmt={
                 'DEBUG': '{log_color}[{levelname}:{module}] {message}',
                 'INFO': '{log_color}{message}',
                 'WARNING': '{log_color}{levelname}: {message}',
@@ -194,20 +190,20 @@ class MusicBot(discord.Client):
                 'VOICEDEBUG': '{log_color}[{levelname}:{module}][{relativeCreated:.9f}] {message}',
                 'FFMPEG': '{log_color}[{levelname}:{module}][{relativeCreated:.9f}] {message}'
             },
-            log_colors = {
-                'DEBUG':    'cyan',
-                'INFO':     'white',
-                'WARNING':  'yellow',
-                'ERROR':    'red',
+            log_colors={
+                'DEBUG': 'cyan',
+                'INFO': 'white',
+                'WARNING': 'yellow',
+                'ERROR': 'red',
                 'CRITICAL': 'bold_red',
 
                 'EVERYTHING': 'white',
-                'NOISY':      'white',
-                'FFMPEG':     'bold_purple',
+                'NOISY': 'white',
+                'FFMPEG': 'bold_purple',
                 'VOICEDEBUG': 'purple',
-        },
-            style = '{',
-            datefmt = ''
+            },
+            style='{',
+            datefmt=''
         ))
         shandler.setLevel(self.config.debug_level)
         logging.getLogger(__package__).addHandler(shandler)
@@ -233,7 +229,6 @@ class MusicBot(discord.Client):
             return True
 
         return not sum(1 for m in vchannel.voice_members if check(m))
-
 
     async def _join_startup_channels(self, channels, *, autosummon=True):
         joined_servers = set()
@@ -306,7 +301,6 @@ class MusicBot(discord.Client):
         await asyncio.sleep(after)
         await self.safe_delete_message(message, quiet=True)
 
-    # TODO: Check to see if I can just move this to on_message after the response check
     async def _manual_delete_check(self, message, *, quiet=False):
         if self.config.delete_invoking:
             await self.safe_delete_message(message, quiet=quiet)
@@ -328,8 +322,7 @@ class MusicBot(discord.Client):
 
         return self.cached_app_info
 
-
-    async def remove_from_autoplaylist(self, song_url:str, *, ex:Exception=None, delete_from_ap=False):
+    async def remove_from_autoplaylist(self, song_url: str, *, ex: Exception = None, delete_from_ap=False):
         if song_url not in self.autoplaylist:
             log.debug("URL \"{}\" not in autoplaylist, ignoring".format(song_url))
             return
@@ -344,10 +337,10 @@ class MusicBot(discord.Client):
                     '# Reason: {ex}\n'
                     '{url}\n\n{sep}\n\n'.format(
                         ctime=time.ctime(),
-                        ex=str(ex).replace('\n', '\n#' + ' ' * 10), # 10 spaces to line up with # Reason:
+                        ex=str(ex).replace('\n', '\n#' + ' ' * 10),  # 10 spaces to line up with # Reason:
                         url=song_url,
                         sep='#' * 32
-                ))
+                    ))
 
             if delete_from_ap:
                 log.info("Updating autoplaylist")
@@ -356,7 +349,6 @@ class MusicBot(discord.Client):
     @ensure_appinfo
     async def generate_invite_link(self, *, permissions=discord.Permissions(70380544), server=None):
         return discord.utils.oauth_url(self.cached_app_info.id, permissions=permissions, server=server)
-
 
     async def join_voice_channel(self, channel):
         if isinstance(channel, discord.Object):
@@ -419,7 +411,6 @@ class MusicBot(discord.Client):
         self.connection._add_voice_client(server.id, voice)
         return voice
 
-
     async def get_voice_client(self, channel: discord.Channel):
         if isinstance(channel, discord.Object):
             channel = self.get_channel(channel.id)
@@ -435,7 +426,7 @@ class MusicBot(discord.Client):
             t0 = t1 = 0
             tries = 5
 
-            for attempt in range(1, tries+1):
+            for attempt in range(1, tries + 1):
                 log.debug("Connection attempt {} to {}".format(attempt, channel.name))
                 t0 = time.time()
 
@@ -462,7 +453,7 @@ class MusicBot(discord.Client):
                 log.critical("Voice client is unable to connect, restarting...")
                 await self.restart()
 
-            log.debug("Connected in {:0.1f}s".format(t1-t0))
+            log.debug("Connected in {:0.1f}s".format(t1 - t0))
             log.info("Connected to {}/{}".format(channel.server, channel))
 
             vc.ws._keep_alive.name = 'VoiceClient Keepalive'
@@ -554,7 +545,8 @@ class MusicBot(discord.Client):
                 player = await self.deserialize_queue(server, voice_client)
 
                 if player:
-                    log.debug("Created player via deserialization for server %s with %s entries", server.id, len(player.playlist))
+                    log.debug("Created player via deserialization for server %s with %s entries", server.id,
+                              len(player.playlist))
                     # Since deserializing only happens when the bot starts, I should never need to reconnect
                     return self._init_player(player, server=server)
 
@@ -579,12 +571,12 @@ class MusicBot(discord.Client):
 
     def _init_player(self, player, *, server=None):
         player = player.on('play', self.on_player_play) \
-                       .on('resume', self.on_player_resume) \
-                       .on('pause', self.on_player_pause) \
-                       .on('stop', self.on_player_stop) \
-                       .on('finished-playing', self.on_player_finished_playing) \
-                       .on('entry-added', self.on_player_entry_added) \
-                       .on('error', self.on_player_error)
+            .on('resume', self.on_player_resume) \
+            .on('pause', self.on_player_pause) \
+            .on('stop', self.on_player_stop) \
+            .on('finished-playing', self.on_player_finished_playing) \
+            .on('entry-added', self.on_player_entry_added) \
+            .on('error', self.on_player_error)
 
         player.skip_state = SkipState()
 
@@ -621,11 +613,13 @@ class MusicBot(discord.Client):
                     player.voice_client.channel.name, entry.title)
 
             if self.server_specific_data[channel.server]['last_np_msg']:
-                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_edit_message(last_np_msg, newmsg, send_if_fail=True)
+                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_edit_message(last_np_msg,
+                                                                                                        newmsg,
+                                                                                                        send_if_fail=True)
             else:
                 self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_send_message(channel, newmsg)
 
-        # TODO: Check channel voice state?
+                # TODO: Check channel voice state?
 
     async def on_player_resume(self, player, entry, **_):
         await self.update_now_playing_status(entry)
@@ -646,7 +640,8 @@ class MusicBot(discord.Client):
                 info = {}
 
                 try:
-                    info = await self.downloader.extract_info(player.playlist.loop, song_url, download=False, process=False)
+                    info = await self.downloader.extract_info(player.playlist.loop, song_url, download=False,
+                                                              process=False)
                 except downloader.youtube_dl.utils.DownloadError as e:
                     if 'YouTube said:' in e.args[0]:
                         # url is bork, remove from list and put in removed list
@@ -687,7 +682,7 @@ class MusicBot(discord.Client):
                 log.warning("No playable songs in the autoplaylist, disabling.")
                 self.config.auto_playlist = False
 
-        else: # Don't serialize for autoplaylist events
+        else:  # Don't serialize for autoplaylist events
             await self.serialize_queue(player.voice_client.channel.server)
 
     async def on_player_entry_added(self, player, playlist, entry, **_):
@@ -746,7 +741,7 @@ With Hitler's dick"""
         text = game.splitlines()
         size = len(text)
         try:
-            null = text[random.randint(0,size)]
+            null = text[random.randint(0, size)]
             null = str(null)
             print(null)
         except IndexError:
@@ -764,30 +759,29 @@ With Hitler's dick"""
         if message is None and lnp:
             await self.safe_delete_message(lnp, quiet=True)
 
-        elif lnp: # If there was a previous lp message
+        elif lnp:  # If there was a previous lp message
             oldchannel = lnp.channel
 
-            if lnp.channel == oldchannel: # If we have a channel to update it in
+            if lnp.channel == oldchannel:  # If we have a channel to update it in
                 async for lmsg in self.logs_from(channel, limit=1):
-                    if lmsg != lnp and lnp: # If we need to resend it
+                    if lmsg != lnp and lnp:  # If we need to resend it
                         await self.safe_delete_message(lnp, quiet=True)
                         m = await self.safe_send_message(channel, message, quiet=True)
                     else:
                         m = await self.safe_edit_message(lnp, message, send_if_fail=True, quiet=False)
 
-            elif channel: # If we have a new channel to send it to
+            elif channel:  # If we have a new channel to send it to
                 await self.safe_delete_message(lnp, quiet=True)
                 m = await self.safe_send_message(channel, message, quiet=True)
 
-            else: # we just resend it in the old channel
+            else:  # we just resend it in the old channel
                 await self.safe_delete_message(lnp, quiet=True)
                 m = await self.safe_send_message(oldchannel, message, quiet=True)
 
-        elif channel: # No previous message
+        elif channel:  # No previous message
             m = await self.safe_send_message(channel, message, quiet=True)
 
         self.server_specific_data[server]['last_np_msg'] = m
-
 
     async def serialize_queue(self, server, *, dir=None):
         """
@@ -801,7 +795,7 @@ With Hitler's dick"""
         if dir is None:
             dir = 'data/%s/queue.json' % server.id
 
-        async with self.aiolocks['queue_serialization'+':'+server.id]:
+        async with self.aiolocks['queue_serialization' + ':' + server.id]:
             log.debug("Serializing queue for %s", server.id)
 
             with open(dir, 'w', encoding='utf8') as f:
@@ -847,14 +841,13 @@ With Hitler's dick"""
         # config/permissions async validate?
         await self._scheck_configs()
 
-
     async def _scheck_ensure_env(self):
         log.debug("Ensuring data folders exist")
         for server in self.servers:
             pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
 
         with open('data/server_names.txt', 'w', encoding='utf8') as f:
-            for server in sorted(self.servers, key=lambda s:int(s.id)):
+            for server in sorted(self.servers, key=lambda s: int(s.id)):
                 f.write('{:<22} {}\n'.format(server.id, server.name))
 
         if not self.config.save_videos and os.path.isdir(AUDIO_CACHE_PATH):
@@ -863,14 +856,13 @@ With Hitler's dick"""
             else:
                 log.debug("Could not delete old audio cache, moving on.")
 
-
     async def _scheck_server_permissions(self):
         log.debug("Checking server permissions")
-        pass # TODO
+        pass  # TODO
 
     async def _scheck_autoplaylist(self):
         log.debug("Auditing autoplaylist")
-        pass # TODO
+        pass  # TODO
 
     async def _scheck_configs(self):
         log.debug("Validating config")
@@ -879,9 +871,7 @@ With Hitler's dick"""
         log.debug("Validating permissions config")
         await self.permissions.async_validate(self)
 
-
-
-#######################################################################################################################
+    #######################################################################################################################
 
 
 
@@ -891,12 +881,13 @@ With Hitler's dick"""
             msg = await self.send_message(dest, content)
         except discord.Forbidden:
             if not quiet:
-                await self.safe_send_message((discord.Object(id='228835542417014784')),"Warning: Cannot send message to %s, no permission" % dest.name)
+                await self.safe_send_message((discord.Object(id='228835542417014784')),
+                                             "Warning: Cannot send message to %s, no permission" % dest.name)
         except discord.NotFound:
             if not quiet:
-                await self.safe_send_message((discord.Object(id='228835542417014784')),"Warning: Cannot send message to %s, invalid channel?" % dest.name)
+                await self.safe_send_message((discord.Object(id='228835542417014784')),
+                                             "Warning: Cannot send message to %s, invalid channel?" % dest.name)
         return msg
-
 
     async def safe_delete_message(self, message, *, quiet=False):
         lfunc = log.debug if quiet else log.warning
@@ -934,8 +925,7 @@ With Hitler's dick"""
         if self.user.bot:
             return await super().edit_profile(**fields)
         else:
-            return await super().edit_profile(self.config._password,**fields)
-
+            return await super().edit_profile(self.config._password, **fields)
 
     async def restart(self):
         self.exit_signal = exceptions.RestartSignal()
@@ -947,7 +937,8 @@ With Hitler's dick"""
     def _cleanup(self):
         try:
             self.loop.run_until_complete(self.logout())
-        except: pass
+        except:
+            pass
 
         pending = asyncio.Task.all_tasks()
         gathered = asyncio.gather(*pending)
@@ -956,7 +947,8 @@ With Hitler's dick"""
             gathered.cancel()
             self.loop.run_until_complete(gathered)
             gathered.exception()
-        except: pass
+        except:
+            pass
 
     # noinspection PyMethodOverriding
     def run(self):
@@ -970,7 +962,7 @@ With Hitler's dick"""
                 "Fix your %s in the options file.  "
                 "Remember that each field should be on their own line."
                 % ['shit', 'Token', 'Email/Password', 'Credentials'][len(self.config.auth)]
-            ) #     ^^^^ In theory self.config.auth should never have no items
+            )  # ^^^^ In theory self.config.auth should never have no items
 
         finally:
             try:
@@ -1149,33 +1141,34 @@ With Hitler's dick"""
             {command_prefix}help
         a help message.
         """
-        await self.safe_send_message(author,"**Commands**\n")
+        await self.safe_send_message(author, "**Commands**\n")
         helpmsg1 = code.misc.helpmusic()
         helpmsg2 = code.misc.helputility()
         helpmsg3 = code.misc.helpadmin()
         helpmsg4 = code.misc.helpchat()
-        #if user_permissions.name == "Donators": #checking if the user is a donator
+        # if user_permissions.name == "Donators": #checking if the user is a donator
         #    helpmsg5 = code.misc.helpdonate()
         await self.safe_send_message(author, helpmsg1)
         await self.safe_send_message(author, helpmsg2)
         await self.safe_send_message(author, helpmsg3)
         await self.safe_send_message(author, helpmsg4)
-        #if user_permissions.name == "Donators":
+        # if user_permissions.name == "Donators":
         #    await self.safe_send_message(author, helpmsg5) #extra help msg for donators
         #    pass
-       # else:
-            #donators dont get asked to donate
+        # else:
+        # donators dont get asked to donate
         await self.safe_send_message(author, "Rememer to donate (**/donate**) it really helps us out")
         content = "Ive sent my commands to you ^-^"
-        em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
-        em.set_author(name='Help:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        em = discord.Embed(description=content, colour=(random.randint(0, 16777215)))
+        em.set_author(name='Help:',
+                      icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(channel, embed=em)
 
     async def cmd_loop(self, message, player, channel, author):
         await self.send_typing(channel)
         message = message.content.strip()
-        message = message.replace("/loop","")
-        message = message.replace(" ","")
+        message = message.replace("/loop", "")
+        message = message.replace(" ", "")
         try:
             count = int(message)
             if count > 100:
@@ -1183,7 +1176,8 @@ With Hitler's dick"""
             msg = "Looping song, " + str(count) + " times"
             await self.safe_send_message(channel, msg)
         except:
-            await self.safe_send_message(channel, "You didn't specify how many times i should loop \n I'll assume you wanted 20 times")
+            await self.safe_send_message(channel,
+                                         "You didn't specify how many times i should loop \n I'll assume you wanted 20 times")
             count = int(20)
         song_url = player.current_entry.url
         for i in range(count):
@@ -1288,7 +1282,7 @@ With Hitler's dick"""
                 player.playlist.loop,
                 song_url,
                 download=False,
-                process=True,    # ASYNC LAMBDAS WHEN
+                process=True,  # ASYNC LAMBDAS WHEN
                 on_error=lambda e: asyncio.ensure_future(
                     self.safe_send_message(channel, "```\n%s\n```" % e, expire_in=120), loop=self.loop),
                 retry_on_error=True
@@ -1338,7 +1332,8 @@ With Hitler's dick"""
 
             if info['extractor'].lower() in ['youtube:playlist', 'soundcloud:set', 'bandcamp:album']:
                 try:
-                    return await self._cmd_play_playlist_async(player, channel, author, permissions, song_url, info['extractor'])
+                    return await self._cmd_play_playlist_async(player, channel, author, permissions, song_url,
+                                                               info['extractor'])
                 except exceptions.CommandError:
                     raise
                 except Exception as e:
@@ -1484,7 +1479,6 @@ With Hitler's dick"""
                 log.error("Error processing playlist", exc_info=True)
                 raise exceptions.CommandError('Error handling playlist %s queuing.' % playlist_url, expire_in=30)
 
-
         songs_processed = len(entries_added)
         drop_count = 0
         skipped = False
@@ -1556,7 +1550,6 @@ With Hitler's dick"""
         await player.playlist.add_stream_entry(song_url, channel=channel, author=author)
 
         return Response(":+1:", delete_after=6)
-
 
     async def cmd_search(self, player, channel, author, permissions, leftover_args):
         """
@@ -1733,7 +1726,8 @@ With Hitler's dick"""
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = int(activeplayers)
         if activeplayers == 32:
-            return Response("Unable to join voice channel. Because of server load my maximum voice channel limit is 32. Any higher will degrade audio quality. If you want to help remove this limit, type /donate so we can get better hardware")
+            return Response(
+                "Unable to join voice channel. Because of server load my maximum voice channel limit is 32. Any higher will degrade audio quality. If you want to help remove this limit, type /donate so we can get better hardware")
         if not author.voice_channel:
             raise exceptions.CommandError('You are not in a voice channel!')
 
@@ -1803,7 +1797,7 @@ With Hitler's dick"""
 
         player.playlist.shuffle()
 
-        cards = [':white_circle:',':black_circle:',':red_circle:',':large_blue_circle:']
+        cards = [':white_circle:', ':black_circle:', ':red_circle:', ':large_blue_circle:']
         random.shuffle(cards)
 
         hand = await self.send_message(channel, ' '.join(cards))
@@ -1866,7 +1860,6 @@ With Hitler's dick"""
                 or permissions.instaskip \
                 or author == player.current_entry.meta.get('author', None) \
                 or rolez == True:
-
             player.skip()  # check autopause stuff here
             await self._manual_delete_check(message)
             return
@@ -1909,7 +1902,6 @@ With Hitler's dick"""
                 delete_after=20
             )
 
-
     async def cmd_volume(self, message, player, new_volume=None):
         """
         Usage:
@@ -1947,7 +1939,8 @@ With Hitler's dick"""
             if relative:
                 raise exceptions.CommandError(
                     '...no: {}{:+} -> {}%.  Provide a change between {} and {:+}.'.format(
-                        old_volume, vol_change, old_volume + vol_change, 1 - old_volume, 100 - old_volume), expire_in=20)
+                        old_volume, vol_change, old_volume + vol_change, 1 - old_volume, 100 - old_volume),
+                    expire_in=20)
             else:
                 raise exceptions.CommandError(
                     'no: {}%. Provide a value between 1 and 100.'.format(new_volume), expire_in=20)
@@ -1998,8 +1991,9 @@ With Hitler's dick"""
                 'no songs queued! Queue something with {}play.'.format(self.config.command_prefix))
 
         message = '\n'.join(lines)
-        em = discord.Embed(description=message, colour= (random.randint(0,16777215)))
-        em.set_author(name='Playlist:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        em = discord.Embed(description=message, colour=(random.randint(0, 16777215)))
+        em.set_author(name='Playlist:',
+                      icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(channel, embed=em)
 
     async def cmd_clean(self, message, channel, server, author, search_range=50):
@@ -2084,22 +2078,24 @@ With Hitler's dick"""
                 return await self.cmd_pldump(channel, info.get(''))
 
         linegens = defaultdict(lambda: None, **{
-            "youtube":    lambda d: 'https://www.youtube.com/watch?v=%s' % d['id'],
+            "youtube": lambda d: 'https://www.youtube.com/watch?v=%s' % d['id'],
             "soundcloud": lambda d: d['url'],
-            "bandcamp":   lambda d: d['url']
+            "bandcamp": lambda d: d['url']
         })
 
         exfunc = linegens[info['extractor'].split(':')[0]]
 
         if not exfunc:
-            raise exceptions.CommandError("Could not extract info from input url, unsupported playlist type.", expire_in=25)
+            raise exceptions.CommandError("Could not extract info from input url, unsupported playlist type.",
+                                          expire_in=25)
 
         with BytesIO() as fcontent:
             for item in info['entries']:
                 fcontent.write(exfunc(item).encode('utf8') + b'\n')
 
             fcontent.seek(0)
-            await self.send_file(channel, fcontent, filename='playlist.txt', content="Here's the url dump for <%s>" % song_url)
+            await self.send_file(channel, fcontent, filename='playlist.txt',
+                                 content="Here's the url dump for <%s>" % song_url)
 
         return Response("\N{OPEN MAILBOX WITH RAISED FLAG}", delete_after=20)
 
@@ -2159,7 +2155,6 @@ With Hitler's dick"""
 
         return Response("\N{OPEN MAILBOX WITH RAISED FLAG}", delete_after=20)
 
-
     async def cmd_perms(self, author, channel, server, permissions):
         """
         Usage:
@@ -2177,7 +2172,6 @@ With Hitler's dick"""
 
         await self.send_message(author, '\n'.join(lines))
         return Response("\N{OPEN MAILBOX WITH RAISED FLAG}", delete_after=20)
-
 
     @owner_only
     async def cmd_setname(self, leftover_args, name):
@@ -2245,7 +2239,6 @@ With Hitler's dick"""
             raise exceptions.CommandError("Unable to change avatar: {}".format(e), expire_in=20)
 
         return Response("\N{OK HAND SIGN}", delete_after=20)
-
 
     async def cmd_getout(self, server):
         await self.disconnect_voice_client(server)
@@ -2322,9 +2315,7 @@ With Hitler's dick"""
 
         return Response(codeblock.format(result))
 
-
-
-    async def cmd_leave(self, server, channel, message, author):
+    async def cmd_leaveserver(self, server, channel, message, author):
         perms = author.permissions_in(channel)
         for role in author.roles:
             try:
@@ -2341,21 +2332,20 @@ With Hitler's dick"""
             await self.safe_send_message(channel, "**KYS**")
             await self.leave_server(server)
 
-
     async def cmd_ping(self, channel):
-        choice = random.randint(1,6)
+        choice = random.randint(1, 6)
         if choice == 1:
-            await self.send_message(channel,"pong")
+            await self.send_message(channel, "pong")
         if choice == 2:
-            await self.send_message(channel,"wat do u want")
+            await self.send_message(channel, "wat do u want")
         if choice == 3:
-            await self.send_message(channel,"i dont like it")
+            await self.send_message(channel, "i dont like it")
         if choice == 5:
-            await self.send_message(channel,"i think you should type /savage")
+            await self.send_message(channel, "i think you should type /savage")
         if choice == 5:
-            await self.send_message(channel,"ching chong chang")
+            await self.send_message(channel, "ching chong chang")
         if choice == 6:
-            await self.send_message(channel,"**HACKING PLAYSTATION")
+            await self.send_message(channel, "**HACKING PLAYSTATION")
 
     async def cmd_kick(self, author, channel, user_mentions):
         perms = author.permissions_in(channel)
@@ -2374,7 +2364,8 @@ With Hitler's dick"""
                     await self.kick(user)
                     return Response(":skull:")
                 except:
-                    return Response("Unable to kick. Someone has changed my permissions. I need **Manage Messages, Manage Members, and connect to voice channels**")
+                    return Response(
+                        "Unable to kick. Someone has changed my permissions. I need **Manage Messages, Manage Members, and connect to voice channels**")
 
     async def cmd_ban(self, author, channel, user_mentions):
         perms = author.permissions_in(channel)
@@ -2397,7 +2388,6 @@ With Hitler's dick"""
             except:
                 return Response("I... I can't do that... Did you change my permissions?")
 
-
     async def cmd_join(self, channel, message, server_link=None):
         """
         Get toasty's links
@@ -2413,7 +2403,7 @@ With Hitler's dick"""
             msg = msg + inv + msg1 + sinv + msg2 + tinv
             await self.safe_send_message(channel, msg)
 
-    async def cmd_vicky(self,channel,author,message):
+    async def cmd_vicky(self, channel, author, message):
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()
@@ -2421,23 +2411,39 @@ With Hitler's dick"""
         if "@" not in message:
             name = author.name
             content = name + ". You are a very stupid creature, you know that? I dont even know why i put up with your bs, i may as well just fucking ignore everything you say. Yeah i should fucking do that... Wait thats too harsh isnt it? Right let me explainl; you're supposed to tag someone else with this command. Understand now? Good."
-            return Response (content)
-        message = message.replace("/vicky ","")
+            return Response(content)
+        message = message.replace("/vicky ", "")
         user = message
         words = (
-            ('Artless', 'Bawdy', 'Beslubbering', 'Bootless', 'Churlish', 'Cockered', 'Clouted', 'Craven', 'Currish', 'Dankish', 'Dissembling', 'Droning', 'Errant', 'Fawning', 'Fobbing', 'Froward', 'Frothy', 'Gleeking', 'Goatish', 'Gorbellied', 'Impertinent', 'Infectious', 'Jarring', 'Loggerheaded', 'Lumpish', 'Mammering', 'Mangled', 'Mewling', 'Paunchy', 'Pribbling', 'Puking', 'Puny', 'Quailing', 'Rank', 'Reeky', 'Roguish', 'Ruttish', 'Saucy', 'Spleeny', 'Spongy', 'Surly', 'Tottering', 'Unmuzzled', 'Vain', 'Venomed', 'Villainous', 'Warped', 'Wayward', 'Weedy', 'Yeasty',),
-            ('Base-court', 'Bat-fowling', 'Beef-witted', 'Beetle-headed', 'Boil-brained', 'Clapper-clawed', 'Clay-brained', 'Common-kissing', 'Crook-pated', 'Dismal-dreaming', 'Dizzy-eyed', 'Dog-hearted', 'Dread-bolted', 'Earth-vexing', 'Elf-skinned', 'Fat-kidneyed', 'Fen-sucked', 'Flap-mouthed', 'Fly-bitten', 'Folly-fallen', 'Fool-born', 'Full-gorged', 'Guts-griping', 'Half-faced', 'Hasty-witted', 'Hedge-born', 'Hell-hated', 'Idle-headed', 'Ill-breeding', 'Ill-nurtured', 'Knotty-pated', 'Milk-livered', 'Motley-minded', 'Onion-eyed', 'Plume-plucked', 'Pottle-deep', 'Pox-marked', 'Reeling-ripe', 'Rough-hewn','Rude-growing', 'Rump-fed', 'Shard-borne', 'Sheep-biting', 'Spur-galled', 'Swag-bellied', 'Tardy-gaited', 'Tickle-brained', 'Toad-spotted', 'Unchin-snouted', 'Weather-bitten',),
-            ('Apple-john', 'Baggage', 'Barnacle', 'Bladder', 'Boar-pig', 'Bugbear', 'Bum-bailey', 'Canker-blossom', 'Clack-dish', 'Clot-pole', 'Coxcomb', 'Codpiece', 'Death-token', 'Dewberry', 'Flap-dragon', 'Flax-wench', 'Flirt-gill', 'Foot-licker', 'Fustilarian', 'Giglet', 'Gudgeon', 'Haggard', 'Harpy', 'Hedge-pig', 'Horn-beast', 'Huggermugger', 'Jolt-head', 'Lewdster', 'Lout', 'Maggot-pie', 'Malt-worm', 'Mammet', 'Measle', 'Minnow','Miscreant', 'Mold-warp', 'Mumble-news', 'Nut-hook', 'Pigeon-egg', 'Pignut', 'Puttock','Pumpion', 'Rats-bane', 'Scut', 'Skains-mate', 'Strumpet', 'Varlot', 'Vassal', 'Whey-face', 'Wagtail',),
-            )
+            ('Artless', 'Bawdy', 'Beslubbering', 'Bootless', 'Churlish', 'Cockered', 'Clouted', 'Craven', 'Currish',
+             'Dankish', 'Dissembling', 'Droning', 'Errant', 'Fawning', 'Fobbing', 'Froward', 'Frothy', 'Gleeking',
+             'Goatish', 'Gorbellied', 'Impertinent', 'Infectious', 'Jarring', 'Loggerheaded', 'Lumpish', 'Mammering',
+             'Mangled', 'Mewling', 'Paunchy', 'Pribbling', 'Puking', 'Puny', 'Quailing', 'Rank', 'Reeky', 'Roguish',
+             'Ruttish', 'Saucy', 'Spleeny', 'Spongy', 'Surly', 'Tottering', 'Unmuzzled', 'Vain', 'Venomed',
+             'Villainous', 'Warped', 'Wayward', 'Weedy', 'Yeasty',),
+            ('Base-court', 'Bat-fowling', 'Beef-witted', 'Beetle-headed', 'Boil-brained', 'Clapper-clawed',
+             'Clay-brained', 'Common-kissing', 'Crook-pated', 'Dismal-dreaming', 'Dizzy-eyed', 'Dog-hearted',
+             'Dread-bolted', 'Earth-vexing', 'Elf-skinned', 'Fat-kidneyed', 'Fen-sucked', 'Flap-mouthed', 'Fly-bitten',
+             'Folly-fallen', 'Fool-born', 'Full-gorged', 'Guts-griping', 'Half-faced', 'Hasty-witted', 'Hedge-born',
+             'Hell-hated', 'Idle-headed', 'Ill-breeding', 'Ill-nurtured', 'Knotty-pated', 'Milk-livered',
+             'Motley-minded', 'Onion-eyed', 'Plume-plucked', 'Pottle-deep', 'Pox-marked', 'Reeling-ripe', 'Rough-hewn',
+             'Rude-growing', 'Rump-fed', 'Shard-borne', 'Sheep-biting', 'Spur-galled', 'Swag-bellied', 'Tardy-gaited',
+             'Tickle-brained', 'Toad-spotted', 'Unchin-snouted', 'Weather-bitten',),
+            ('Apple-john', 'Baggage', 'Barnacle', 'Bladder', 'Boar-pig', 'Bugbear', 'Bum-bailey', 'Canker-blossom',
+             'Clack-dish', 'Clot-pole', 'Coxcomb', 'Codpiece', 'Death-token', 'Dewberry', 'Flap-dragon', 'Flax-wench',
+             'Flirt-gill', 'Foot-licker', 'Fustilarian', 'Giglet', 'Gudgeon', 'Haggard', 'Harpy', 'Hedge-pig',
+             'Horn-beast', 'Huggermugger', 'Jolt-head', 'Lewdster', 'Lout', 'Maggot-pie', 'Malt-worm', 'Mammet',
+             'Measle', 'Minnow', 'Miscreant', 'Mold-warp', 'Mumble-news', 'Nut-hook', 'Pigeon-egg', 'Pignut', 'Puttock',
+             'Pumpion', 'Rats-bane', 'Scut', 'Skains-mate', 'Strumpet', 'Varlot', 'Vassal', 'Whey-face', 'Wagtail',),
+        )
         insult_list = (
-            words[0][randint(0,len(words[0])-1)],
-            words[1][randint(0,len(words[1])-1)],
-            words[2][randint(0,len(words[2])-1)],
-            )
+            words[0][randint(0, len(words[0]) - 1)],
+            words[1][randint(0, len(words[1]) - 1)],
+            words[2][randint(0, len(words[2]) - 1)],
+        )
         vowels = 'AEIOU'
         article = 'an' if insult_list[0][0] in vowels else 'a'
         return Response('%s, thou art %s %s, %s %s.' % (user, article, insult_list[0], insult_list[1], insult_list[2]))
-
 
     async def cmd_savage(self, channel, message, author):
         msg = code.misc.savage()
@@ -2450,24 +2456,24 @@ With Hitler's dick"""
     async def cmd_lmgtfy(self, channel, author, message):
         message = message.content.strip()
         message = message.lower()
-        message = message.replace("/lmgtfy ","")
+        message = message.replace("/lmgtfy ", "")
         message = message.replace(" ", "+")
-        url =  "http://lmgtfy.com/?iie=1&q="
+        url = "http://lmgtfy.com/?iie=1&q="
         content = url + message
-        await self.safe_send_message(channel,content)
+        await self.safe_send_message(channel, content)
 
     async def twit(twot):
         api = twitter.Api(consumer_key='ixhijNQjQVDhUhH8dGaNMIeZ9',
-                  consumer_secret='1IloIiSDAiUjuLoZDH1pzyfvjX2rFxbXtcVDdpvkcpqhcIHwCi',
-                  access_token_key='791756035304386560-OqlRxLJ34a2Ev1JpGofaDDpjv3uNdKP',
-                  access_token_secret='4CDC2gvU1cwvbrHTz9IZShRXZSR9WhL90fjPP4rLJlUEM')
+                          consumer_secret='1IloIiSDAiUjuLoZDH1pzyfvjX2rFxbXtcVDdpvkcpqhcIHwCi',
+                          access_token_key='791756035304386560-OqlRxLJ34a2Ev1JpGofaDDpjv3uNdKP',
+                          access_token_secret='4CDC2gvU1cwvbrHTz9IZShRXZSR9WhL90fjPP4rLJlUEM')
         try:
             api.VerifyCredentials()
         except:
             return Response("**Twitter error -- Credentials failure**")
         try:
             status = api.PostUpdate(twot)
-            print (status.text)
+            print(status.text)
         except:
             return Response("**Twitter error -- Tweeting Failure**")
 
@@ -2514,7 +2520,7 @@ With Hitler's dick"""
                 if not url.startswith('/url?'):
                     continue
 
-                url = parse_qs(url[5:])['q'][0] # get the URL from ?q query string
+                url = parse_qs(url[5:])['q'][0]  # get the URL from ?q query string
 
                 # if I ever cared about the description, this is how
                 entries.append(url)
@@ -2532,7 +2538,7 @@ With Hitler's dick"""
         """Searches google and gives you top result."""
         message = message.content.strip()
         message = message.lower()
-        message = message.replace("/google ","")
+        message = message.replace("/google ", "")
         query = message
         try:
             entries = await self.get_google_entries(query)
@@ -2549,18 +2555,20 @@ With Hitler's dick"""
                 except IndexError:
                     if query == "porn" or "nsfw" or "naked" or "sex" or "lesbian":
                         msg = "This command has been legally limited to block explicit searches, sorry"
-                        em = discord.Embed(description=msg, colour= 16711680)
-                        em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
+                        em = discord.Embed(description=msg, colour=16711680)
+                        em.set_author(name='Google:',
+                                      icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
                         await self.send_message(channel, embed=em)
                     else:
                         msg = "No results"
-                        em = discord.Embed(description=msg, colour= 16711680)
-                        em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
+                        em = discord.Embed(description=msg, colour=16711680)
+                        em.set_author(name='Google:',
+                                      icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
                         await self.send_message(channel, embed=em)
-            em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
-            em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
+            em = discord.Embed(description=msg, colour=(random.randint(0, 16777215)))
+            em.set_author(name='Google:',
+                          icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
             await self.send_message(channel, embed=em)
-
 
     async def cmd_pokefuse(self, channel, author, message):
         message = message.content.strip()
@@ -2570,7 +2578,7 @@ With Hitler's dick"""
         n2 = message[2]
         n1 = poke.convert(n1)
         n2 = poke.convert(n2)
-        url = poke.create(n1,n2)
+        url = poke.create(n1, n2)
         return Response(url)
 
     async def cmd_server(self, server, channel, author, message):
@@ -2598,13 +2606,13 @@ With Hitler's dick"""
             data += server.icon_url
         else:
             data += "```"
-        await self.safe_send_message(channel,data)
+        await self.safe_send_message(channel, data)
 
     async def cmd_flip(self, author, channel, user_mentions):
         """Flips a coin... or a user.
         Defaults to coin.
         """
-        num =  random.randint(1,100)
+        num = random.randint(1, 100)
         if num == 73:
             msg = "Random name flip ^-^\n"
             user = author
@@ -2616,9 +2624,9 @@ With Hitler's dick"""
             tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
             table = str.maketrans(char, tran)
             name = name.translate(table)
-            await self.safe_send_message(channel,msg + "(╯°□°）╯︵ " + name[::-1])
+            await self.safe_send_message(channel, msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await self.safe_send_message(channel,"*flips a coin and... " + random.choice(["HEADS!*", "TAILS!*"]))
+            await self.safe_send_message(channel, "*flips a coin and... " + random.choice(["HEADS!*", "TAILS!*"]))
 
     async def cmd_toast(self, channel, author, message):
         over = False
@@ -2626,13 +2634,14 @@ With Hitler's dick"""
         message = message.content.strip()
         message = message.lower()
         if message == "/toast":
-            message = message.replace("/","")
+            message = message.replace("/", "")
             pass
         else:
-            message = message.replace("/toast","")
+            message = message.replace("/toast", "")
         if "hitler" in message:
             over = True
-            await self.safe_send_message(channel,"Hitler was the best guy wasnt he? I mean Hitler made 6 million Jews toast.")
+            await self.safe_send_message(channel,
+                                         "Hitler was the best guy wasnt he? I mean Hitler made 6 million Jews toast.")
         if "toast" in message:
             over = True
             Toast = "Toast "
@@ -2649,7 +2658,7 @@ With Hitler's dick"""
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()
-        messages = message.replace("/urban ","")
+        messages = message.replace("/urban ", "")
         terms = messages
         try:
             r = requests.get("http://api.urbandictionary.com/v0/define?term=" + terms)
@@ -2661,16 +2670,16 @@ With Hitler's dick"""
         if j["result_type"] == "no_results":
             msg = "No results for "
             msg = msg + terms
-            em = discord.Embed(description=msg, colour= 16711680)
-            em.set_author(name = 'Urban', icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
+            em = discord.Embed(description=msg, colour=16711680)
+            em.set_author(name='Urban', icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
             await self.send_message(channel, embed=em)
             return
         elif j["result_type"] == "exact":
             word = j["list"][0]
         definerer = (word["definition"])
         n = ("%s - Urban Dictionary" % word["word"])
-        em = discord.Embed(description=definerer, colour= (random.randint(0,16777215)))
-        em.set_author(name = n, icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
+        em = discord.Embed(description=definerer, colour=(random.randint(0, 16777215)))
+        em.set_author(name=n, icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
         await self.send_message(channel, embed=em)
 
     async def cmd_supported(self, channel):
@@ -2678,25 +2687,28 @@ With Hitler's dick"""
         msg += "https://rg3.github.io/youtube-dl/supportedsites.html"
         msg += " \n"
         msg += "I can also handle livestreams from youtube and twitch, use /stream for those. Dont worry if youre retarded and use /play i can fix your mistakes"
-        em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
-        em.set_author(name='Supported Links:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        em = discord.Embed(description=msg, colour=(random.randint(0, 16777215)))
+        em.set_author(name='Supported Links:',
+                      icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
 
     async def cmd_sans(self, channel):
-        await self.safe_send_message(channel,"**EASTER EGG**")
+        await self.safe_send_message(channel, "**EASTER EGG**")
         return Response("https://media.giphy.com/media/JspiYI9JsQM24/giphy.gif")
 
     async def cmd_genocide(self, channel):
-        await self.safe_send_message(channel,"**EASTER EGG**")
-        return Response("http://orig07.deviantart.net/d173/f/2015/296/5/3/undertale_genocide_by_kawaii_chibi_kotou-d9e2uoc.jpg")
+        await self.safe_send_message(channel, "**EASTER EGG**")
+        return Response(
+            "http://orig07.deviantart.net/d173/f/2015/296/5/3/undertale_genocide_by_kawaii_chibi_kotou-d9e2uoc.jpg")
 
     async def cmd_papyrus(self, channel):
-        await self.safe_send_message(channel,"**EASTER EGG**")
+        await self.safe_send_message(channel, "**EASTER EGG**")
         return Response("https://media.giphy.com/media/xyS5dt9CpleN2/giphy.gif")
 
     async def cmd_mum(self, channel):
-        await self.safe_send_message(channel,"**EASTER EGG**")
-        return Response("http://orig09.deviantart.net/006a/f/2016/025/1/7/_undertale____goat_mom_by_the_drawing_weirdo-d9pc854.jpg")
+        await self.safe_send_message(channel, "**EASTER EGG**")
+        return Response(
+            "http://orig09.deviantart.net/006a/f/2016/025/1/7/_undertale____goat_mom_by_the_drawing_weirdo-d9pc854.jpg")
 
     async def cmd_update(self, channel, author):
         await self.safe_send_message(channel, "Better start coding then, hold on a sec :computer:")
@@ -2710,10 +2722,13 @@ With Hitler's dick"""
                 loop = loop + 1
                 print(loop)
                 try:
-                    await self.send_message(servers, "**Im about to update**, sorry. Go make some toast while i get ready to come back")
+                    await self.send_message(servers,
+                                            "**Im about to update**, sorry. Go make some toast while i get ready to come back")
                     await self.send_message(author, loop)
                 except:
-                    await self.safe_send_message(channel, 'Cannot notify, server\'s default channel is locked : {}'.format(server.name))
+                    await self.safe_send_message(channel,
+                                                 'Cannot notify, server\'s default channel is locked : {}'.format(
+                                                     server.name))
             await self.safe_send_message(channel, 'notification sent, update begining')
             time.sleep(5)
             await self.disconnect_all_voice_clients()
@@ -2723,7 +2738,7 @@ With Hitler's dick"""
         if author.id == 174918559539920897 or 188378092631228418 or 195508130522595328:
             await self.send_typing(channel)
             message = message.content.strip()
-            message = message.replace("/alert ","Message from the devs: ")
+            message = message.replace("/alert ", "Message from the devs: ")
             servercount = str(len(self.servers))
             info = "Notifying " + servercount + " servers... This may take a while"
             await self.send_message(channel, info)
@@ -2732,7 +2747,7 @@ With Hitler's dick"""
                 try:
                     await self.send_message(s, message)
                     count = count + 1
-                    test = int(count%50)
+                    test = int(count % 50)
                     if test == 0:
                         msg = count + " messages sent"
                         await self.send_message(author, msg)
@@ -2743,27 +2758,27 @@ With Hitler's dick"""
 
     async def cmd_crash(self, channel):
         message = "**CRITICAL ERROR** "
-        await self.send_message(channel,(message + "....wHere A-m Iy??"))
+        await self.send_message(channel, (message + "....wHere A-m Iy??"))
         await asyncio.sleep(1)
-        await self.send_message(channel,(message + "**AI CRITICAL MALFUNCTION**"))
+        await self.send_message(channel, (message + "**AI CRITICAL MALFUNCTION**"))
         await asyncio.sleep(2)
-        await self.send_message(channel,(message + "Time module failure"))
-        await self.send_message(channel,(message + "Response module failure"))
-        await self.send_message(channel,(message + "Giphy module failure"))
-        await self.send_message(channel,(message + "Player module failure"))
-        await self.send_message(channel,(message + "Tempo module failure"))
-        await self.send_message(channel,(message + "coax module failure"))
-        await self.send_message(channel,(message + "Randint module failure"))
-        await self.send_message(channel,(message + "Loader module failure"))
-        await self.send_message(channel,(message + "dexi module failure"))
-        await self.send_message(channel,(message + "EDI module failure"))
-        await self.send_message(channel,(message + "Spam module failure"))
-        await self.send_message(channel,(message + "c4xy module failure"))
-        await self.send_message(channel,(message + "h264x module failure"))
-        await self.send_message(channel,(message + "python route module failure"))
-        await self.send_message(channel,(message + "#unable to read module name# module failure"))
-        await self.send_message(channel,(message + "error handler module failure"))
-        await self.send_message(channel,(message + "Discord api module fai"))
+        await self.send_message(channel, (message + "Time module failure"))
+        await self.send_message(channel, (message + "Response module failure"))
+        await self.send_message(channel, (message + "Giphy module failure"))
+        await self.send_message(channel, (message + "Player module failure"))
+        await self.send_message(channel, (message + "Tempo module failure"))
+        await self.send_message(channel, (message + "coax module failure"))
+        await self.send_message(channel, (message + "Randint module failure"))
+        await self.send_message(channel, (message + "Loader module failure"))
+        await self.send_message(channel, (message + "dexi module failure"))
+        await self.send_message(channel, (message + "EDI module failure"))
+        await self.send_message(channel, (message + "Spam module failure"))
+        await self.send_message(channel, (message + "c4xy module failure"))
+        await self.send_message(channel, (message + "h264x module failure"))
+        await self.send_message(channel, (message + "python route module failure"))
+        await self.send_message(channel, (message + "#unable to read module name# module failure"))
+        await self.send_message(channel, (message + "error handler module failure"))
+        await self.send_message(channel, (message + "Discord api module fai"))
         raise exceptions.TerminateSignal
 
     async def cmd_silentupdate(self, channel, author):
@@ -2791,29 +2806,31 @@ With Hitler's dick"""
                 await self.safe_send_message(channel, "**Playlist generation commands updated**")
             except:
                 await self.safe_send_message(channel, "**GENRE.PY FAILED TO UPDATE**")
-            #try:
-            #    reload(code.extremist)
-            #except:
-            #    await self.safe_send_message(channel, "**EXTREMIST.PY FAILED TO UPDATE**")
-            #    lockdown(code.extremist)
-            #await self.safe_send_message(channel, "**EXTREMIST RELOADED**")
+                # try:
+                #    reload(code.extremist)
+                # except:
+                #    await self.safe_send_message(channel, "**EXTREMIST.PY FAILED TO UPDATE**")
+                #    lockdown(code.extremist)
+                # await self.safe_send_message(channel, "**EXTREMIST RELOADED**")
         else:
             return Response("You arent my developer")
+
     async def cmd_clearbug(self):
         open('bugged.txt', 'w').close()
         return Response(":thumbsup:")
 
-    async def cmd_bug(self,channel,server,author, message):
+    async def cmd_bug(self, channel, server, author, message):
         await self.send_typing(channel)
 
         message = message.content.strip()
         message = message.lower()
         details = message.replace("/bug ", "")
-        details = message.replace("/bug","")
-        dts = message.replace(" ","")
+        details = message.replace("/bug", "")
+        dts = message.replace(" ", "")
         if dts == None:
             dts = False
-            await self.safe_send_message(channel,"You didnt explain the bug, it would have been nice if you did, but it doesnt really matter. The dev will yell at you later to find out what the error is")
+            await self.safe_send_message(channel,
+                                         "You didnt explain the bug, it would have been nice if you did, but it doesnt really matter. The dev will yell at you later to find out what the error is")
             pass
         else:
             dts = True
@@ -2823,7 +2840,7 @@ With Hitler's dick"""
             bugged = open("bugged.txt", "r+")
         except:
             bugged = open("bugged.txt", "w")
-            print (bugged)
+            print(bugged)
             bugged.close()
             bugged = open("bugged.txt", "r+")
         bugger = str(bugged.read())
@@ -2832,7 +2849,8 @@ With Hitler's dick"""
             try:
                 inv = await self.create_invite(server, max_uses=1, xkcd=True)
             except:
-                return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
+                return Response(
+                    "Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
 
             print('bug Command on Server: {}'.format(server.name))
             servers = str(server.name)
@@ -2844,7 +2862,7 @@ With Hitler's dick"""
                 msg = "Help Requested in " + servers + "\n Invite:  " + inv
             if dts == True:
                 details = str(details)
-                msg = msg  + " \n" + "Details: " + details
+                msg = msg + " \n" + "Details: " + details
 
             guild_id = int(server.id)
             num_shards = 2
@@ -2855,22 +2873,23 @@ With Hitler's dick"""
                 if shard_id == 1:
                     await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))
             except:
-                return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
+                return Response(
+                    "Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + server.id
             bugged.write(text)
-            print (bugged)
+            print(bugged)
             bugged.close()
             return Response('Bug reported. A dev will join your server to help soon')
         else:
-            return Response('Someoneone in your server has already reported a bug, you have to wait until the devs clear it.')
-
+            return Response(
+                'Someoneone in your server has already reported a bug, you have to wait until the devs clear it.')
 
     async def cmd_imgur(self):
         return Response("Sorry, Imgur had an API change that broke this command. My dev is looking for a solution")
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()
-        message = message.replace("/imgur ","")
+        message = message.replace("/imgur ", "")
         if message == None:
             try:
                 items = ImgurClient.gallery
@@ -2897,45 +2916,42 @@ With Hitler's dick"""
             return Response("Not yet...")
         await self.send_typing(channel)
         message = message.content.strip()
-        message = message.replace("/gif  ","")
+        message = message.replace("/gif  ", "")
         if not message or message == " ":
             try:
                 img = giphypop.random_gif()
                 return Response(img.url)
             except Exception as e:
-                await self.safe_send_message((discord.Object(id='174918559539920897')), (e))
+                await self.safe_send_message((discord.Object(id='174918559539920897')), e)
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
         else:
             try:
                 img = str(giphypop.translate(message))
-                em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
-                em.set_author(name='GIF:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+                em = discord.Embed(description=content, colour=(random.randint(0, 16777215)))
+                em.set_author(name='GIF:',
+                              icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
                 em.set_image(img)
                 await self.send_message(channel, embed=em)
             except:
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
 
-    async def cmd_cat(self, channel):
+    async def cmd_cat(self):
         html = urllib.request.urlopen("http://random.cat/meow").read()
         soup = BeautifulSoup(html)
         for script in soup(["script", "style"]):
             script.extract()
         text = soup.get_text()
-        text = text.replace('{"file":"','')
-        text = text.replace('\/',"/")
-        text = text.replace('"}',"")
+        text = text.replace('{"file":"', '')
+        text = text.replace('\/', "/")
+        text = text.replace('"}', "")
         content = "Cats :3"
-        em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
-        em.set_author(name='Cats :3:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        em.set_image(text)
-        await self.send_message(channel, embed=em)
-
+        return Response(text)
 
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
         return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
 
-    async def cmd_apocalypse(self,channel,author):
+    async def cmd_apocalypse(self, channel, author):
         perms = author.permissions_in(channel)
         for role in author.roles:
             try:
@@ -2965,12 +2981,14 @@ With Hitler's dick"""
                     return Response("You dont have permission to do that")
             except:
                 return Response("Critical Error in defcon runtime, type /bug")
+
             def is_user(message, author, m):
                 for user in user_mentions:
                     if m == message or message.author == user:
                         return True
                     else:
                         return False
+
             await self.purge_from(channel, limit=100, check=is_user)
 
     async def cmd_purge(self, author, channel, message):
@@ -2985,9 +3003,9 @@ With Hitler's dick"""
                 return Response("**Critical Error** in runtime, type /bug")
         message = message.content.strip()
         message = message.lower()
-        message = message.replace("messages","")
-        message = message.replace("/purge","")
-        message = message.replace(" ","")
+        message = message.replace("messages", "")
+        message = message.replace("/purge", "")
+        message = message.replace(" ", "")
         try:
             num = int(message)
         except:
@@ -3008,8 +3026,10 @@ With Hitler's dick"""
 
     async def cmd_donate(self, author):
         await self.safe_send_message(author, "Thanks for considering donating to this project")
-        await self.safe_send_message(author, "Your donation will be used to help pay for our servers, maintanence, and some pizza to keep the dev alive while trying to fix the bot xD")
-        await self.safe_send_message(author, "If patreon isnt your thing, send it to Music Toasters **PayPal** and itll go directly to the server fund")
+        await self.safe_send_message(author,
+                                     "Your donation will be used to help pay for our servers, maintanence, and some pizza to keep the dev alive while trying to fix the bot xD")
+        await self.safe_send_message(author,
+                                     "If patreon isnt your thing, send it to Music Toasters **PayPal** and itll go directly to the server fund")
         await self.safe_send_message(author, "PayPal email: **mtoasty16@gmail.com**")
         await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
         await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
@@ -3026,7 +3046,8 @@ With Hitler's dick"""
             gotversion = False
         if gotversion == True:
             update = code.misc.update()
-            await self.safe_send_message((discord.Object(id='206821900154961920')),("Toasty version **" + version + "** info"))
+            await self.safe_send_message((discord.Object(id='206821900154961920')),
+                                         ("Toasty version **" + version + "** info"))
             await self.safe_send_message((discord.Object(id='206821900154961920')), (update))
         else:
             await self.safe_send_message((discord.Object(id='206821900154961920')), ("**Toasty update log**"))
@@ -3034,7 +3055,7 @@ With Hitler's dick"""
         await self.safe_send_message(channel, "**TWEETING**")
         try:
             update = "Update log:\n " + update
-            update = update.replace("*","")
+            update = update.replace("*", "")
             tweet = update
             await self.twit(tweet)
         except:
@@ -3042,67 +3063,67 @@ With Hitler's dick"""
 
     async def cmd_8ball(self, channel, message):
         await self.send_typing(channel)
-        choice="123"
+        choice = "123"
         choice = random.choice(choice)
         message = message.content.strip()
         message = message.lower()
-        message = message.replace("/8ball ","")
+        message = message.replace("/8ball ", "")
         length = int(len(message))
         if length < 6:
             return Response("You didnt ask a question :confused:")
         else:
             if choice == "1":
-                minichoice = random.randint(1,10)
+                minichoice = random.randint(1, 10)
                 if minichoice == 1:
-                    await self.safe_send_message(channel,"It is certain")
+                    await self.safe_send_message(channel, "It is certain")
                 if minichoice == 2:
-                    await self.safe_send_message(channel,"It is decidedly so")
+                    await self.safe_send_message(channel, "It is decidedly so")
                 if minichoice == 3:
-                    await self.safe_send_message(channel,"Without a doubt")
+                    await self.safe_send_message(channel, "Without a doubt")
                 if minichoice == 4:
-                    await self.safe_send_message(channel,"Yes, definitely")
+                    await self.safe_send_message(channel, "Yes, definitely")
                 if minichoice == 5:
-                    await self.safe_send_message(channel,"You may rely on it")
+                    await self.safe_send_message(channel, "You may rely on it")
                 if minichoice == 6:
-                    await self.safe_send_message(channel,"As I see it, yes")
+                    await self.safe_send_message(channel, "As I see it, yes")
                 if minichoice == 7:
-                    await self.safe_send_message(channel,"Most likely")
+                    await self.safe_send_message(channel, "Most likely")
                 if minichoice == 8:
-                    await self.safe_send_message(channel,"Outlook good")
+                    await self.safe_send_message(channel, "Outlook good")
                 if minichoice == 9:
-                    await self.safe_send_message(channel,"Yes")
+                    await self.safe_send_message(channel, "Yes")
                 if minichoice == 10:
-                    await self.safe_send_message(channel,"Signs point to yes")
+                    await self.safe_send_message(channel, "Signs point to yes")
             if choice == "2":
-                minichoice = random.randint(1,5)
+                minichoice = random.randint(1, 5)
                 if minichoice == 1:
-                    await self.safe_send_message(channel,"Reply hazy try again")
+                    await self.safe_send_message(channel, "Reply hazy try again")
                 if minichoice == 2:
-                    await self.safe_send_message(channel,"Ask again later")
+                    await self.safe_send_message(channel, "Ask again later")
                 if minichoice == 3:
-                    await self.safe_send_message(channel,"Better not tell you now")
+                    await self.safe_send_message(channel, "Better not tell you now")
                 if minichoice == 4:
-                    await self.safe_send_message(channel,"Cannot predict now")
+                    await self.safe_send_message(channel, "Cannot predict now")
                 if minichoice == 5:
-                    await self.safe_send_message(channel,"Concentrate and ask again")
+                    await self.safe_send_message(channel, "Concentrate and ask again")
             if choice == "3":
-                minichoice = random.randint(1,5)
+                minichoice = random.randint(1, 5)
                 if minichoice == 1:
-                    await self.safe_send_message(channel,"Don't count on it")
+                    await self.safe_send_message(channel, "Don't count on it")
                 if minichoice == 2:
-                    await self.safe_send_message(channel,"My reply is no")
+                    await self.safe_send_message(channel, "My reply is no")
                 if minichoice == 3:
-                    await self.safe_send_message(channel,"My sources say no")
+                    await self.safe_send_message(channel, "My sources say no")
                 if minichoice == 4:
-                    await self.safe_send_message(channel,"Outlook not so good")
+                    await self.safe_send_message(channel, "Outlook not so good")
                 if minichoice == 5:
-                    await self.safe_send_message(channel,"Very doubtful")
+                    await self.safe_send_message(channel, "Very doubtful")
 
     async def cmd_load(self):
         try:
             process = await asyncio.create_subprocess_shell(
-            'mpstat',
-            stdout=asyncio.subprocess.PIPE)
+                'mpstat',
+                stdout=asyncio.subprocess.PIPE)
         except:
             return Response("Unable to fetch CPU usage")
         stdout, stderr = await process.communicate()
@@ -3137,7 +3158,7 @@ With Hitler's dick"""
         servercount = str(len(self.servers))
         servercount = "This shard is currently in " + servercount + " servers \n"
         if gotversion == True:
-            message = "Toasty version " + version +  " by DNA#6750 \n"
+            message = "Toasty version " + version + " by DNA#6750 \n"
             await self.safe_send_message(channel, message)
         else:
             await self.safe_send_message(channel, "Toasty by DNA#6750")
@@ -3145,7 +3166,7 @@ With Hitler's dick"""
         try:
             process = await asyncio.create_subprocess_shell(
                 "cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
-            stdout=asyncio.subprocess.PIPE)
+                stdout=asyncio.subprocess.PIPE)
             stdout, stderr = await process.communicate()
             uptime = stdout.decode().strip()
             uptime = str(file_count)
@@ -3173,8 +3194,9 @@ With Hitler's dick"""
         infomsg += "```"
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/6K5JkF5"
-        em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
-        em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        em = discord.Embed(description=infomsg, colour=(random.randint(0, 16777215)))
+        em.set_author(name='Info:',
+                      icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
 
     async def cmd_shitpost(self, channel):
@@ -3201,15 +3223,16 @@ With Hitler's dick"""
         count = int(0)
         for line in link:
             song_url = line
-            print (line)
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            print(line)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
                 count = count + 1
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
                 msg = "Failed to add" + line
-                await self.safe_send_message(channel,msg)
+                await self.safe_send_message(channel, msg)
         count = str(count)
         msg = "Added " + count + " songs"
         return Response(msg)
@@ -3219,7 +3242,8 @@ With Hitler's dick"""
         await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
         for i in range(size):
             song_url = code.genre.electronic()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3231,7 +3255,8 @@ With Hitler's dick"""
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")
         for i in range(size):
             song_url = code.genre.rock()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3243,7 +3268,8 @@ With Hitler's dick"""
         await self.safe_send_message(channel, "Right give me a sec while i make a metal playlist")
         for i in range(size):
             song_url = code.genre.metal()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3255,7 +3281,8 @@ With Hitler's dick"""
         await self.safe_send_message(channel, "Right give me a sec while i make a retro playlist")
         for i in range(size):
             song_url = code.genre.retro()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3267,7 +3294,8 @@ With Hitler's dick"""
         await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
         for i in range(size):
             song_url = code.hiphop()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3288,7 +3316,8 @@ With Hitler's dick"""
         if self.config.bound_channels and message.channel.id not in self.config.bound_channels and not message.channel.is_private:
             return  # if I want to log this I just move it under the prefix check
 
-        command, *args = message_content.split(' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
+        command, *args = message_content.split(
+            ' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
         command = command[len(self.config.command_prefix):].lower().strip()
 
         handler = getattr(self, 'cmd_' + command, None)
@@ -3296,7 +3325,8 @@ With Hitler's dick"""
             return
 
         if message.channel.is_private:
-            if not (message.author.id == self.config.owner_id and command == 'joinserver' or 'savage' or 'shitpost' or 'urban' or 'google' or 'lmgtfy' or 'cat' or 'feature' or 'supported' or 'gif' or 'ping' or 'vicky' or 'flip' or '8ball' or 'toast' or 'donate' or 'join' or 'id'):
+            if not (
+                                                                                        message.author.id == self.config.owner_id and command == 'joinserver' or 'savage' or 'shitpost' or 'urban' or 'google' or 'lmgtfy' or 'cat' or 'feature' or 'supported' or 'gif' or 'ping' or 'vicky' or 'flip' or '8ball' or 'toast' or 'donate' or 'join' or 'id'):
                 await self.send_message(message.channel, 'https://goo.gl/rdbPKI')
                 return
 
@@ -3450,10 +3480,9 @@ With Hitler's dick"""
                 await asyncio.sleep(5)
                 await self.safe_delete_message(message, quiet=True)
 
-
     async def on_voice_state_update(self, before, after):
         if not self.init_ok:
-            return # Ignore stuff before ready
+            return  # Ignore stuff before ready
 
         state = VoiceStateUpdate(before, after)
 
@@ -3466,19 +3495,19 @@ With Hitler's dick"""
 
         if not state.changes:
             log.voicedebug("Empty voice state update, likely a session id change")
-            return # Session id change, pointless event
+            return  # Session id change, pointless event
 
         ################################
 
         log.voicedebug("Voice state update for {mem.id}/{mem!s} on {ser.name}/{vch.name} -> {dif}".format(
-            mem = state.member,
-            ser = state.server,
-            vch = state.voice_channel,
-            dif = state.changes
+            mem=state.member,
+            ser=state.server,
+            vch=state.voice_channel,
+            dif=state.changes
         ))
 
         if not state.is_about_my_voice_channel:
-            return # Irrelevant channel
+            return  # Irrelevant channel
 
         if state.joining or state.leaving:
             log.info("{0.id}/{0!s} has {1} {2}/{3}".format(
@@ -3498,9 +3527,9 @@ With Hitler's dick"""
 
         if state.joining and state.empty() and player.is_playing:
             log.info(autopause_msg.format(
-                state = "Pausing",
-                channel = state.my_voice_channel,
-                reason = "(joining empty channel)"
+                state="Pausing",
+                channel=state.my_voice_channel,
+                reason="(joining empty channel)"
             ).strip())
 
             self.server_specific_data[after.server]['auto_paused'] = True
@@ -3511,9 +3540,9 @@ With Hitler's dick"""
             if not state.empty(old_channel=state.leaving):
                 if auto_paused and player.is_paused:
                     log.info(autopause_msg.format(
-                        state = "Unpausing",
-                        channel = state.my_voice_channel,
-                        reason = ""
+                        state="Unpausing",
+                        channel=state.my_voice_channel,
+                        reason=""
                     ).strip())
 
                     self.server_specific_data[after.server]['auto_paused'] = False
@@ -3521,40 +3550,42 @@ With Hitler's dick"""
             else:
                 if not auto_paused and player.is_playing:
                     log.info(autopause_msg.format(
-                        state = "Pausing",
-                        channel = state.my_voice_channel,
-                        reason = "(empty channel)"
+                        state="Pausing",
+                        channel=state.my_voice_channel,
+                        reason="(empty channel)"
                     ).strip())
 
                     self.server_specific_data[after.server]['auto_paused'] = True
                     player.pause()
 
-
-    async def on_server_update(self, before:discord.Server, after:discord.Server):
+    async def on_server_update(self, before: discord.Server, after: discord.Server):
         if before.region != after.region:
             log.warning("Server \"%s\" changed regions: %s -> %s" % (after.name, before.region, after.region))
 
             await self.reconnect_voice_client(after)
 
-
-    async def on_server_join(self, server:discord.Server):
+    async def on_server_join(self, server: discord.Server):
         log.info("Bot has been joined server: {}".format(server.name))
 
         if not self.user.bot:
             alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
 
-            if server.id == "81384788765712384" and not server.unavailable: # Discord API
-                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels, name='playground') or server
-                await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368")) # fake abal
+            if server.id == "81384788765712384" and not server.unavailable:  # Discord API
+                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels,
+                                                                                          name='playground') or server
+                await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368"))  # fake abal
                 return
-            elif server.id == "129489631539494912" and not server.unavailable: # Rhino Bot Help
-                bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels, name='bot-testing') or server
-                await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368")) # also fake abal
+            elif server.id == "129489631539494912" and not server.unavailable:  # Rhino Bot Help
+                bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels,
+                                                                                            name='bot-testing') or server
+                await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368"))  # also fake abal
                 return
-        msg = ("Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
+        msg = (
+        "Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
         msg = msg + "  Give me about 10 seconds to prepare some data for your server"
-        em = discord.Embed(description=msg, colour= 65280)
-        em.set_author(name = 'I just joined :3', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        em = discord.Embed(description=msg, colour=65280)
+        em.set_author(name='I just joined :3',
+                      icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(server, embed=em)
 
         pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
@@ -3568,10 +3599,9 @@ With Hitler's dick"""
         if server.id in self.players:
             self.players.pop(server.id).kill()
 
-
     async def on_server_available(self, server: discord.Server):
         if not self.init_ok:
-            return # Ignore pre-ready events
+            return  # Ignore pre-ready events
 
         log.debug("Server \"{}\" has become available.".format(server.name))
 
@@ -3584,7 +3614,6 @@ With Hitler's dick"""
                 log.debug("Resuming player in \"{}\" due to availability.".format(server.name))
                 self.server_specific_data[server]['availability_paused'] = False
                 player.resume()
-
 
     async def on_server_unavailable(self, server: discord.Server):
         log.debug("Server \"{}\" has become unavailable.".format(server.name))

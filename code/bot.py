@@ -3053,17 +3053,15 @@ With Hitler's dick"""
         message = message.content.strip() 
         message = message.lower() 
         message = message.replace("messages","")
+        message = message.replace("/purge","")
         message = message.replace(" ","")
         try:
             num = int(message)
         except:
-            await self.safe_send_message("Unable to convert message into a number, using default value.")
+            await self.safe_send_message(channel, "Using default value.")
             num = 20
         try:
             await self.purge_from(channel, limit=num)
-            num = str(num)
-            msg = "Purged " + num + " messages"
-            return Response(msg)
         except:
             return Response("I can't purge, did you change my permissions?")
 

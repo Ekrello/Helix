@@ -2807,10 +2807,12 @@ With Hitler's dick"""
 
         message = message.content.strip()
         message = message.lower()
+        details = message.replace("/bug ", "")
         details = message.replace("/bug","")
-        details = message.replace(" ","")
-        if details == None:
+        dts = message.replace(" ","")
+        if dts == None:
             dts = False
+            await self.safe_send_message(channel,"You didnt explain the bug, it would have been nice if you did, but it doesnt really matter. The dev will yell at you later to find out what the error is")
             pass
         else:
             dts = True
@@ -2836,7 +2838,7 @@ With Hitler's dick"""
             inv = str(inv)
             author = author.name
             try:
-                msg = "Help Requested in " + servers + "by " + author + "\n Invite:  " + inv
+                msg = "Help Requested in " + servers + " by " + author + "\n" + "Invite:  " + inv
             except:
                 msg = "Help Requested in " + servers + "\n Invite:  " + inv
             if dts == True:

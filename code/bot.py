@@ -1,17 +1,16 @@
-import sys
-import time
-import shlex
-import shutil
-import random
+import asyncio
 import inspect
 import logging
-import asyncio
-import pathlib
-import traceback
 import os
-import json
+import pathlib
 import random
+import shlex
+import shutil
+import sys
+import traceback
+
 import aiohttp
+
 allow_requests = True
 import requests
 from cleverbot import Cleverbot
@@ -53,7 +52,7 @@ load_opus_lib()
 
 log = logging.getLogger(__name__)
 
-import sched, time
+import time
 
 
 
@@ -106,7 +105,7 @@ class MusicBot(discord.Client):
         super().__init__()
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
         self.http.user_agent += ' Toasty/%s' % BOTVERSION
-        
+
 
     def __del__(self):
         # These functions return futures but it doesn't matter
@@ -758,7 +757,7 @@ With Hitler's dick"""
         name = str(null)
         game = discord.Game(name=name)
         await self.change_status(game)
-                
+
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']
         m = None
@@ -1172,10 +1171,10 @@ With Hitler's dick"""
         em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
         em.set_author(name='Help:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         await self.send_message(channel, embed=em)
-        
+
     async def cmd_loop(self, message, player, channel, author):
         await self.send_typing(channel)
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.replace("/loop","")
         message = message.replace(" ","")
         try:
@@ -1769,7 +1768,7 @@ With Hitler's dick"""
             return Repsonse("You're my creator")
         else:
             return Reponse("DNA")
-    
+
     async def cmd_pause(self, player):
         """
         Usage:
@@ -1858,7 +1857,7 @@ With Hitler's dick"""
                 if perms.administrator or perms.manage_server:
                     rolez = True
                     pass
-                else: 
+                else:
                     rolez = False
             except:
                 await self.safe_send_message(channel, "Failed to find administrator or manage server role")
@@ -2325,14 +2324,14 @@ With Hitler's dick"""
         return Response(codeblock.format(result))
 
 
-    
+
     async def cmd_leave(self, server, channel, message, author):
         perms = author.permissions_in(channel)
         for role in author.roles:
             try:
                 if perms.administrator or perms.manage_server:
                     pass
-                else: 
+                else:
                     if author.id == "174918559539920897":
                         pass
                     else:
@@ -2358,7 +2357,7 @@ With Hitler's dick"""
             await self.send_message(channel,"ching chong chang")
         if choice == 6:
             await self.send_message(channel,"**HACKING PLAYSTATION")
-    
+
     async def cmd_kick(self, author, channel, user_mentions):
         perms = author.permissions_in(channel)
         for role in author.roles:
@@ -2398,7 +2397,7 @@ With Hitler's dick"""
                 return Response("ripperoni pepperoni, they got bend")
             except:
                 return Response("I... I can't do that... Did you change my permissions?")
-                
+
 
     async def cmd_join(self, channel, message, server_link=None):
         """
@@ -2412,12 +2411,12 @@ With Hitler's dick"""
             sinv = "https://discord.gg/6K5JkF5"
             msg2 = "\n**And here is the link to my twitter:\n**"
             tinv = "https://twitter.com/mtoastyofficial"
-            msg = msg + inv + msg1 + sinv + msg2 + tinv 
+            msg = msg + inv + msg1 + sinv + msg2 + tinv
             await self.safe_send_message(channel, msg)
-            
+
     async def cmd_vicky(self,channel,author,message):
         await self.send_typing(channel)
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.lower()
         length = int(len(message))
         if "@" not in message:
@@ -2438,7 +2437,7 @@ With Hitler's dick"""
             )
         vowels = 'AEIOU'
         article = 'an' if insult_list[0][0] in vowels else 'a'
-        return Response('%s, thou art %s %s, %s %s.' % (user, article, insult_list[0], insult_list[1], insult_list[2]))                
+        return Response('%s, thou art %s %s, %s %s.' % (user, article, insult_list[0], insult_list[1], insult_list[2]))
 
 
     async def cmd_savage(self, channel, message, author):
@@ -2448,9 +2447,9 @@ With Hitler's dick"""
         except:
             pass
         return Response(msg)
-    
+
     async def cmd_lmgtfy(self, channel, author, message):
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.lower()
         message = message.replace("/lmgtfy ","")
         message = message.replace(" ", "+")
@@ -2532,7 +2531,7 @@ With Hitler's dick"""
 
     async def cmd_google(self, channel, message):
         """Searches google and gives you top result."""
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.lower()
         message = message.replace("/google ","")
         query = message
@@ -2563,7 +2562,7 @@ With Hitler's dick"""
             em.set_author(name='Google:', icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2000px-Google_%22G%22_Logo.svg.png")
             await self.send_message(channel, embed=em)
 
-    
+
     async def cmd_pokefuse(self, channel, author, message):
         message = message.content.strip()
         message = lower()
@@ -2601,7 +2600,7 @@ With Hitler's dick"""
         else:
             data += "```"
         await self.safe_send_message(channel,data)
-    
+
     async def cmd_flip(self, author, channel, user_mentions):
         """Flips a coin... or a user.
         Defaults to coin.
@@ -2621,7 +2620,7 @@ With Hitler's dick"""
             await self.safe_send_message(channel,msg + "(╯°□°）╯︵ " + name[::-1])
         else:
             await self.safe_send_message(channel,"*flips a coin and... " + random.choice(["HEADS!*", "TAILS!*"]))
-    
+
     async def cmd_toast(self, channel, author, message):
         over = False
         await self.send_typing(channel)
@@ -2632,7 +2631,7 @@ With Hitler's dick"""
             pass
         else:
             message = message.replace("/toast","")
-        if "hitler" in message: 
+        if "hitler" in message:
             over = True
             await self.safe_send_message(channel,"Hitler was the best guy wasnt he? I mean Hitler made 6 million Jews toast.")
         if "toast" in message:
@@ -2646,7 +2645,7 @@ With Hitler's dick"""
         message = cb.ask(message)
         if over == False:
             await self.safe_send_message(channel, message)
-        
+
     async def cmd_urban(self, channel, message):
         await self.send_typing(channel)
         message = message.content.strip()
@@ -2674,7 +2673,7 @@ With Hitler's dick"""
         em = discord.Embed(description=definerer, colour= (random.randint(0,16777215)))
         em.set_author(name = n, icon_url="https://pilotmoon.com/popclip/extensions/icon/ud.png")
         await self.send_message(channel, embed=em)
-        
+
     async def cmd_supported(self, channel):
         msg = "I use YoutubeDL to get the songs, if they support it, so do I:\n"
         msg += "https://rg3.github.io/youtube-dl/supportedsites.html"
@@ -2683,19 +2682,19 @@ With Hitler's dick"""
         em = discord.Embed(description=msg, colour= (random.randint(0,16777215)))
         em.set_author(name='Supported Links:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
-    
+
     async def cmd_sans(self, channel):
         await self.safe_send_message(channel,"**EASTER EGG**")
         return Response("https://media.giphy.com/media/JspiYI9JsQM24/giphy.gif")
-        
+
     async def cmd_genocide(self, channel):
         await self.safe_send_message(channel,"**EASTER EGG**")
         return Response("http://orig07.deviantart.net/d173/f/2015/296/5/3/undertale_genocide_by_kawaii_chibi_kotou-d9e2uoc.jpg")
-        
+
     async def cmd_papyrus(self, channel):
         await self.safe_send_message(channel,"**EASTER EGG**")
         return Response("https://media.giphy.com/media/xyS5dt9CpleN2/giphy.gif")
-        
+
     async def cmd_mum(self, channel):
         await self.safe_send_message(channel,"**EASTER EGG**")
         return Response("http://orig09.deviantart.net/006a/f/2016/025/1/7/_undertale____goat_mom_by_the_drawing_weirdo-d9pc854.jpg")
@@ -2720,11 +2719,11 @@ With Hitler's dick"""
             time.sleep(5)
             await self.disconnect_all_voice_clients()
             raise exceptions.TerminateSignal
-            
+
     async def cmd_alert(self, channel, author, message):
         if author.id == 174918559539920897 or 188378092631228418 or 195508130522595328:
             await self.send_typing(channel)
-            message = message.content.strip() 
+            message = message.content.strip()
             message = message.replace("/alert ","Message from the devs: ")
             servercount = str(len(self.servers))
             info = "Notifying " + servercount + " servers... This may take a while"
@@ -2776,7 +2775,7 @@ With Hitler's dick"""
             raise exceptions.TerminateSignal
         else:
             return Response("You dont have permission to do that")
-    
+
     async def cmd_moduleupdate(self, channel, author):
         if author.id == "174918559539920897":
             await self.safe_send_message(channel, "Hold on")
@@ -2855,7 +2854,7 @@ With Hitler's dick"""
                 if shard_id == 0:
                     await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))
                 if shard_id == 1:
-                    await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))                    
+                    await self.safe_send_message((discord.Object(id='259800563137511424')), (msg))
             except:
                 return Response("Something very bad has happened which technically shouldnt be able to happen. Type /join and join my server, mention Tech Support and say you hit **ERROR 666**")
             text = " " + server.id
@@ -2865,7 +2864,7 @@ With Hitler's dick"""
             return Response('Bug reported. A dev will join your server to help soon')
         else:
             return Response('Someoneone in your server has already reported a bug, you have to wait until the devs clear it.')
-        
+
 
     async def cmd_imgur(self):
         return Response("Sorry, Imgur had an API change that broke this command. My dev is looking for a solution")
@@ -2898,7 +2897,7 @@ With Hitler's dick"""
         elif servercount < 100:
             return Response("Not yet...")
         await self.send_typing(channel)
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.replace("/gif  ","")
         if not message or message == " ":
             try:
@@ -2932,7 +2931,7 @@ With Hitler's dick"""
         em.set_image(text)
         await self.send_message(channel, embed=em)
 
-            
+
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
         return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
@@ -2943,19 +2942,19 @@ With Hitler's dick"""
             try:
                 if perms.administrator:
                     usage = True
-                else: 
+                else:
                     usage = False
             except:
                 await self.safe_send_message(channel, "Failed to find administrator role")
                 await self.safe_send_message(channel, perms)
         if author.id == "174918559539920897":
             usage = True
-        if usage == True:        
+        if usage == True:
             await self.safe_send_message(channel, "**PURGING**")
             time.sleep(1)
             await self.purge_from(channel, limit=99999999999999)
             await self.safe_send_message(channel, ":fire:**CHAT PURGED**:fire:")
-        else: 
+        else:
             return Response("Fuck off")
 
     async def cmd_defcon(self, author, channel, user_mentions):
@@ -2974,7 +2973,7 @@ With Hitler's dick"""
                     else:
                         return False
             await self.purge_from(channel, limit=100, check=is_user)
-    
+
     async def cmd_purge(self, author, channel, message):
         perms = author.permissions_in(channel)
         for role in author.roles:
@@ -2985,8 +2984,8 @@ With Hitler's dick"""
                     return Response("You dont have permission to do that")
             except:
                 return Response("**Critical Error** in runtime, type /bug")
-        message = message.content.strip() 
-        message = message.lower() 
+        message = message.content.strip()
+        message = message.lower()
         message = message.replace("messages","")
         message = message.replace("/purge","")
         message = message.replace(" ","")
@@ -2998,7 +2997,7 @@ With Hitler's dick"""
         if num == 0:
             await self.safe_send_message(channel, "Using default value.")
             num = 20
-        
+
         if num == None:
             await self.safe_send_message(channel, "Using default value.")
             num = 20
@@ -3015,7 +3014,7 @@ With Hitler's dick"""
         await self.safe_send_message(author, "PayPal email: **mtoasty16@gmail.com**")
         await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
         await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
-   
+
     async def cmd_ul(self, channel):
         try:
             getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
@@ -3041,12 +3040,12 @@ With Hitler's dick"""
             await self.twit(tweet)
         except:
             pass
-        
+
     async def cmd_8ball(self, channel, message):
         await self.send_typing(channel)
         choice="123"
         choice = random.choice(choice)
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.lower()
         message = message.replace("/8ball ","")
         length = int(len(message))
@@ -3098,7 +3097,7 @@ With Hitler's dick"""
                 if minichoice == 4:
                     await self.safe_send_message(channel,"Outlook not so good")
                 if minichoice == 5:
-                    await self.safe_send_message(channel,"Very doubtful")  
+                    await self.safe_send_message(channel,"Very doubtful")
 
     async def cmd_load(self):
         try:
@@ -3111,7 +3110,7 @@ With Hitler's dick"""
         usage = stdout.decode().strip()
         usage = "```py \n" + usage + "```"
         return Response(usage)
-                    
+
     async def cmd_info(self, channel):
         await self.send_typing(channel)
         try:
@@ -3178,11 +3177,11 @@ With Hitler's dick"""
         em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
         em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
-        
+
     async def cmd_shitpost(self, channel):
         message = code.misc.shitpost()
         return Response(message)
-    
+
     async def cmd_add(self, channel, player, message, author):
         """
         Usage:
@@ -3191,8 +3190,8 @@ With Hitler's dick"""
         Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
         """
         try:
-            message = message.content.strip() 
-            message = message[5:]      
+            message = message.content.strip()
+            message = message[5:]
             link = code.misc.patebin(message)
             link = link.splitlines()
             if link == None:
@@ -3209,13 +3208,13 @@ With Hitler's dick"""
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
                 count = count + 1
             except exceptions.ExtractionError as e:
-                print("Error adding song from autoplaylist:", e) 
+                print("Error adding song from autoplaylist:", e)
                 msg = "Failed to add" + line
                 await self.safe_send_message(channel,msg)
         count = str(count)
         msg = "Added " + count + " songs"
         return Response(msg)
-        
+
     async def cmd_electronic(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
@@ -3227,7 +3226,7 @@ With Hitler's dick"""
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
-    
+
     async def cmd_rock(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")

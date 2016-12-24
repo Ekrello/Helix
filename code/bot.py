@@ -2815,7 +2815,6 @@ With Hitler's dick"""
         else:
             dts = True
 
-        server = server.id
         print(author)
         try:
             bugged = open("bugged.txt", "r+")
@@ -2826,7 +2825,7 @@ With Hitler's dick"""
             bugged = open("bugged.txt", "r+")
         bugger = str(bugged.read())
 
-        if server not in bugger: 
+        if server.id not in bugger:
             try:
                 inv = await self.create_invite(server, max_uses=1, xkcd=True)
             except:

@@ -3060,9 +3060,16 @@ With Hitler's dick"""
         except:
             await self.safe_send_message(channel, "Using default value.")
             num = 20
+        if num == 0:
+            await self.safe_send_message(channel, "Using default value.")
+            num = 20
+        
+        if num == None:
+            await self.safe_send_message(channel, "Using default value.")
+            num = 20
         try:
             await self.purge_from(channel, limit=num)
-            return Response(":fire:"
+            return Response(":fire:")
         except:
             return Response("I can't purge, did you change my permissions?")
 

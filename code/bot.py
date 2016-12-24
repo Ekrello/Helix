@@ -1,3 +1,6 @@
+allow_requests = True
+import requests
+from cleverbot import Cleverbot
 import asyncio
 import inspect
 import logging
@@ -8,16 +11,14 @@ import shlex
 import shutil
 import sys
 import traceback
-
-import aiohttp
-
-allow_requests = True
-import requests
-from cleverbot import Cleverbot
 import giphypop
 import discord
 import twitter
 import urllib.request
+import aiohttp
+import logmein
+import time
+
 from random import randint
 from bs4 import BeautifulSoup
 from io import BytesIO, StringIO
@@ -44,15 +45,13 @@ from .constructs import SkipState, Response, VoiceStateUpdate
 from .utils import load_file, write_file, sane_round_int, fixg, ftimedelta
 import code.misc
 import code.genre
-import logmein
 from .constants import VERSION as BOTVERSION
 from .constants import DISCORD_MSG_CHAR_LIMIT, AUDIO_CACHE_PATH
 
 load_opus_lib()
-
 log = logging.getLogger(__name__)
 
-import time
+
 
 
 

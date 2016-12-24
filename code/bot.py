@@ -2647,7 +2647,7 @@ With Hitler's dick"""
         if over == False:
             await self.safe_send_message(channel, message)
         
-    async def cmd_urban(self, channel, author, message):
+    async def cmd_urban(self, channel, message):
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()
@@ -2801,6 +2801,9 @@ With Hitler's dick"""
             #await self.safe_send_message(channel, "**EXTREMIST RELOADED**")
         else:
             return Response("You arent my developer")
+    async def cmd_clearbug(self):
+        open('bugged.txt', 'w').close()
+        return Response(":thumbsup:")
 
     async def cmd_bug(self,channel,server,author, message):
         await self.send_typing(channel)
@@ -2864,7 +2867,7 @@ With Hitler's dick"""
             return Response('Someoneone in your server has already reported a bug, you have to wait until the devs clear it.')
         
 
-    async def cmd_imgur(self, author, channel, message):
+    async def cmd_imgur(self):
         return Response("Sorry, Imgur had an API change that broke this command. My dev is looking for a solution")
         await self.send_typing(channel)
         message = message.content.strip()
@@ -2914,7 +2917,7 @@ With Hitler's dick"""
             except:
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
 
-    async def cmd_cat(channel):
+    async def cmd_cat(self, channel):
         html = urllib.request.urlopen("http://random.cat/meow").read()
         soup = BeautifulSoup(html)
         for script in soup(["script", "style"]):
@@ -2923,6 +2926,7 @@ With Hitler's dick"""
         text = text.replace('{"file":"','')
         text = text.replace('\/',"/")
         text = text.replace('"}',"")
+        content = "Cats :3"
         em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
         em.set_author(name='Cats :3:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         em.set_image(text)
@@ -3012,7 +3016,7 @@ With Hitler's dick"""
         await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
         await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
    
-    async def cmd_ul(self, channel, message):
+    async def cmd_ul(self, channel):
         try:
             getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
             getversion = getversion.read()
@@ -3096,7 +3100,7 @@ With Hitler's dick"""
                 if minichoice == 5:
                     await self.safe_send_message(channel,"Very doubtful")  
 
-    async def cmd_load(self, channel):
+    async def cmd_load(self):
         try:
             process = await asyncio.create_subprocess_shell(
             'mpstat',
@@ -3108,7 +3112,7 @@ With Hitler's dick"""
         usage = "```py \n" + usage + "```"
         return Response(usage)
                     
-    async def cmd_info(self, channel, server, message):
+    async def cmd_info(self, channel):
         await self.send_typing(channel)
         try:
             getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
@@ -3174,31 +3178,6 @@ With Hitler's dick"""
         em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
         em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
-
-    async def cmd_awake(self):
-        """Displays bot's total running time"""
-
-        seconds = int(time.time() - self.bot.start_time)
-        minutes, seconds = divmod(seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        days, hours = divmod(hours, 24)
-
-        #takes a numerical time and what it corresponds to e.g. hours and return a string
-        def parse_time(time, time_type):
-            if time > 1:
-                return ' ' + str(time) + ' ' + time_type
-            elif time == 1:
-                return ' ' + str(time) + ' ' + time_type[:-1]
-            else:
-                return ''
-
-        seconds = parse_time(seconds, 'seconds')
-        minutes = parse_time(minutes, 'minutes')
-        hours = parse_time(hours, 'hours')
-        days = parse_time(days, 'days')
-
-        output = ":sleeping: I've been awake for{}{}{}{}".format(days, hours, minutes, seconds)
-        return Response(output)
         
     async def cmd_shitpost(self, channel):
         message = code.misc.shitpost()

@@ -2625,7 +2625,7 @@ With Hitler's dick"""
     async def cmd_toast(self, channel, author, message):
         over = False
         await self.send_typing(channel)
-        message = message.content.strip() 
+        message = message.content.strip()
         message = message.lower()
         if message == "/toast":
             message = message.replace("/","")
@@ -2802,9 +2802,21 @@ With Hitler's dick"""
         else:
             return Response("You arent my developer")
 
-    async def cmd_bug(self,channel,server,author):
+    async def cmd_bug(self,channel,server,author, message):
+        await self.send_typing(channel)
+
+        message = message.content.strip()
+        message = message.lower()
+        details = message.replace("/bug","")
+        details = message.replace(" ","")
+        if details == None:
+            dts = False
+            pass
+        else:
+            dts = True
+
         server = server.id
-        print (author)
+        print(author)
         try:
             bugged = open("bugged.txt", "r+")
         except:
@@ -2813,15 +2825,25 @@ With Hitler's dick"""
             bugged.close()
             bugged = open("bugged.txt", "r+")
         bugger = str(bugged.read())
+
         if server not in bugger: 
             try:
                 inv = await self.create_invite(server, max_uses=1, xkcd=True)
             except:
                 return Response("Youve removed one of my permissions. I recommend you go ask for help in my server (type /join)")
+
             print('bug Command on Server: {}'.format(server.name))
             servers = str(server.name)
             inv = str(inv)
-            msg = "Help Requested in " + servers + "\n " + inv
+            author = author.name
+            try:
+                msg = "Help Requested in " + servers + "by " + author + "\n Invite:  " + inv
+            except:
+                msg = "Help Requested in " + servers + "\n Invite:  " + inv
+            if dts == True:
+                details = str(details)
+                msg = msg  + " \n" + "Details: " + details
+
             guild_id = int(server.id)
             num_shards = 2
             shard_id = (guild_id >> 22) % num_shards
@@ -2838,103 +2860,11 @@ With Hitler's dick"""
             bugged.close()
             return Response('Bug reported. A dev will join your server to help soon')
         else:
-            return Response('Someoneone in your server has already reported a bug, you have to wait until they clear it.')
-
-    async def cmd_status(self, player):
-        x = True
-        while x == True:
-            channel = discord.Object(id='259802981262688267')
-            await self.purge_from(channel, limit=99999999999999)
-            try:
-                getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-                getversion = getversion.read()
-                version = getversion.split('|')
-                version = str(version[2])
-                version = version.strip()
-                gotversion = True
-            except:
-                gotversion = False
-            process = await asyncio.create_subprocess_shell(
-                'find /root/Toasty/audio_cache -type f | wc -l',
-                stdout=asyncio.subprocess.PIPE)
-            stdout, stderr = await process.communicate()
-            file_count = stdout.decode().strip()
-            file_count = str(file_count)
-            file_count = file_count + " songs cached \n"
-            num = int(0)
-            for server in self.servers:
-                for member in server.members:
-                    num = num + 1
-            num = str(num)
-            num = "This shard can see " + num + " people\n"
-            servercount = str(len(self.servers))
-            servercount = "This shard is currently in " + servercount + " servers \n"
-            if gotversion == True:
-                message = "Toasty version " + version +  " by DNA#6750 \n"
-                await self.safe_send_message(channel, message)
-            else:
-                await self.safe_send_message(channel, "Toasty by DNA#6750")
-                print("unable to obtain version number")
-            try:
-                process = await asyncio.create_subprocess_shell(
-                    "cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
-                stdout=asyncio.subprocess.PIPE)
-                stdout, stderr = await process.communicate()
-                uptime = stdout.decode().strip()
-                uptime = str(file_count)
-                uptime = code.misc.uptime()
-                uptime = "My host has been running for " + uptime + "\n"
-            except:
-                uptime = False
-                pass
-            activeplayers = sum(1 for p in self.players.values() if p.is_playing)
-            activeplayers = str(activeplayers)
-            p = "This shard is playing music in " + activeplayers + " servers \n"
-            print("commands complete, sending messages")
-            infomsg = "Type /donate to help run the bot\n"
-            infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
-            infomsg += "```py"
-            infomsg += "\n"
-            infomsg += file_count
-            infomsg += servercount
-            infomsg += p
-            infomsg += num
-            if uptime == False:
-                pass
-            else:
-                infomsg += uptime
-            infomsg += "```"
-            em = discord.Embed(description=infomsg, colour= (random.randint(0,16777215)))
-            em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
-            await self.send_message(channel, embed=em)
-            time.sleep(30)
-        
-
-    async def cmd_spy(self,channel,message,server,author):
-        message = message.content.strip()
-        message = message.replace("/spy ","")
-        sah = message
-        for servers in self.servers:
-            try:
-                if sah in servers.name:
-                    inv = await self.create_invite(servers, max_uses=5, xkcd=True)
-                    await self.safe_send_message((discord.Object(id='215202022260080640')), (inv))
-                else:
-                    pass
-            except:
-                pass
-        return Response("**failed**")
-
-    async def cmd_clearbug(self, message):
-        open('bugged.txt', 'w').close()
-        try:
-            await self.delete_message(message)
-        except:
-            pass
-        return Response("Bug file cleared :thumbsup:")
+            return Response('Someoneone in your server has already reported a bug, you have to wait until the devs clear it.')
         
 
     async def cmd_imgur(self, author, channel, message):
+        return Response("Sorry, Imgur had an API change that broke this command. My dev is looking for a solution")
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()
@@ -2970,14 +2900,15 @@ With Hitler's dick"""
             try:
                 img = giphypop.random_gif()
                 return Response(img.url)
-            except:
+            except Exception as e:
+                await self.safe_send_message((discord.Object(id='174918559539920897')), (e))
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
         else:
             try:
-                img = giphypop.translate(message)
+                img = str(giphypop.translate(message))
                 em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
                 em.set_author(name='GIF:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-                em.set_image(img.url)
+                em.set_image(img)
                 await self.send_message(channel, embed=em)
             except:
                 return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
@@ -2991,7 +2922,6 @@ With Hitler's dick"""
         text = text.replace('{"file":"','')
         text = text.replace('\/',"/")
         text = text.replace('"}',"")
-        return Response(text)
         em = discord.Embed(description=content, colour= (random.randint(0,16777215)))
         em.set_author(name='Cats :3:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
         em.set_image(text)

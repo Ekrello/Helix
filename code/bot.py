@@ -3062,6 +3062,7 @@ With Hitler's dick"""
             num = 20
         try:
             await self.purge_from(channel, limit=num)
+            return Response(":fire:"
         except:
             return Response("I can't purge, did you change my permissions?")
 

@@ -2735,7 +2735,7 @@ With Hitler's dick"""
             raise exceptions.TerminateSignal
 
     async def cmd_alert(self, channel, author, message):
-        if author.id == 174918559539920897 or 188378092631228418 or 195508130522595328:
+        if author.id == 174918559539920897:
             await self.send_typing(channel)
             message = message.content.strip()
             message = message.replace("/alert ", "Message from the devs: ")
@@ -2743,7 +2743,8 @@ With Hitler's dick"""
             info = "Notifying " + servercount + " servers... This may take a while"
             await self.send_message(channel, info)
             count = int(0)
-            for s in self.servers:
+            targets = self.servers
+            for s in targets:
                 try:
                     await self.send_message(s, message)
                     count = count + 1
@@ -2754,6 +2755,20 @@ With Hitler's dick"""
                     print("sent")
                 except:
                     pass
+            if count == 0 or count == None:
+                await self.send_message(channel, "Failed to use error clearing version, reverting to origional version")
+                for s in self.servers:
+                    try:
+                        await self.send_message(s, message)
+                        count = count + 1
+                        test = int(count % 50)
+                        if test == 0:
+                            msg = count + " messages sent"
+                            await self.send_message(author, msg)
+                        print("sent")
+                    except:
+                        pass
+
             return Response("Priority Message Sent")
 
     async def cmd_crash(self, channel):
@@ -2806,12 +2821,6 @@ With Hitler's dick"""
                 await self.safe_send_message(channel, "**Playlist generation commands updated**")
             except:
                 await self.safe_send_message(channel, "**GENRE.PY FAILED TO UPDATE**")
-                # try:
-                #    reload(code.extremist)
-                # except:
-                #    await self.safe_send_message(channel, "**EXTREMIST.PY FAILED TO UPDATE**")
-                #    lockdown(code.extremist)
-                # await self.safe_send_message(channel, "**EXTREMIST RELOADED**")
         else:
             return Response("You arent my developer")
 
@@ -2947,6 +2956,17 @@ With Hitler's dick"""
         content = "Cats :3"
         return Response(text)
 
+    async def cmd_dog(self, channel):
+        html = urllib.request.urlopen("http://random.dog").read()
+        soup = BeautifulSoup(html, "lxml")
+        imgs = soup.select('img')
+        img = str(imgs[0])
+        img = img.replace('<img src="', "")
+        img = img.replace("/>", "")
+        img = img.replace('"', "")
+        url = "http://random.dog/" + img
+        return Response(html)
+
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
         return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
@@ -3034,7 +3054,7 @@ With Hitler's dick"""
         await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
         await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
 
-    async def cmd_ul(self, channel):
+    async def cmd_updatelog(self, channel):
         try:
             getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
             getversion = getversion.read()
@@ -3044,22 +3064,25 @@ With Hitler's dick"""
             gotversion = True
         except:
             gotversion = False
-        if gotversion == True:
-            update = code.misc.update()
-            await self.safe_send_message((discord.Object(id='206821900154961920')),
-                                         ("Toasty version **" + version + "** info"))
-            await self.safe_send_message((discord.Object(id='206821900154961920')), (update))
-        else:
-            await self.safe_send_message((discord.Object(id='206821900154961920')), ("**Toasty update log**"))
 
-        await self.safe_send_message(channel, "**TWEETING**")
-        try:
-            update = "Update log:\n " + update
-            update = update.replace("*", "")
-            tweet = update
-            await self.twit(tweet)
-        except:
+        if gotversion == True:
+            msg = "**Toasty Version **" + version + "** info**"
+        else:
+            msg = None
             pass
+        try:
+            msg += "```"
+        except:
+            msg = "```"
+        msg += "\n"
+        update = code.misc.update()
+        update = "Log:\n" + update
+        msg = msg + update
+        msg += "```"
+        em = discord.Embed(description=msg, colour=(random.randint(0, 16777215)))
+        em.set_author(name='Update Log:',
+                      icon_url="http://www.procurementleaders.com/AcuCustom/Sitename/Icon/Icons/home-logged-out-icon07.svg")
+        await self.send_message(channel, embed=em)
 
     async def cmd_8ball(self, channel, message):
         await self.send_typing(channel)
@@ -3195,8 +3218,7 @@ With Hitler's dick"""
         infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
         infomsg += "https://discord.gg/6K5JkF5"
         em = discord.Embed(description=infomsg, colour=(random.randint(0, 16777215)))
-        em.set_author(name='Info:',
-                      icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        em.set_author(name='Info:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
         await self.send_message(channel, embed=em)
 
     async def cmd_shitpost(self, channel):

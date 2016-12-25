@@ -2965,7 +2965,7 @@ With Hitler's dick"""
         img = img.replace("/>", "")
         img = img.replace('"', "")
         url = "http://random.dog/" + img
-        return Response(html)
+        return Response(url)
 
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")

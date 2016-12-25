@@ -464,5 +464,8 @@ def update():
     update += "Updated /bug\n"
     update += "Debugged certain commands\n"
     update += "New message style\n"
-    update += "Shutdown 3 shards so we only use 1 now\n"
+    update += "Added more playlist generator commands\n"
+    update += "Added /compliment\n"
+    update += "Added /dog\n"
+    update += "Restored /updatelog\n"
     return update

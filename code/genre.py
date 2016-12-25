@@ -473,6 +473,7 @@ https://youtube.com/watch?v=2Y_33mzzLsA
     song_url = (text[random.randint(0,(len(text)))])
     return song_url
 
+
 def rock():
     import random
     text = """https://youtube.com/watch?v=pR30knJs4Xk
@@ -801,6 +802,7 @@ https://youtube.com/watch?v=kLoskF32tCU
     song_url = (text[random.randint(0,(len(text)))])
     return song_url
 
+
 def metal():
     import random
     text = """https://youtube.com/watch?v=Hj2vU2nr5Jw
@@ -1112,6 +1114,7 @@ https://youtube.com/watch?v=1RLFWhYydqE
     song_url = (text[random.randint(0,(len(text)))])
     return song_url
 
+
 def retro():
     import random
     text = """https://youtube.com/watch?v=c2orBsXp4HM
@@ -1404,6 +1407,7 @@ https://youtube.com/watch?v=dBgfMPLX4GA
     song_url = (text[random.randint(0,(len(text)))])
     return song_url
 
+
 def hiphop():
     import random
     text = """https://youtube.com/watch?v=jvEQD2pzPBY
@@ -1677,6 +1681,7 @@ https://youtube.com/watch?v=iZ1CWfcFO4c
     text = text.splitlines()
     song_url = (text[random.randint(0,(len(text)))])
     return song_url
+
 
 def christmas():
     import random

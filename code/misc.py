@@ -406,8 +406,8 @@ You coffin dodging oxygen thief.
 You’re like the top piece of bread. Everybody touches you, but nobody wants you.
 I treasure the time i don’t spend with you.
 What is that you are wearing? Looks like a dog took a shit on a knitted jumper.
-What's the different between you and Hitler? At least Hitler knew when to kill himself. 
-Don't play hard to get when you're hard to want. 
+What's the different between you and Hitler? At least Hitler knew when to kill himself.
+Don't play hard to get when you're hard to want.
 Your bacteria is the only culture you have.
 The only good thing to pull itself out of your mom's vagina was your dad's dick. Too bad it wasnt fast enough.
 I doubt that you could drown: fat floats.
@@ -422,6 +422,29 @@ The best part of you ran down your mother’s legs"""
     message = (text[random.randint(0, (len(text)) - 1)])
     return message
 
+
+def compliments():
+    import random
+    nice = """Your smile is contagious
+You look great today
+You're a smart cookie
+I bet you make babies smile
+You have impeccable manners
+I like your style
+You have the best laugh
+I appreciate you
+You are the most perfect you there is
+Your perspective is refreshing
+You're an awesome friend
+You light up the room
+You deserve a hug right now
+You should be proud of yourself
+You're more helpful than you realize
+You have a great sense of humour
+Is that your picture next to "charming" in the dictionary?"""
+    text = nice.splitlines()
+    message = (text[random.randint(0,(len(text))])
+    return message
 
 def uptime():
     from datetime import timedelta

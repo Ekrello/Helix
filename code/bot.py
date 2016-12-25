@@ -2445,8 +2445,16 @@ With Hitler's dick"""
         article = 'an' if insult_list[0][0] in vowels else 'a'
         return Response('%s, thou art %s %s, %s %s.' % (user, article, insult_list[0], insult_list[1], insult_list[2]))
 
-    async def cmd_savage(self, channel, message, author):
+    async def cmd_savage(self, message):
         msg = code.misc.savage()
+        try:
+            await self.delete_message(message)
+        except:
+            pass
+        return Response(msg)
+
+    async def cmd_compliment(self, message):
+        msg = code.misc.compliments()
         try:
             await self.delete_message(message)
         except:
@@ -3315,7 +3323,59 @@ With Hitler's dick"""
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
         for i in range(size):
-            song_url = code.hiphop()
+            song_url = code.genre.hiphop()
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
+            try:
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e)
+        await self.safe_send_message(channel, "All done, enjoy")
+
+    async def cmd_classical(self, channel, player, author):
+        size = int(20)
+        await self.safe_send_message(channel, "Right give me a sec while i make a classical playlist")
+        for i in range(size):
+            song_url = code.genre.classical()
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
+            try:
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e)
+        await self.safe_send_message(channel, "All done, enjoy")
+
+    async def cmd_christmas(self, channel, player, author):
+        size = int(20)
+        await self.safe_send_message(channel, "Right give me a sec while i make a christmas playlist")
+        for i in range(size):
+            song_url = code.genre.christmas()
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
+            try:
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e)
+        await self.safe_send_message(channel, "All done, enjoy")
+
+    async def cmd_japanese(self, channel, player, author):
+        size = int(20)
+        await self.safe_send_message(channel, "Right give me a sec while i make a japanese playlist")
+        for i in range(size):
+            song_url = code.genre.japanese()
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
+            try:
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e)
+        await self.safe_send_message(channel, "All done, enjoy")
+
+    async def cmd_jazz(self, channel, player, author):
+        size = int(20)
+        await self.safe_send_message(channel, "Right give me a sec while i make a jazz playlist")
+        for i in range(size):
+            song_url = code.genre.jazz()
             info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
                                                            process=False)
             try:

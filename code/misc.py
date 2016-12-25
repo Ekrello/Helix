@@ -443,7 +443,7 @@ You're more helpful than you realize
 You have a great sense of humour
 Is that your picture next to "charming" in the dictionary?"""
     text = nice.splitlines()
-    message = (text[random.randint(0,(len(text))])
+    message = (text[random.randint(0, (len(text)))])
     return message
 
 def uptime():

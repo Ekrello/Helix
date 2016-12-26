@@ -2450,7 +2450,7 @@ With Hitler's dick"""
         message = message.content.strip()
         message = message.lower()
         length = len(message)
-        if length < 8:
+        if length < 10:
             return Response("You need to specify a location, e.g. ```/weather London, UK```")
         else:
             location = message.replace("/weather ", "")

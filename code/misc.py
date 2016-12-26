@@ -470,6 +470,7 @@ def update():
     update += "Restored /updatelog\n"
     return update
 
+
 def weather(location):
     try:
         import pyowm
@@ -490,14 +491,14 @@ def weather(location):
         return output
 
     cache = LRUCache()
-    api_key = "redacted"
+    api_key = "1f6b67d5e531ea940dde7155e87b9c76"
     length = len(api_key)
     if api_key == None or length < 4 or api_key == "redacted":
         return("There isnt a valid api key in my code, please get one here: https://home.openweathermap.org/users/sign_up")
     else:
         owm = pyowm.OWM(API_key=api_key)
 
-    location = input("Where are you? ")
+    location = location
     length = len(location)
     if location == None or length < 3:
         return("location error")

@@ -2826,7 +2826,7 @@ With Hitler's dick"""
         raise exceptions.TerminateSignal
 
     async def cmd_silentupdate(self, channel, author):
-        if author.id == "174918559539920897":
+        if author.id == "174918559539920897" or "216840311232528384":
             await self.safe_send_message(channel, "Better start coding then, hold on a sec :computer:")
             os.system("git pull origin dev")
             await self.disconnect_all_voice_clients()

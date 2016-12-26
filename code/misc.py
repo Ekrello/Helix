@@ -512,7 +512,7 @@ def weather(location):
 
     status = w.get_detailed_status()
     sunrise = str(w.get_sunrise_time('iso'))
-    sunset = str(w.get_sunset_time())
+    sunset = str(w.get_sunset_time('iso'))
 
     fc = owm.daily_forecast(location, limit=1)
 

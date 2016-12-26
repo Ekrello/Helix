@@ -2453,7 +2453,7 @@ With Hitler's dick"""
         if length < 8:
             return Response("You need to specify a location, e.g. ```/weather London, UK```")
         else:
-            location = message.replace("/weather ")
+            location = message.replace("/weather ", "")
             try:
                 msg = code.misc.weather(location)
                 if msg == "module failure":

@@ -479,17 +479,6 @@ def weather(location):
         return "module failure"
     from pyowm.caches.lrucache import LRUCache
 
-    def output(location, status, temp, wind, humid, sunrise, sunset, forecast):
-        output = "Weather in " + location + ": " + status + "\n\n"
-        output += "Temperature: " + temp + "\n"
-        output += "Wind: " + wind + "\n"
-        output += "Humidity: " + humid + "\n"
-        output += "Sunrise: " + sunrise + "\n"
-        output += "Sunset: " + sunset + "\n"
-        output += "\n\n"
-        output += forecast
-        return output
-
     cache = LRUCache()
     api_key = "1f6b67d5e531ea940dde7155e87b9c76"
     length = len(api_key)
@@ -560,4 +549,12 @@ def weather(location):
     if storm:
         forecast += "there will be a storm today, "
 
-    output(location, status, temp, wind, humid, sunrise, sunset, forecast)
+    output = "Weather in " + location + ": " + status + "\n\n"
+    output += "Temperature: " + temp + "\n"
+    output += "Wind: " + wind + "\n"
+    output += "Humidity: " + humid + "\n"
+    output += "Sunrise: " + sunrise + "\n"
+    output += "Sunset: " + sunset + "\n"
+    output += "\n\n"
+    output += forecast
+    return output

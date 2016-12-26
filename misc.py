@@ -44,6 +44,7 @@ def helputility():
     helpmsg2 += "/urban           <--Urban Dictionary\n"
     helpmsg2 += "/gif[word        <--Giphy\n"
     helpmsg2 += "/cat             <--I want to see cats, and i want them now\n"
+	helpmsg2 += "/meme             <--Generates a random meme\n"
     helpmsg2 += "/dog             <--Give me my doggo\n"
     helpmsg2 += "/server          <--Server Info\n"
     helpmsg2 += "```"

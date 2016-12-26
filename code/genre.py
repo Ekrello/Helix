@@ -799,7 +799,7 @@ https://youtube.com/watch?v=zueQ7Hz7l8s
 https://youtube.com/watch?v=kLoskF32tCU
 """
     text = text.splitlines()
-    song_url = (text[random.randint(0,(len(text)))])
+    song_url = (text[random.randint(0,((len(text))-1))])
     return song_url
 
 
@@ -1111,7 +1111,7 @@ https://youtube.com/watch?v=RdyExxpd3Pg
 https://youtube.com/watch?v=1RLFWhYydqE
 """
     text = text.splitlines()
-    song_url = (text[random.randint(0,(len(text)))])
+    song_url = (text[random.randint(0,((len(text))-1))])
     return song_url
 
 
@@ -1404,7 +1404,7 @@ https://youtube.com/watch?v=xLsuam9o9BA
 https://youtube.com/watch?v=dBgfMPLX4GA
 """
     text = text.splitlines()
-    song_url = (text[random.randint(0,(len(text)))])
+    song_url = (text[random.randint(0,((len(text))-1))])
     return song_url
 
 
@@ -1679,7 +1679,7 @@ https://youtube.com/watch?v=8R5T2pkjCdM
 https://youtube.com/watch?v=iZ1CWfcFO4c
 """
     text = text.splitlines()
-    song_url = (text[random.randint(0,(len(text)))])
+    song_url = (text[random.randint(0,((len(text))-1))])
     return song_url
 
 
@@ -1896,7 +1896,7 @@ https://www.youtube.com/watch?v&#x3D;MrJWl6QSzNk
 https://www.youtube.com/watch?v&#x3D;tR_LwFSDDuw
 https://www.youtube.com/watch?v&#x3D;7NyyMc9ytxU"""
     text = text.splitlines()
-    song_url = (text[random.randint(0, (len(text)))])
+    song_url = (text[random.randint(0,((len(text))-1))])
     return song_url
 
 def jazz():

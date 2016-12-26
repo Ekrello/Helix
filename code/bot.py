@@ -2445,7 +2445,7 @@ With Hitler's dick"""
         article = 'an' if insult_list[0][0] in vowels else 'a'
         return Response('%s, thou art %s %s, %s %s.' % (user, article, insult_list[0], insult_list[1], insult_list[2]))
 
-    async def cmd_weather(self, message):
+    async def cmd_weather(self, message, channel):
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()

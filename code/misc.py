@@ -73,7 +73,7 @@ def helpchat():
     helpmsg4 += "/8ball[question]   <--Magic 8-ball\n"
     helpmsg4 += "/shitpost          <--A random shitpost message\n"
     helpmsg4 += "/flip              <--Flip coins...and something else\n"
-    helpmsg4 += "/weather [location] <--weather where you are\n"
+    helpmsg4 += "/weather [location]<--weather where you are\n"
     helpmsg4 += "```"
     return helpmsg4
 
@@ -528,10 +528,8 @@ def weather(location):
     forecast = "The following is predicted today:\n"
     if hurricane:
         forecast = "**A HURRICANE IS PREDICTED TODAY**"
-        output(location, status, temp, wind, humid, sunrise, sunset, forecast)
     if tornado:
         forecast = "**A TORNADO IS PREDICTED TODAY**"
-        output(location, status, temp, wind, humid, sunrise, sunset, forecast)
     if clouds:
         forecast += "it will be cloudy, "
     if rain:

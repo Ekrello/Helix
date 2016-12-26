@@ -1860,6 +1860,7 @@ With Hitler's dick"""
                 or permissions.instaskip \
                 or author == player.current_entry.meta.get('author', None) \
                 or rolez == True:
+            await self.safe_send_message(channel, "Insta-skip override...")
             player.skip()  # check autopause stuff here
             await self._manual_delete_check(message)
             return

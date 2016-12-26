@@ -2445,6 +2445,27 @@ With Hitler's dick"""
         article = 'an' if insult_list[0][0] in vowels else 'a'
         return Response('%s, thou art %s %s, %s %s.' % (user, article, insult_list[0], insult_list[1], insult_list[2]))
 
+    async def cmd_weather(self, message):
+        await self.send_typing(channel)
+        message = message.content.strip()
+        message = message.lower()
+        length = len(message)
+        if length < 8:
+            return Response("You need to specify a location, e.g. ```/weather London, UK```")
+        else:
+            location = message.replace("/weather ")
+            try:
+                msg = code.misc.weather(location)
+                if msg == "module failure":
+                    return Response("Module failure, contact the devs via '/bug weather failure'")
+                return Response(msg)
+                if msg == "There isnt a valid api key in my code, please get one here: https://home.openweathermap.org/users/sign_up":
+                    return Response("Module failure, contact the devs via '/bug weather api failure'")
+                if msg == "location error":
+                    return Response("Something was wrong with the location you gave me :confused:")
+            except:
+                return Response("/weather failed to fetch weather data, check your inputted location if that doesnt work, type /bug")
+
     async def cmd_savage(self, message):
         msg = code.misc.savage()
         try:

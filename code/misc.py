@@ -469,3 +469,94 @@ def update():
     update += "Added /dog\n"
     update += "Restored /updatelog\n"
     return update
+
+def weather(location):
+    try:
+        import pyowm
+    except:
+        print("The module PYOWM, is not installed on this system, please install it")
+        return "module failure"
+    from pyowm.caches.lrucache import LRUCache
+
+    def output(location, status, temp, wind, humid, sunrise, sunset, forecast):
+        output = "Weather in " + location + ": " + status + "\n\n"
+        output += "Temperature: " + temp + "\n"
+        output += "Wind: " + wind + "\n"
+        output += "Humidity: " + humid + "\n"
+        output += "Sunrise: " + sunrise + "\n"
+        output += "Sunset: " + sunset + "\n"
+        output += "\n\n"
+        output += forecast
+        return output
+
+    cache = LRUCache()
+    api_key = "redacted"
+    length = len(api_key)
+    if api_key == None or length < 4 or api_key == "redacted":
+        return("There isnt a valid api key in my code, please get one here: https://home.openweathermap.org/users/sign_up")
+    else:
+        owm = pyowm.OWM(API_key=api_key)
+
+    location = input("Where are you? ")
+    length = len(location)
+    if location == None or length < 3:
+        return("location error")
+
+    observation = owm.weather_at_place(location)
+    w = observation.get_weather()
+
+    humid = str(w.get_humidity())
+    humid = humid + "%"
+
+    temp = w.get_temperature('celsius')
+    tmin = str(temp['temp_min'])
+    tmin = "Minimum: " + tmin + "°C"
+    tmax = str(temp['temp_max'])
+    tmax = "Maximum: " + tmax + "°C"
+    temp = str(temp['temp'])
+    temp = "Current: " + temp + "°C"
+    temp = temp + "   " + tmin + "   " + tmax
+
+    wind = w.get_wind()
+    speed = str(wind['speed'])
+    speed = "Speed: " + speed + "mph"
+    dir = str(wind['deg'])
+    dir = "Direction: " + dir + "°"
+    wind = speed + "   " + dir
+
+    status = w.get_detailed_status()
+    sunrise = str(w.get_sunrise_time('iso'))
+    sunset = str(w.get_sunset_time())
+
+    fc = owm.daily_forecast(location, limit=1)
+
+    clouds = fc.will_have_clouds()
+    rain = fc.will_have_rain()
+    sun = fc.will_have_sun()
+    fog = fc.will_have_fog()
+    snow = fc.will_have_snow()
+    hurricane = fc.will_have_hurricane()
+    storm = fc.will_have_storm()
+    tornado = fc.will_have_tornado()
+
+    forecast = "The following is predicted today:\n"
+    if hurricane:
+        forecast = "**A HURRICANE IS PREDICTED TODAY**"
+        output(location, status, temp, wind, humid, sunrise, sunset, forecast)
+    if tornado:
+        forecast = "**A TORNADO IS PREDICTED TODAY**"
+        output(location, status, temp, wind, humid, sunrise, sunset, forecast)
+    if clouds:
+        forecast += "it will be cloudy, "
+    if rain:
+        forecast += "it will rain, "
+    if sun:
+        forecast += "it will be sunny ^-^, "
+    if fog:
+        forecast += "it will be foggy, "
+    if snow:
+        forecast += "it will snow today, "
+    if storm:
+        forecast += "there will be a storm today, "
+
+    output(location, status, temp, wind, humid, sunrise, sunset, forecast)

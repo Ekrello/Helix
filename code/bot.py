@@ -451,7 +451,7 @@ class MusicBot(discord.Client):
 
             if not vc:
                 log.critical("Voice client is unable to connect, restarting...")
-                await self.restart()
+                await self.safe_send_message(channel, "Sorry i cant join your voice channel, type /bug")
 
             log.debug("Connected in {:0.1f}s".format(t1 - t0))
             log.info("Connected to {}/{}".format(channel.server, channel))

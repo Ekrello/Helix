@@ -3,6 +3,7 @@ def helpmusic():
     helpmsg1 += "===Music===\n"
     helpmsg1 += "/play [song name or url]\n"
     helpmsg1 += "/search [song name]\n"
+    helpmsg1 += "/volume [number]   <--Volume control\n"
     helpmsg1 += "/stream            <--Play a stream\n"
     helpmsg1 += "/skip              <--Skips the song?\n"
     helpmsg1 += "/pause             <--Pauses the song\n"

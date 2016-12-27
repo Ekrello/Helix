@@ -2765,40 +2765,25 @@ With Hitler's dick"""
             raise exceptions.TerminateSignal
 
     async def cmd_alert(self, channel, author, message):
-        if author.id == 174918559539920897:
+        if author.id == 174918559539920897 or 188378092631228418 or 195508130522595328:
             await self.send_typing(channel)
-            message = message.content.strip()
-            message = message.replace("/alert ", "Message from the devs: ")
+            message = message.content.strip() 
+            message = message.replace("/alert ","Message from the devs: ")
             servercount = str(len(self.servers))
             info = "Notifying " + servercount + " servers... This may take a while"
             await self.send_message(channel, info)
             count = int(0)
-            targets = self.servers
-            for s in targets:
+            for s in self.servers:
                 try:
                     await self.send_message(s, message)
                     count = count + 1
-                    test = int(count % 50)
+                    test = int(count%50)
                     if test == 0:
                         msg = count + " messages sent"
                         await self.send_message(author, msg)
                     print("sent")
                 except:
                     pass
-            if count == 0 or count == None:
-                await self.send_message(channel, "Failed to use error clearing version, reverting to origional version")
-                for s in self.servers:
-                    try:
-                        await self.send_message(s, message)
-                        count = count + 1
-                        test = int(count % 50)
-                        if test == 0:
-                            msg = count + " messages sent"
-                            await self.send_message(author, msg)
-                        print("sent")
-                    except:
-                        pass
-
             return Response("Priority Message Sent")
 
     async def cmd_crash(self, channel):

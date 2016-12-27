@@ -2773,7 +2773,7 @@ With Hitler's dick"""
             info = "Notifying " + servercount + " servers... This may take a while"
             await self.send_message(channel, info)
             count = int(0)
-            for s in self.servers:
+            for s in list(self.servers):
                 try:
                     await self.send_message(s, message)
                     count = count + 1

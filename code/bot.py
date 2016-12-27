@@ -552,9 +552,7 @@ class MusicBot(discord.Client):
 
             if server.id not in self.players:
                 if not create:
-                    raise exceptions.CommandError(
-                        'Im not in a voice channel.  '
-                        'Use %sspawn to spawn me to your voice channel.' % self.config.command_prefix)
+                    return Response('Im not in a voice channel.\n Use %sspawn to spawn me to your voice channel.' % self.config.command_prefix)
 
                 voice_client = await self.get_voice_client(channel)
 
@@ -1726,8 +1724,7 @@ With Hitler's dick"""
         activeplayers = sum(1 for p in self.players.values() if p.is_playing)
         activeplayers = int(activeplayers)
         if activeplayers == 32:
-            return Response(
-                "Unable to join voice channel. Because of server load my maximum voice channel limit is 32. Any higher will degrade audio quality. If you want to help remove this limit, type /donate so we can get better hardware")
+            return Response("Unable to join voice channel. Because of server load my maximum voice channel limit is 32. Any higher will degrade audio quality. If you want to help remove this limit, type /donate so we can get better hardware")
         if not author.voice_channel:
             raise exceptions.CommandError('You are not in a voice channel!')
 
@@ -1739,8 +1736,7 @@ With Hitler's dick"""
             chperms = permissions_in(author.voice_channel)
             if not chperms.speak:
                 log.warning("Will not join channel \"{}\", no permission to speak.".format(author.voice_channel.name))
-                return Response(
-                    "```Will not join channel \"{}\", no permission to speak.```".format(author.voice_channel.name),
+                return Response("```Will not join channel \"{}\", no permission to speak.```".format(author.voice_channel.name),
                     delete_after=25
                 )
         except:

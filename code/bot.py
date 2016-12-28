@@ -1078,8 +1078,7 @@ def _cleanup(self):
 
         # maybe option to leave the ownerid blank and generate a random command for the owner to use
         # wait_for_message is pretty neato
-
-    await self._join_startup_channels(autojoin_channels, autosummon=self.config.auto_summon)
+        await self._join_startup_channels(autojoin_channels, autosummon=self.config.auto_summon)
 
     async def cmd_help(self, author, channel, command=None):
         """

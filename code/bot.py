@@ -117,7 +117,7 @@ class MusicBot(discord.Client):
         async def wrapper(self, *args, **kwargs):
             await self._cache_app_info()
             return await func(self, *args, **kwargs)
-        return wrappe
+        return wrapper
 
     def _get_owner(self, *, server=None, voice=False):
             return discord.utils.find(

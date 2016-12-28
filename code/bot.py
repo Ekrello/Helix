@@ -3585,9 +3585,12 @@ With Hitler's dick"""
                 await self.safe_send_message(message.channel, '```\n{}\n```'.format(traceback.format_exc()))
 
         finally:
-            if not sentmsg and not response and self.config.delete_invoking:
-                await asyncio.sleep(5)
-                await self.safe_delete_message(message, quiet=True)
+            try:
+                if not sentmsg and not response and self.config.delete_invoking:
+                    await asyncio.sleep(5)
+                    await self.safe_delete_message(message, quiet=True)
+            except:
+                pass
                 
     async def on_voice_state_update(self, before, after):
         if not self.init_ok:

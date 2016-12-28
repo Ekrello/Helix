@@ -3427,8 +3427,7 @@ With Hitler's dick"""
         if self.config.bound_channels and message.channel.id not in self.config.bound_channels and not message.channel.is_private:
             return  # if I want to log this I just move it under the prefix check
 
-        command, *args = message_content.split(
-            ' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
+        command, *args = message_content.split(' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
         command = command[len(self.config.command_prefix):].lower().strip()
 
         handler = getattr(self, 'cmd_' + command, None)
@@ -3436,9 +3435,8 @@ With Hitler's dick"""
             return
 
         if message.channel.is_private:
-            if not (
-                                                                                        message.author.id == self.config.owner_id and command == 'joinserver' or 'savage' or 'shitpost' or 'urban' or 'google' or 'lmgtfy' or 'cat' or 'feature' or 'supported' or 'gif' or 'ping' or 'vicky' or 'flip' or '8ball' or 'toast' or 'donate' or 'join' or 'id'):
-                await self.send_message(message.channel, 'https://goo.gl/rdbPKI')
+            if not (message.author.id == self.config.owner_id and command == 'joinserver'):
+                await self.send_message(message.channel, 'You cannot use this bot in private messages.')
                 return
 
         if message.author.id in self.blacklist and message.author.id != self.config.owner_id:
@@ -3590,7 +3588,7 @@ With Hitler's dick"""
             if not sentmsg and not response and self.config.delete_invoking:
                 await asyncio.sleep(5)
                 await self.safe_delete_message(message, quiet=True)
-
+                
     async def on_voice_state_update(self, before, after):
         if not self.init_ok:
             return  # Ignore stuff before ready

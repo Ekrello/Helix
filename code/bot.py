@@ -1185,6 +1185,23 @@ With Hitler's dick"""
         return Response(":thumbsup:")
 
     async def cmd_blacklist(self, message, user_mentions, option, something):
+        if server.id == "206794668736774155": #Toastys server
+            print("Server is correct")
+            perms = author.permissions_in(channel)
+            for role in author.roles:
+                try:
+                    if perms.administrator or perms.manage_server or perms.manage_channels: #Devs, Tech support
+                        usage = True
+                    else:
+                        return Response("You cant use this command")
+                except:
+                    await self.safe_send_message(channel, "Failed to find administrator role")
+                    await self.safe_send_message(channel, perms)
+        else:
+            if author.id == "174918559539920897":
+                pass
+            else:
+                return Response("You cant use this command")
         """
         Usage:
             {command_prefix}blacklist [ + | - | add | remove ] @UserName [@UserName2 ...]
@@ -2839,7 +2856,24 @@ With Hitler's dick"""
         else:
             return Response("You arent my developer")
 
-    async def cmd_clearbug(self):
+    async def cmd_clearbug(self, author,server):
+        if server.id == "206794668736774155": #Toastys server
+            print("Server is correct")
+            perms = author.permissions_in(channel)
+            for role in author.roles:
+                try:
+                    if perms.administrator or perms.manage_server or perms.manage_channels: #Devs, Tech support
+                        usage = True
+                    else:
+                        return Response("You cant use this command")
+                except:
+                    await self.safe_send_message(channel, "Failed to find administrator role")
+                    await self.safe_send_message(channel, perms)
+        else:
+            if author.id == "174918559539920897":
+                pass
+            else:
+                return Response("You cant use this command")
         open('bugged.txt', 'w').close()
         return Response(":thumbsup:")
 

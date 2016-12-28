@@ -1131,7 +1131,7 @@ With Hitler's dick"""
         # maybe option to leave the ownerid blank and generate a random command for the owner to use
         # wait_for_message is pretty neato
 
-			
+            
 
         # t-t-th-th-that's all folks!
 
@@ -2983,7 +2983,7 @@ With Hitler's dick"""
         return Response(url)
 
     async def cmd_doge(self, message):
-		msg = message.content.strip()
+        msg = message.content.strip()
         msg = msg.replace("/doge", "")
         if msg ==  " " or "" or None:
             return Response("You need to say something after /doge")
@@ -2997,13 +2997,13 @@ With Hitler's dick"""
                     inputs += variable
                 except:
                     inputs = variable
-            	count = count + 1
-          	inputs = inputs.rstrip('/')
+                count = count + 1
+            inputs = inputs.rstrip('/')
 
             url = "http://dogr.io/" + inputs + ".png"
 
             return Response(url)
-	
+    
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
         return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")

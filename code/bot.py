@@ -80,52 +80,7 @@ class MusicBot(discord.Client):
 
         super().__init__()
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
-        self.http.user_agent += ' MusicBot/%s' % BOTVERSION
-
-def __init__(self, config_file=None, perms_file=None):
-    if config_file is None:
-        config_file = ConfigDefaults.options_file
-
-    if perms_file is None:
-        perms_file = PermissionsDefaults.perms_file
-
-    self.players = {}
-    self.exit_signal = None
-    self.init_ok = False
-    self.cached_app_info = None
-    self.last_status = None
-
-    self.config = Config(config_file)
-    self.permissions = Permissions(perms_file, grant_all=[self.config.owner_id])
-
-    self.blacklist = set(load_file(self.config.blacklist_file))
-    self.autoplaylist = load_file(self.config.auto_playlist_file)
-
-    self.aiolocks = defaultdict(asyncio.Lock)
-    self.downloader = downloader.Downloader(download_folder='audio_cache')
-
-    self._setup_logging()
-
-    if not self.autoplaylist:
-        log.warning("Autoplaylist is empty, disabling.")
-        self.config.auto_playlist = False
-    else:
-        log.info("Loaded autoplaylist with {} entries".format(len(self.autoplaylist)))
-
-    if self.blacklist:
-        log.debug("Loaded blacklist with {} entries".format(len(self.blacklist)))
-
-    # TODO: Do these properly
-    ssd_defaults = {
-        'last_np_msg': None,
-        'auto_paused': False,
-        'availability_paused': False
-    }
-    self.server_specific_data = defaultdict(ssd_defaults.copy)
-
-    super().__init__()
-    self.aiosession = aiohttp.ClientSession(loop=self.loop)
-    self.http.user_agent += 'Toasty 1.5'
+        self.http.user_agent += 'Toasty 1.5'
 
     def __del__(self):
         try:

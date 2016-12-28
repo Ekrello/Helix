@@ -916,7 +916,8 @@ def _cleanup(self):
 # noinspection PyMethodOverriding
 def run(self):
     try:
-        self.loop.run_until_complete(self.start(logmein.token()))
+        token = logmein.token()
+        self.loop.run_until_complete(self.start(token))
 
     except discord.errors.LoginFailure:
         # Add if token, else

@@ -1,5 +1,5 @@
 allow_requests = True
-import logmein
+
 import os, sys, time, shlex, shutil,random, inspect, logging, asyncio, pathlib, traceback
 import aiohttp, discord, colorlog
 
@@ -19,7 +19,7 @@ from functools import wraps
 from textwrap import dedent
 from datetime import timedelta
 from collections import defaultdict
-
+import logmein
 from . import downloader
 from . import exceptions
 from .config import Config, ConfigDefaults
@@ -894,190 +894,190 @@ def _cleanup(self):
 
 
 # noinspection PyMethodOverriding
-def run(self):
-    try:
-        token = logmein.token()
-        self.loop.run_until_complete(self.start(token))
-
-    except discord.errors.LoginFailure:
-        # Add if token, else
-        raise exceptions.HelpfulError(
-            "Bot cannot login, bad credentials.",
-            "Fix your %s in the options file.  "
-            "Remember that each field should be on their own line."
-            % ['shit', 'Token', 'Email/Password', 'Credentials'][len(self.config.auth)]
-        )  # ^^^^ In theory self.config.auth should never have no items
-
-    finally:
+    def run(self):
         try:
-            self._cleanup()
-        except Exception:
-            log.error("Error in cleanup", exc_info=True)
+            self.loop.run_until_complete(self.start(logmein.token()))
 
-        self.loop.close()
-        if self.exit_signal:
+        except discord.errors.LoginFailure:
+            # Add if token, else
+            raise exceptions.HelpfulError(
+                "Bot cannot login, bad credentials.",
+                "Fix your %s in the options file.  "
+                "Remember that each field should be on their own line."
+                % ['shit', 'Token', 'Email/Password', 'Credentials'][len(self.config.auth)]
+            )  # ^^^^ In theory self.config.auth should never have no items
+
+        finally:
+            try:
+                self._cleanup()
+            except Exception:
+                log.error("Error in cleanup", exc_info=True)
+
+            self.loop.close()
+            if self.exit_signal:
+                raise self.exit_signal
             raise self.exit_signal
 
 
-async def logout(self):
-    await self.disconnect_all_voice_clients()
-    return await super().logout()
+    async def logout(self):
+        await self.disconnect_all_voice_clients()
+        return await super().logout()
 
 
-async def on_error(self, event, *args, **kwargs):
-    ex_type, ex, stack = sys.exc_info()
+    async def on_error(self, event, *args, **kwargs):
+        ex_type, ex, stack = sys.exc_info()
 
-    if ex_type == exceptions.HelpfulError:
-        log.error("Exception in {}:\n{}".format(event, ex.message))
+        if ex_type == exceptions.HelpfulError:
+            log.error("Exception in {}:\n{}".format(event, ex.message))
 
-        await asyncio.sleep(2)  # don't ask
-        await self.logout()
+            await asyncio.sleep(2)  # don't ask
+            await self.logout()
 
-    elif issubclass(ex_type, exceptions.Signal):
-        self.exit_signal = ex_type
-        await self.logout()
+        elif issubclass(ex_type, exceptions.Signal):
+            self.exit_signal = ex_type
+            await self.logout()
 
-    else:
-        log.error("Exception in {}".format(event), exc_info=True)
-
-
-async def on_resumed(self):
-    log.info("\nReconnected to discord.\n")
+        else:
+            log.error("Exception in {}".format(event), exc_info=True)
 
 
-async def on_ready(self):
-    dlogger = logging.getLogger('discord')
-    for h in dlogger.handlers:
-        if getattr(h, 'terminator', None) == '':
-            dlogger.removeHandler(h)
-            print()
+    async def on_resumed(self):
+        log.info("\nReconnected to discord.\n")
 
-    log.debug("Connection established, ready to go.")
 
-    self.ws._keep_alive.name = 'Gateway Keepalive'
+    async def on_ready(self):
+        dlogger = logging.getLogger('discord')
+        for h in dlogger.handlers:
+            if getattr(h, 'terminator', None) == '':
+                dlogger.removeHandler(h)
+                print()
 
-    if self.init_ok:
-        log.debug("Received additional READY event, may have failed to resume")
-        return
+        log.debug("Connection established, ready to go.")
 
-    await self._on_ready_sanity_checks()
-    print()
+        self.ws._keep_alive.name = 'Gateway Keepalive'
 
-    log.info('Connected!  Toasty v{}\n'.format(BOTVERSION))
+        if self.init_ok:
+            log.debug("Received additional READY event, may have failed to resume")
+            return
 
-    self.init_ok = True
+        await self._on_ready_sanity_checks()
+        print()
 
-    ################################
+        log.info('Connected!  Toasty v{}\n'.format(BOTVERSION))
 
-    log.info("Bot:   {0}/{1}#{2}{3}".format(
-        self.user.id,
-        self.user.name,
-        self.user.discriminator,
-        ' [BOT]' if self.user.bot else ' [Userbot]'
-    ))
+        self.init_ok = True
 
-    owner = self._get_owner(voice=True) or self._get_owner()
-    if owner and self.servers:
-        log.info("Owner: {0}/{1}#{2}\n".format(
-            owner.id,
-            owner.name,
-            owner.discriminator
+        ################################
+
+        log.info("Bot:   {0}/{1}#{2}{3}".format(
+            self.user.id,
+            self.user.name,
+            self.user.discriminator,
+            ' [BOT]' if self.user.bot else ' [Userbot]'
         ))
 
-        log.info('Server List:')
-        [log.info(' - ' + s.name) for s in self.servers]
+        owner = self._get_owner(voice=True) or self._get_owner()
+        if owner and self.servers:
+            log.info("Owner: {0}/{1}#{2}\n".format(
+                owner.id,
+                owner.name,
+                owner.discriminator
+            ))
 
-    elif self.servers:
-        log.warning("Owner could not be found on any server (id: %s)\n" % self.config.owner_id)
+            log.info('Server List:')
+            [log.info(' - ' + s.name) for s in self.servers]
 
-        log.info('Server List:')
-        [log.info(' - ' + s.name) for s in self.servers]
+        elif self.servers:
+            log.warning("Owner could not be found on any server (id: %s)\n" % self.config.owner_id)
 
-    else:
-        log.warning("Owner unknown, bot is not on any servers.")
-        if self.user.bot:
-            log.warning(
-                "To make the bot join a server, paste this link in your browser. \n"
-                "Note: You should be logged into your main account and have \n"
-                "manage server permissions on the server you want the bot to join.\n"
-                "  " + await self.generate_invite_link()
-            )
+            log.info('Server List:')
+            [log.info(' - ' + s.name) for s in self.servers]
 
-    print(flush=True)
-
-    if self.config.bound_channels:
-        chlist = set(self.get_channel(i) for i in self.config.bound_channels if i)
-        chlist.discard(None)
-
-        invalids = set()
-        invalids.update(c for c in chlist if c.type == discord.ChannelType.voice)
-
-        chlist.difference_update(invalids)
-        self.config.bound_channels.difference_update(invalids)
-
-        if chlist:
-            log.info("Bound to text channels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
         else:
-            print("Not bound to any text channels")
-
-        if invalids and self.config.debug_mode:
-            print(flush=True)
-            log.info("Not binding to voice channels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+            log.warning("Owner unknown, bot is not on any servers.")
+            if self.user.bot:
+                log.warning(
+                    "To make the bot join a server, paste this link in your browser. \n"
+                    "Note: You should be logged into your main account and have \n"
+                    "manage server permissions on the server you want the bot to join.\n"
+                    "  " + await self.generate_invite_link()
+                )
 
         print(flush=True)
 
-    else:
-        log.info("Not bound to any text channels")
+        if self.config.bound_channels:
+            chlist = set(self.get_channel(i) for i in self.config.bound_channels if i)
+            chlist.discard(None)
 
-    if self.config.autojoin_channels:
-        chlist = set(self.get_channel(i) for i in self.config.autojoin_channels if i)
-        chlist.discard(None)
+            invalids = set()
+            invalids.update(c for c in chlist if c.type == discord.ChannelType.voice)
 
-        invalids = set()
-        invalids.update(c for c in chlist if c.type == discord.ChannelType.text)
+            chlist.difference_update(invalids)
+            self.config.bound_channels.difference_update(invalids)
 
-        chlist.difference_update(invalids)
-        self.config.autojoin_channels.difference_update(invalids)
+            if chlist:
+                log.info("Bound to text channels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
+            else:
+                print("Not bound to any text channels")
 
-        if chlist:
-            log.info("Autojoining voice chanels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
+            if invalids and self.config.debug_mode:
+                print(flush=True)
+                log.info("Not binding to voice channels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+
+            print(flush=True)
+
+        else:
+            log.info("Not bound to any text channels")
+
+        if self.config.autojoin_channels:
+            chlist = set(self.get_channel(i) for i in self.config.autojoin_channels if i)
+            chlist.discard(None)
+
+            invalids = set()
+            invalids.update(c for c in chlist if c.type == discord.ChannelType.text)
+
+            chlist.difference_update(invalids)
+            self.config.autojoin_channels.difference_update(invalids)
+
+            if chlist:
+                log.info("Autojoining voice chanels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
+            else:
+                log.info("Not autojoining any voice channels")
+
+            if invalids and self.config.debug_mode:
+                print(flush=True)
+                log.info("Cannot autojoin text channels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+
+            autojoin_channels = chlist
+
         else:
             log.info("Not autojoining any voice channels")
+            autojoin_channels = set()
 
-        if invalids and self.config.debug_mode:
-            print(flush=True)
-            log.info("Cannot autojoin text channels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+        print(flush=True)
+        log.info("Options:")
 
-        autojoin_channels = chlist
+        log.info("  Command prefix: " + self.config.command_prefix)
+        log.info("  Default volume: {}%".format(int(self.config.default_volume * 100)))
+        log.info("  Skip threshold: {} votes or {}%".format(
+            self.config.skips_required, fixg(self.config.skip_ratio_required * 100)))
+        log.info("  Now Playing @mentions: " + ['Disabled', 'Enabled'][self.config.now_playing_mentions])
+        log.info("  Auto-Summon: " + ['Disabled', 'Enabled'][self.config.auto_summon])
+        log.info("  Auto-Playlist: " + ['Disabled', 'Enabled'][self.config.auto_playlist])
+        log.info("  Auto-Pause: " + ['Disabled', 'Enabled'][self.config.auto_pause])
+        log.info("  Delete Messages: " + ['Disabled', 'Enabled'][self.config.delete_messages])
+        if self.config.delete_messages:
+            log.info("    Delete Invoking: " + ['Disabled', 'Enabled'][self.config.delete_invoking])
+        log.info("  Debug Mode: " + ['Disabled', 'Enabled'][self.config.debug_mode])
+        log.info("  Downloaded songs will be " + ['deleted', 'saved'][self.config.save_videos])
+        print(flush=True)
 
-    else:
-        log.info("Not autojoining any voice channels")
-        autojoin_channels = set()
-
-    print(flush=True)
-    log.info("Options:")
-
-    log.info("  Command prefix: " + self.config.command_prefix)
-    log.info("  Default volume: {}%".format(int(self.config.default_volume * 100)))
-    log.info("  Skip threshold: {} votes or {}%".format(
-        self.config.skips_required, fixg(self.config.skip_ratio_required * 100)))
-    log.info("  Now Playing @mentions: " + ['Disabled', 'Enabled'][self.config.now_playing_mentions])
-    log.info("  Auto-Summon: " + ['Disabled', 'Enabled'][self.config.auto_summon])
-    log.info("  Auto-Playlist: " + ['Disabled', 'Enabled'][self.config.auto_playlist])
-    log.info("  Auto-Pause: " + ['Disabled', 'Enabled'][self.config.auto_pause])
-    log.info("  Delete Messages: " + ['Disabled', 'Enabled'][self.config.delete_messages])
-    if self.config.delete_messages:
-        log.info("    Delete Invoking: " + ['Disabled', 'Enabled'][self.config.delete_invoking])
-    log.info("  Debug Mode: " + ['Disabled', 'Enabled'][self.config.debug_mode])
-    log.info("  Downloaded songs will be " + ['deleted', 'saved'][self.config.save_videos])
-    print(flush=True)
-
-    # maybe option to leave the ownerid blank and generate a random command for the owner to use
-    # wait_for_message is pretty neato
+        # maybe option to leave the ownerid blank and generate a random command for the owner to use
+        # wait_for_message is pretty neato
 
     await self._join_startup_channels(autojoin_channels, autosummon=self.config.auto_summon)
 

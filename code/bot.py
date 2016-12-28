@@ -1,3 +1,4 @@
+allow_requests = True
 import os, sys, time, shlex, shutil,random, inspect, logging, asyncio, pathlib, traceback
 import aiohttp, discord, colorlog
 

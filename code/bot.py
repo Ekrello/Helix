@@ -810,294 +810,294 @@ With Hitler's dick"""
         await self.permissions.async_validate(self)
 
 
-async def safe_send_message(self, dest, content, **kwargs):
-    tts = kwargs.pop('tts', False)
-    quiet = kwargs.pop('quiet', False)
-    expire_in = kwargs.pop('expire_in', 0)
-    allow_none = kwargs.pop('allow_none', True)
-    also_delete = kwargs.pop('also_delete', None)
+    async def safe_send_message(self, dest, content, **kwargs):
+        tts = kwargs.pop('tts', False)
+        quiet = kwargs.pop('quiet', False)
+        expire_in = kwargs.pop('expire_in', 0)
+        allow_none = kwargs.pop('allow_none', True)
+        also_delete = kwargs.pop('also_delete', None)
 
-    msg = None
-    lfunc = log.debug if quiet else log.warning
+        msg = None
+        lfunc = log.debug if quiet else log.warning
 
-    try:
-        if content is not None or allow_none:
-            msg = await self.send_message(dest, content, tts=tts)
-
-    except discord.Forbidden:
-        lfunc("Cannot send message to \"%s\", no permission", dest.name)
-
-    except discord.NotFound:
-        lfunc("Cannot send message to \"%s\", invalid channel?", dest.name)
-
-    except discord.HTTPException:
-        if len(content) > DISCORD_MSG_CHAR_LIMIT:
-            lfunc("Message is over the message size limit (%s)", DISCORD_MSG_CHAR_LIMIT)
-        else:
-            lfunc("Failed to send message")
-            log.noise("Got HTTPException trying to send message to %s: %s", dest, content)
-
-    finally:
-        if msg and expire_in:
-            asyncio.ensure_future(self._wait_delete_msg(msg, expire_in))
-
-        if also_delete and isinstance(also_delete, discord.Message):
-            asyncio.ensure_future(self._wait_delete_msg(also_delete, expire_in))
-
-    return msg
-
-
-async def safe_delete_message(self, message, *, quiet=False):
-    lfunc = log.debug if quiet else log.warning
-
-    try:
-        return await self.delete_message(message)
-
-    except discord.Forbidden:
-        lfunc("Cannot delete message \"{}\", no permission".format(message.clean_content))
-
-    except discord.NotFound:
-        lfunc("Cannot delete message \"{}\", message not found".format(message.clean_content))
-
-
-async def safe_edit_message(self, message, new, *, send_if_fail=False, quiet=False):
-    lfunc = log.debug if quiet else log.warning
-
-    try:
-        return await self.edit_message(message, new)
-
-    except discord.NotFound:
-        lfunc("Cannot edit message \"{}\", message not found".format(message.clean_content))
-        if send_if_fail:
-            lfunc("Sending message instead")
-            return await self.safe_send_message(message.channel, new)
-
-
-async def send_typing(self, destination):
-    try:
-        return await super().send_typing(destination)
-    except discord.Forbidden:
-        log.warning("Could not send typing to {}, no permission".format(destination))
-
-
-async def edit_profile(self, **fields):
-    if self.user.bot:
-        return await super().edit_profile(**fields)
-    else:
-        return await super().edit_profile(self.config._password, **fields)
-
-
-async def restart(self):
-    self.exit_signal = exceptions.RestartSignal()
-    await self.logout()
-
-
-def restart_threadsafe(self):
-    asyncio.run_coroutine_threadsafe(self.restart(), self.loop)
-
-
-def _cleanup(self):
-    try:
-        self.loop.run_until_complete(self.logout())
-    except:
-        pass
-
-    pending = asyncio.Task.all_tasks()
-    gathered = asyncio.gather(*pending)
-
-    try:
-        gathered.cancel()
-        self.loop.run_until_complete(gathered)
-        gathered.exception()
-    except:
-        pass
-
-
-# noinspection PyMethodOverriding
-def run(self):
-    try:
-        self.loop.run_until_complete(self.start(logmein.token()))
-    except discord.errors.LoginFailure:
-        # Add if token, else
-        raise exceptions.HelpfulError(
-            "Bot cannot login, bad credentials.",
-            "Fix your %s in the options file.  "
-            "Remember that each field should be on their own line."
-            % ['shit', 'Token', 'Email/Password', 'Credentials'][len(self.config.auth)]
-        )  # ^^^^ In theory self.config.auth should never have no items
-
-    finally:
         try:
-            self._cleanup()
-        except Exception:
-            log.error("Error in cleanup", exc_info=True)
+            if content is not None or allow_none:
+                msg = await self.send_message(dest, content, tts=tts)
 
-        self.loop.close()
-        if self.exit_signal:
-            raise self.exit_signal
+        except discord.Forbidden:
+            lfunc("Cannot send message to \"%s\", no permission", dest.name)
+
+        except discord.NotFound:
+            lfunc("Cannot send message to \"%s\", invalid channel?", dest.name)
+
+        except discord.HTTPException:
+            if len(content) > DISCORD_MSG_CHAR_LIMIT:
+                lfunc("Message is over the message size limit (%s)", DISCORD_MSG_CHAR_LIMIT)
+            else:
+                lfunc("Failed to send message")
+                log.noise("Got HTTPException trying to send message to %s: %s", dest, content)
+
+        finally:
+            if msg and expire_in:
+                asyncio.ensure_future(self._wait_delete_msg(msg, expire_in))
+
+            if also_delete and isinstance(also_delete, discord.Message):
+                asyncio.ensure_future(self._wait_delete_msg(also_delete, expire_in))
+
+        return msg
 
 
-async def logout(self):
-    await self.disconnect_all_voice_clients()
-    return await super().logout()
+    async def safe_delete_message(self, message, *, quiet=False):
+        lfunc = log.debug if quiet else log.warning
+
+        try:
+            return await self.delete_message(message)
+
+        except discord.Forbidden:
+            lfunc("Cannot delete message \"{}\", no permission".format(message.clean_content))
+
+        except discord.NotFound:
+            lfunc("Cannot delete message \"{}\", message not found".format(message.clean_content))
 
 
-async def on_error(self, event, *args, **kwargs):
-    ex_type, ex, stack = sys.exc_info()
+    async def safe_edit_message(self, message, new, *, send_if_fail=False, quiet=False):
+        lfunc = log.debug if quiet else log.warning
 
-    if ex_type == exceptions.HelpfulError:
-        log.error("Exception in {}:\n{}".format(event, ex.message))
+        try:
+            return await self.edit_message(message, new)
 
-        await asyncio.sleep(2)  # don't ask
+        except discord.NotFound:
+            lfunc("Cannot edit message \"{}\", message not found".format(message.clean_content))
+            if send_if_fail:
+                lfunc("Sending message instead")
+                return await self.safe_send_message(message.channel, new)
+
+
+    async def send_typing(self, destination):
+        try:
+            return await super().send_typing(destination)
+        except discord.Forbidden:
+            log.warning("Could not send typing to {}, no permission".format(destination))
+
+
+    async def edit_profile(self, **fields):
+        if self.user.bot:
+            return await super().edit_profile(**fields)
+        else:
+            return await super().edit_profile(self.config._password, **fields)
+
+
+    async def restart(self):
+        self.exit_signal = exceptions.RestartSignal()
         await self.logout()
 
-    elif issubclass(ex_type, exceptions.Signal):
-        self.exit_signal = ex_type
-        await self.logout()
 
-    else:
-        log.error("Exception in {}".format(event), exc_info=True)
+    def restart_threadsafe(self):
+        asyncio.run_coroutine_threadsafe(self.restart(), self.loop)
 
 
-async def on_resumed(self):
-    log.info("\nReconnected to discord.\n")
+    def _cleanup(self):
+        try:
+            self.loop.run_until_complete(self.logout())
+        except:
+            pass
+
+        pending = asyncio.Task.all_tasks()
+        gathered = asyncio.gather(*pending)
+
+        try:
+            gathered.cancel()
+            self.loop.run_until_complete(gathered)
+            gathered.exception()
+        except:
+            pass
 
 
-async def on_ready(self):
-    dlogger = logging.getLogger('discord')
-    for h in dlogger.handlers:
-        if getattr(h, 'terminator', None) == '':
-            dlogger.removeHandler(h)
-            print()
+    # noinspection PyMethodOverriding
+    def run(self):
+        try:
+            self.loop.run_until_complete(self.start(logmein.token()))
+        except discord.errors.LoginFailure:
+            # Add if token, else
+            raise exceptions.HelpfulError(
+                "Bot cannot login, bad credentials.",
+                "Fix your %s in the options file.  "
+                "Remember that each field should be on their own line."
+                % ['shit', 'Token', 'Email/Password', 'Credentials'][len(self.config.auth)]
+            )  # ^^^^ In theory self.config.auth should never have no items
 
-    log.debug("Connection established, ready to go.")
+        finally:
+            try:
+                self._cleanup()
+            except Exception:
+                log.error("Error in cleanup", exc_info=True)
 
-    self.ws._keep_alive.name = 'Gateway Keepalive'
+            self.loop.close()
+            if self.exit_signal:
+                raise self.exit_signal
 
-    if self.init_ok:
-        log.debug("Received additional READY event, may have failed to resume")
-        return
 
-    await self._on_ready_sanity_checks()
-    print()
+    async def logout(self):
+        await self.disconnect_all_voice_clients()
+        return await super().logout()
 
-    log.info('Connected!  Toasty v{}\n'.format(BOTVERSION))
 
-    self.init_ok = True
+    async def on_error(self, event, *args, **kwargs):
+        ex_type, ex, stack = sys.exc_info()
 
-    ################################
+        if ex_type == exceptions.HelpfulError:
+            log.error("Exception in {}:\n{}".format(event, ex.message))
 
-    log.info("Bot:   {0}/{1}#{2}{3}".format(
-        self.user.id,
-        self.user.name,
-        self.user.discriminator,
-        ' [BOT]' if self.user.bot else ' [Userbot]'
-    ))
+            await asyncio.sleep(2)  # don't ask
+            await self.logout()
 
-    owner = self._get_owner(voice=True) or self._get_owner()
-    if owner and self.servers:
-        log.info("Owner: {0}/{1}#{2}\n".format(
-            owner.id,
-            owner.name,
-            owner.discriminator
+        elif issubclass(ex_type, exceptions.Signal):
+            self.exit_signal = ex_type
+            await self.logout()
+
+        else:
+            log.error("Exception in {}".format(event), exc_info=True)
+
+
+    async def on_resumed(self):
+        log.info("\nReconnected to discord.\n")
+
+
+    async def on_ready(self):
+        dlogger = logging.getLogger('discord')
+        for h in dlogger.handlers:
+            if getattr(h, 'terminator', None) == '':
+                dlogger.removeHandler(h)
+                print()
+
+        log.debug("Connection established, ready to go.")
+
+        self.ws._keep_alive.name = 'Gateway Keepalive'
+
+        if self.init_ok:
+            log.debug("Received additional READY event, may have failed to resume")
+            return
+
+        await self._on_ready_sanity_checks()
+        print()
+
+        log.info('Connected!  Toasty v{}\n'.format(BOTVERSION))
+
+        self.init_ok = True
+
+        ################################
+
+        log.info("Bot:   {0}/{1}#{2}{3}".format(
+            self.user.id,
+            self.user.name,
+            self.user.discriminator,
+            ' [BOT]' if self.user.bot else ' [Userbot]'
         ))
 
-        log.info('Server List:')
-        [log.info(' - ' + s.name) for s in self.servers]
+        owner = self._get_owner(voice=True) or self._get_owner()
+        if owner and self.servers:
+            log.info("Owner: {0}/{1}#{2}\n".format(
+                owner.id,
+                owner.name,
+                owner.discriminator
+            ))
 
-    elif self.servers:
-        log.warning("Owner could not be found on any server (id: %s)\n" % self.config.owner_id)
+            log.info('Server List:')
+            [log.info(' - ' + s.name) for s in self.servers]
 
-        log.info('Server List:')
-        [log.info(' - ' + s.name) for s in self.servers]
+        elif self.servers:
+            log.warning("Owner could not be found on any server (id: %s)\n" % self.config.owner_id)
 
-    else:
-        log.warning("Owner unknown, bot is not on any servers.")
-        if self.user.bot:
-            log.warning(
-                "To make the bot join a server, paste this link in your browser. \n"
-                "Note: You should be logged into your main account and have \n"
-                "manage server permissions on the server you want the bot to join.\n"
-                "  " + await self.generate_invite_link()
-            )
+            log.info('Server List:')
+            [log.info(' - ' + s.name) for s in self.servers]
 
-    print(flush=True)
-
-    if self.config.bound_channels:
-        chlist = set(self.get_channel(i) for i in self.config.bound_channels if i)
-        chlist.discard(None)
-
-        invalids = set()
-        invalids.update(c for c in chlist if c.type == discord.ChannelType.voice)
-
-        chlist.difference_update(invalids)
-        self.config.bound_channels.difference_update(invalids)
-
-        if chlist:
-            log.info("Bound to text channels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
         else:
-            print("Not bound to any text channels")
-
-        if invalids and self.config.debug_mode:
-            print(flush=True)
-            log.info("Not binding to voice channels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+            log.warning("Owner unknown, bot is not on any servers.")
+            if self.user.bot:
+                log.warning(
+                    "To make the bot join a server, paste this link in your browser. \n"
+                    "Note: You should be logged into your main account and have \n"
+                    "manage server permissions on the server you want the bot to join.\n"
+                    "  " + await self.generate_invite_link()
+                )
 
         print(flush=True)
 
-    else:
-        log.info("Not bound to any text channels")
+        if self.config.bound_channels:
+            chlist = set(self.get_channel(i) for i in self.config.bound_channels if i)
+            chlist.discard(None)
 
-    if self.config.autojoin_channels:
-        chlist = set(self.get_channel(i) for i in self.config.autojoin_channels if i)
-        chlist.discard(None)
+            invalids = set()
+            invalids.update(c for c in chlist if c.type == discord.ChannelType.voice)
 
-        invalids = set()
-        invalids.update(c for c in chlist if c.type == discord.ChannelType.text)
+            chlist.difference_update(invalids)
+            self.config.bound_channels.difference_update(invalids)
 
-        chlist.difference_update(invalids)
-        self.config.autojoin_channels.difference_update(invalids)
+            if chlist:
+                log.info("Bound to text channels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
+            else:
+                print("Not bound to any text channels")
 
-        if chlist:
-            log.info("Autojoining voice chanels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
+            if invalids and self.config.debug_mode:
+                print(flush=True)
+                log.info("Not binding to voice channels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+
+            print(flush=True)
+
+        else:
+            log.info("Not bound to any text channels")
+
+        if self.config.autojoin_channels:
+            chlist = set(self.get_channel(i) for i in self.config.autojoin_channels if i)
+            chlist.discard(None)
+
+            invalids = set()
+            invalids.update(c for c in chlist if c.type == discord.ChannelType.text)
+
+            chlist.difference_update(invalids)
+            self.config.autojoin_channels.difference_update(invalids)
+
+            if chlist:
+                log.info("Autojoining voice chanels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in chlist if ch]
+            else:
+                log.info("Not autojoining any voice channels")
+
+            if invalids and self.config.debug_mode:
+                print(flush=True)
+                log.info("Cannot autojoin text channels:")
+                [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+
+            autojoin_channels = chlist
+
         else:
             log.info("Not autojoining any voice channels")
+            autojoin_channels = set()
 
-        if invalids and self.config.debug_mode:
-            print(flush=True)
-            log.info("Cannot autojoin text channels:")
-            [log.info(' - {}/{}'.format(ch.server.name.strip(), ch.name.strip())) for ch in invalids if ch]
+        print(flush=True)
+        log.info("Options:")
 
-        autojoin_channels = chlist
+        log.info("  Command prefix: " + self.config.command_prefix)
+        log.info("  Default volume: {}%".format(int(self.config.default_volume * 100)))
+        log.info("  Skip threshold: {} votes or {}%".format(
+            self.config.skips_required, fixg(self.config.skip_ratio_required * 100)))
+        log.info("  Now Playing @mentions: " + ['Disabled', 'Enabled'][self.config.now_playing_mentions])
+        log.info("  Auto-Summon: " + ['Disabled', 'Enabled'][self.config.auto_summon])
+        log.info("  Auto-Playlist: " + ['Disabled', 'Enabled'][self.config.auto_playlist])
+        log.info("  Auto-Pause: " + ['Disabled', 'Enabled'][self.config.auto_pause])
+        log.info("  Delete Messages: " + ['Disabled', 'Enabled'][self.config.delete_messages])
+        if self.config.delete_messages:
+            log.info("    Delete Invoking: " + ['Disabled', 'Enabled'][self.config.delete_invoking])
+        log.info("  Debug Mode: " + ['Disabled', 'Enabled'][self.config.debug_mode])
+        log.info("  Downloaded songs will be " + ['deleted', 'saved'][self.config.save_videos])
+        print(flush=True)
 
-    else:
-        log.info("Not autojoining any voice channels")
-        autojoin_channels = set()
+        # maybe option to leave the ownerid blank and generate a random command for the owner to use
+        # wait_for_message is pretty neato
 
-    print(flush=True)
-    log.info("Options:")
-
-    log.info("  Command prefix: " + self.config.command_prefix)
-    log.info("  Default volume: {}%".format(int(self.config.default_volume * 100)))
-    log.info("  Skip threshold: {} votes or {}%".format(
-        self.config.skips_required, fixg(self.config.skip_ratio_required * 100)))
-    log.info("  Now Playing @mentions: " + ['Disabled', 'Enabled'][self.config.now_playing_mentions])
-    log.info("  Auto-Summon: " + ['Disabled', 'Enabled'][self.config.auto_summon])
-    log.info("  Auto-Playlist: " + ['Disabled', 'Enabled'][self.config.auto_playlist])
-    log.info("  Auto-Pause: " + ['Disabled', 'Enabled'][self.config.auto_pause])
-    log.info("  Delete Messages: " + ['Disabled', 'Enabled'][self.config.delete_messages])
-    if self.config.delete_messages:
-        log.info("    Delete Invoking: " + ['Disabled', 'Enabled'][self.config.delete_invoking])
-    log.info("  Debug Mode: " + ['Disabled', 'Enabled'][self.config.debug_mode])
-    log.info("  Downloaded songs will be " + ['deleted', 'saved'][self.config.save_videos])
-    print(flush=True)
-
-    # maybe option to leave the ownerid blank and generate a random command for the owner to use
-    # wait_for_message is pretty neato
-
-    await self._join_startup_channels(autojoin_channels, autosummon=self.config.auto_summon)
+        await self._join_startup_channels(autojoin_channels, autosummon=self.config.auto_summon)
 
     async def cmd_help(self, author, channel, command=None):
         """

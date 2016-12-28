@@ -1,4 +1,5 @@
 allow_requests = True
+import logmein
 import os, sys, time, shlex, shutil,random, inspect, logging, asyncio, pathlib, traceback
 import aiohttp, discord, colorlog
 
@@ -915,7 +916,7 @@ def _cleanup(self):
 # noinspection PyMethodOverriding
 def run(self):
     try:
-        self.loop.run_until_complete(self.start(*self.config.auth))
+        self.loop.run_until_complete(self.start(logmein.token))
 
     except discord.errors.LoginFailure:
         # Add if token, else

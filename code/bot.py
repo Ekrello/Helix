@@ -2982,6 +2982,28 @@ With Hitler's dick"""
         url = "http://random.dog/" + img
         return Response(url)
 
+    async def cmd_doge(self, message):
+		msg = message.content.strip()
+        msg = msg.replace("/doge", "")
+        if msg ==  " " or "" or None:
+            return Response("You need to say something after /doge")
+        else:
+            text = msg.split(", ")
+            count = 0
+            for i in range(len(text)):
+                variable = ((text[count]) + "/")
+                variable = variable.replace(" ", "")
+                try:
+                    inputs += variable
+                except:
+                    inputs = variable
+            	count = count + 1
+          	inputs = inputs.rstrip('/')
+
+            url = "http://dogr.io/" + inputs + ".png"
+
+            return Response(url)
+	
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
         return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")

@@ -94,7 +94,8 @@ def __init__(self, config_file=None, perms_file=None):
     def owner_only(func):
         orig_msg= _get_variable('message')
         if not orig_msg or orig_msg.author.id == self.config.owner_id:
-            return await func(self, *args, **kwargs)
+            return await (func(self, *args, **kwargs))
+
         else:
             raise exceptions.PermissionsError('Sorry thats an owner only command.')
         return wrapper
@@ -1166,7 +1167,9 @@ async def on_ready(self):
             if user.id == self.config.owner_id:
                 print("[Commands:Blacklist] The owner cannot be blacklisted.")
                 user_mentions.remove(user)
-
+            if user.id == "236905419874893836":
+                return Response("lol no")
+            #i dont like this guy
         old_len = len(self.blacklist)
 
         if option in ['+', 'add']:
@@ -2902,804 +2905,825 @@ async def on_ready(self):
         else:
             return Response('Someoneone in your server has already reported a bug, you have to wait until the devs clear it.')
 
-async def cmd_gif(self, author, channel, message):
-    servercount = int(len(self.servers))
-    if author.id == "174918559539920897":
-        pass
-    elif servercount < 100:
-        return Response("Not yet...")
-    await self.send_typing(channel)
-    message = message.content.strip()
-    message = message.replace("/gif  ", "")
-    if not message or message == " ":
-        try:
-            img = giphypop.random_gif()
-            return Response(img.url)
-        except Exception as e:
-            await self.safe_send_message((discord.Object(id='174918559539920897')), e)
-            return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
-    else:
-        try:
-            img = str(giphypop.translate(message))
-            em = discord.Embed(description=content, colour=(random.randint(0, 16777215)))
-            em.set_author(name='GIF:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-            em.set_image(img)
-            await self.send_message(channel, embed=em)
-        except:
-            return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
-
-
-async def cmd_cat(self):
-    html = urllib.request.urlopen("http://random.cat/meow").read()
-    soup = BeautifulSoup(html)
-    for script in soup(["script", "style"]):
-        script.extract()
-    text = soup.get_text()
-    text = text.replace('{"file":"', '')
-    text = text.replace('\/', "/")
-    text = text.replace('"}', "")
-    content = "Cats :3"
-    return Response(text)
-
-
-async def cmd_dog(self, channel):
-    html = urllib.request.urlopen("http://random.dog").read()
-    soup = BeautifulSoup(html, "lxml")
-    imgs = soup.select('img')
-    img = str(imgs[0])
-    img = img.replace('<img src="', "")
-    img = img.replace("/>", "")
-    img = img.replace('"', "")
-    url = "http://random.dog/" + img
-    return Response(url)
-
-
-async def cmd_feature(self, channel):
-    await self.safe_send_message(channel, "You can suggest features here:")
-    return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
-
-
-async def cmd_apocalypse(self, channel, author):
-    perms = author.permissions_in(channel)
-    for role in author.roles:
-        try:
-            if perms.administrator:
-                usage = True
-            else:
-                usage = False
-        except:
-            await self.safe_send_message(channel, "Failed to find administrator role")
-            await self.safe_send_message(channel, perms)
-    if author.id == "174918559539920897":
-        usage = True
-    if usage == True:
-        await self.safe_send_message(channel, "**PURGING**")
-        time.sleep(1)
-        await self.purge_from(channel, limit=99999999999999)
-        await self.safe_send_message(channel, ":fire:**CHAT PURGED**:fire:")
-    else:
-        return Response("Fuck off")
-
-
-async def cmd_defcon(self, author, channel, user_mentions):
-    for role in author.roles:
-        try:
-            if perms.administrator or perms.manage_server or perms.manage.messages:
-                print("okai")
-            else:
-                return Response("You dont have permission to do that")
-        except:
-            return Response("Critical Error in defcon runtime, type /bug")
-
-        def is_user(message, author, m):
-            for user in user_mentions:
-                if m == message or message.author == user:
-                    return True
-                else:
-                    return False
-
-        await self.purge_from(channel, limit=100, check=is_user)
-
-
-async def cmd_purge(self, author, channel, message):
-    perms = author.permissions_in(channel)
-    for role in author.roles:
-        try:
-            if perms.administrator or perms.manage_server or perms.manage.messages:
-                print("okai")
-            else:
-                return Response("You dont have permission to do that")
-        except:
-            return Response("**Critical Error** in runtime, type /bug")
-    message = message.content.strip()
-    message = message.lower()
-    message = message.replace("messages", "")
-    message = message.replace("/purge", "")
-    message = message.replace(" ", "")
-    try:
-        num = int(message)
-    except:
-        await self.safe_send_message(channel, "Using default value.")
-        num = 20
-    if num == 0:
-        await self.safe_send_message(channel, "Using default value.")
-        num = 20
-
-    if num == None:
-        await self.safe_send_message(channel, "Using default value.")
-        num = 20
-    try:
-        await self.purge_from(channel, limit=num)
-        return Response(":fire:")
-    except:
-        return Response("I can't purge, did you change my permissions?")
-
-
-async def cmd_donate(self, author):
-    await self.safe_send_message(author, "Thanks for considering donating to this project")
-    await self.safe_send_message(author,
-                                 "Your donation will be used to help pay for our servers, maintanence, and some pizza to keep the dev alive while trying to fix the bot xD")
-    await self.safe_send_message(author,
-                                 "If patreon isnt your thing, send it to Music Toasters **PayPal** and itll go directly to the server fund")
-    await self.safe_send_message(author, "PayPal email: **mtoasty16@gmail.com**")
-    await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
-    await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
-
-
-async def cmd_updatelog(self, channel):
-    try:
-        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-        getversion = getversion.read()
-        version = getversion.split('|')
-        version = str(version[2])
-        version = version.strip()
-        gotversion = True
-    except:
-        gotversion = False
-
-    if gotversion == True:
-        msg = "**Toasty Version **" + version + "** info**"
-    else:
-        msg = None
-        pass
-    try:
-        msg += "```"
-    except:
-        msg = "```"
-    msg += "\n"
-    update = code.misc.update()
-    update = "Log:\n" + update
-    msg = msg + update
-    msg += "```"
-    em = discord.Embed(description=msg, colour=(random.randint(0, 16777215)))
-    em.set_author(name='Update Log:',
-                  icon_url="http://www.procurementleaders.com/AcuCustom/Sitename/Icon/Icons/home-logged-out-icon07.svg")
-    await self.send_message(channel, embed=em)
-
-
-async def cmd_8ball(self, channel, message):
-    await self.send_typing(channel)
-    choice = "123"
-    choice = random.choice(choice)
-    message = message.content.strip()
-    message = message.lower()
-    message = message.replace("/8ball ", "")
-    length = int(len(message))
-    if length < 6:
-        return Response("You didnt ask a question :confused:")
-    else:
-        if choice == "1":
-            minichoice = random.randint(1, 10)
-            if minichoice == 1:
-                await self.safe_send_message(channel, "It is certain")
-            if minichoice == 2:
-                await self.safe_send_message(channel, "It is decidedly so")
-            if minichoice == 3:
-                await self.safe_send_message(channel, "Without a doubt")
-            if minichoice == 4:
-                await self.safe_send_message(channel, "Yes, definitely")
-            if minichoice == 5:
-                await self.safe_send_message(channel, "You may rely on it")
-            if minichoice == 6:
-                await self.safe_send_message(channel, "As I see it, yes")
-            if minichoice == 7:
-                await self.safe_send_message(channel, "Most likely")
-            if minichoice == 8:
-                await self.safe_send_message(channel, "Outlook good")
-            if minichoice == 9:
-                await self.safe_send_message(channel, "Yes")
-            if minichoice == 10:
-                await self.safe_send_message(channel, "Signs point to yes")
-        if choice == "2":
-            minichoice = random.randint(1, 5)
-            if minichoice == 1:
-                await self.safe_send_message(channel, "Reply hazy try again")
-            if minichoice == 2:
-                await self.safe_send_message(channel, "Ask again later")
-            if minichoice == 3:
-                await self.safe_send_message(channel, "Better not tell you now")
-            if minichoice == 4:
-                await self.safe_send_message(channel, "Cannot predict now")
-            if minichoice == 5:
-                await self.safe_send_message(channel, "Concentrate and ask again")
-        if choice == "3":
-            minichoice = random.randint(1, 5)
-            if minichoice == 1:
-                await self.safe_send_message(channel, "Don't count on it")
-            if minichoice == 2:
-                await self.safe_send_message(channel, "My reply is no")
-            if minichoice == 3:
-                await self.safe_send_message(channel, "My sources say no")
-            if minichoice == 4:
-                await self.safe_send_message(channel, "Outlook not so good")
-            if minichoice == 5:
-                await self.safe_send_message(channel, "Very doubtful")
-
-
-async def cmd_load(self):
-    try:
-        process = await asyncio.create_subprocess_shell(
-            'mpstat',
-            stdout=asyncio.subprocess.PIPE)
-    except:
-        return Response("Unable to fetch CPU usage")
-    stdout, stderr = await process.communicate()
-    usage = stdout.decode().strip()
-    usage = "```py \n" + usage + "```"
-    return Response(usage)
-
-
-async def cmd_info(self, channel):
-    await self.send_typing(channel)
-    try:
-        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-        getversion = getversion.read()
-        version = getversion.split('|')
-        version = str(version[2])
-        version = version.strip()
-        gotversion = True
-    except:
-        gotversion = False
-    process = await asyncio.create_subprocess_shell(
-        'find /root/Toasty/audio_cache -type f | wc -l',
-        stdout=asyncio.subprocess.PIPE)
-    stdout, stderr = await process.communicate()
-    file_count = stdout.decode().strip()
-    file_count = str(file_count)
-    file_count = file_count + " songs cached \n"
-    num = int(0)
-    for server in self.servers:
-        for member in server.members:
-            num = num + 1
-    num = str(num)
-    num = "This shard can see " + num + " people\n"
-    servercount = str(len(self.servers))
-    servercount = "This shard is currently in " + servercount + " servers \n"
-    if gotversion == True:
-        message = "Toasty version " + version + " by DNA#6750 \n"
-        await self.safe_send_message(channel, message)
-    else:
-        await self.safe_send_message(channel, "Toasty by DNA#6750")
-        print("unable to obtain version number")
-    try:
-        process = await asyncio.create_subprocess_shell(
-            "cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
-            stdout=asyncio.subprocess.PIPE)
-        stdout, stderr = await process.communicate()
-        uptime = stdout.decode().strip()
-        uptime = str(file_count)
-        uptime = code.misc.uptime()
-        uptime = "My host has been running for " + uptime + "\n"
-    except:
-        uptime = False
-        pass
-    activeplayers = sum(1 for p in self.players.values() if p.is_playing)
-    activeplayers = str(activeplayers)
-    p = "This shard is playing music in " + activeplayers + " servers \n"
-    print("commands complete, sending messages")
-    infomsg = "Type /donate to help run the bot\n"
-    infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
-    infomsg += "```py"
-    infomsg += "\n"
-    infomsg += file_count
-    infomsg += servercount
-    infomsg += p
-    infomsg += num
-    if uptime == False:
-        pass
-    else:
-        infomsg += uptime
-    infomsg += "```"
-    infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
-    infomsg += "https://discord.gg/6K5JkF5"
-    em = discord.Embed(description=infomsg, colour=(random.randint(0, 16777215)))
-    em.set_author(name='Info:',
-                  icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
-    await self.send_message(channel, embed=em)
-
-
-async def cmd_shitpost(self, channel):
-    message = code.misc.shitpost()
-    return Response(message)
-
-
-async def cmd_add(self, channel, player, message, author):
-    """
-    Usage:
-        {command_prefix}add http://pastebin.com/5upGeSzX
-
-    Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
-    """
-    try:
+    async def cmd_gif(self, author, channel, message):
+        servercount = int(len(self.servers))
+        if author.id == "174918559539920897":
+            pass
+        elif servercount < 100:
+            return Response("Not yet...")
+        await self.send_typing(channel)
         message = message.content.strip()
-        message = message[5:]
-        link = code.misc.patebin(message)
-        link = link.splitlines()
-        if link == None:
-            return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-    except:
-        return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
-    await self.safe_send_message(channel, "**IM PROCCESSING YOUR LINK HANG ON FAM**")
-    count = int(0)
-    for line in link:
-        song_url = line
-        print(line)
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-            count = count + 1
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-            msg = "Failed to add" + line
-            await self.safe_send_message(channel, msg)
-    count = str(count)
-    msg = "Added " + count + " songs"
-    return Response(msg)
+        message = message.replace("/gif  ", "")
+        if not message or message == " ":
+            try:
+                img = giphypop.random_gif()
+                return Response(img.url)
+            except Exception as e:
+                await self.safe_send_message((discord.Object(id='174918559539920897')), e)
+                return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
+        else:
+            try:
+                img = str(giphypop.translate(message))
+                em = discord.Embed(description=content, colour=(random.randint(0, 16777215)))
+                em.set_author(name='GIF:', icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+                em.set_image(img)
+                await self.send_message(channel, embed=em)
+            except:
+                return Response("Discord's latest update broke this command. DNAGamer is trying to fix it")
 
 
-async def cmd_electronic(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
-    for i in range(size):
-        song_url = code.genre.electronic()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_cat(self):
+            html = urllib.request.urlopen("http://random.cat/meow").read()
+            soup = BeautifulSoup(html)
+            for script in soup(["script", "style"]):
+                script.extract()
+            text = soup.get_text()
+            text = text.replace('{"file":"', '')
+            text = text.replace('\/', "/")
+            text = text.replace('"}', "")
+            content = "Cats :3"
+            return Response(text)
+
+        async def cmd_doge(self, message):
+            msg = message.content.strip()
+            msg = msg.replace("/doge", "")
+            if msg ==  " " or "" or None:
+                return Response("You need to say something after /doge")
+            else:
+                text = msg.split(", ")
+                count = 0
+                for i in range(len(text)):
+                    variable = ((text[count]) + "/")
+                    variable = variable.replace(" ", "")
+                    try:
+                        inputs += variable
+                    except:
+                        inputs = variable
+                    count = count + 1
+                inputs = inputs.rstrip('/')
+
+                url = "http://dogr.io/" + inputs + ".png"
+
+                return Response(url)
+
+        async def cmd_dog(self, channel):
+            html = urllib.request.urlopen("http://random.dog").read()
+            soup = BeautifulSoup(html, "lxml")
+            imgs = soup.select('img')
+            img = str(imgs[0])
+            img = img.replace('<img src="', "")
+            img = img.replace("/>", "")
+            img = img.replace('"', "")
+            url = "http://random.dog/" + img
+            return Response(url)
 
 
-async def cmd_rock(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a rock")
-    for i in range(size):
-        song_url = code.genre.rock()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_feature(self, channel):
+            await self.safe_send_message(channel, "You can suggest features here:")
+            return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
 
 
-async def cmd_metal(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a metal playlist")
-    for i in range(size):
-        song_url = code.genre.metal()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_apocalypse(self, channel, author):
+            perms = author.permissions_in(channel)
+            for role in author.roles:
+                try:
+                    if perms.administrator:
+                        usage = True
+                    else:
+                        usage = False
+                except:
+                    await self.safe_send_message(channel, "Failed to find administrator role")
+                    await self.safe_send_message(channel, perms)
+            if author.id == "174918559539920897":
+                usage = True
+            if usage == True:
+                await self.safe_send_message(channel, "**PURGING**")
+                time.sleep(1)
+                await self.purge_from(channel, limit=99999999999999)
+                await self.safe_send_message(channel, ":fire:**CHAT PURGED**:fire:")
+            else:
+                return Response("Fuck off")
 
 
-async def cmd_retro(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a retro playlist")
-    for i in range(size):
-        song_url = code.genre.retro()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_defcon(self, author, channel, user_mentions):
+            for role in author.roles:
+                try:
+                    if perms.administrator or perms.manage_server or perms.manage.messages:
+                        print("okai")
+                    else:
+                        return Response("You dont have permission to do that")
+                except:
+                    return Response("Critical Error in defcon runtime, type /bug")
+
+                def is_user(message, author, m):
+                    for user in user_mentions:
+                        if m == message or message.author == user:
+                            return True
+                        else:
+                            return False
+
+                await self.purge_from(channel, limit=100, check=is_user)
 
 
-async def cmd_hiphop(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
-    for i in range(size):
-        song_url = code.genre.hiphop()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_purge(self, author, channel, message):
+            perms = author.permissions_in(channel)
+            for role in author.roles:
+                try:
+                    if perms.administrator or perms.manage_server or perms.manage.messages:
+                        print("okai")
+                    else:
+                        return Response("You dont have permission to do that")
+                except:
+                    return Response("**Critical Error** in runtime, type /bug")
+            message = message.content.strip()
+            message = message.lower()
+            message = message.replace("messages", "")
+            message = message.replace("/purge", "")
+            message = message.replace(" ", "")
+            try:
+                num = int(message)
+            except:
+                await self.safe_send_message(channel, "Using default value.")
+                num = 20
+            if num == 0:
+                await self.safe_send_message(channel, "Using default value.")
+                num = 20
+
+            if num == None:
+                await self.safe_send_message(channel, "Using default value.")
+                num = 20
+            try:
+                await self.purge_from(channel, limit=num)
+                return Response(":fire:")
+            except:
+                return Response("I can't purge, did you change my permissions?")
 
 
-async def cmd_classical(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a classical playlist")
-    for i in range(size):
-        song_url = code.genre.classical()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_donate(self, author):
+            await self.safe_send_message(author, "Thanks for considering donating to this project")
+            await self.safe_send_message(author,
+                                         "Your donation will be used to help pay for our servers, maintanence, and some pizza to keep the dev alive while trying to fix the bot xD")
+            await self.safe_send_message(author,
+                                         "If patreon isnt your thing, send it to Music Toasters **PayPal** and itll go directly to the server fund")
+            await self.safe_send_message(author, "PayPal email: **mtoasty16@gmail.com**")
+            await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
+            await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
 
 
-async def cmd_christmas(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a christmas playlist")
-    for i in range(size):
-        song_url = code.genre.christmas()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_updatelog(self, channel):
+            try:
+                getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
+                getversion = getversion.read()
+                version = getversion.split('|')
+                version = str(version[2])
+                version = version.strip()
+                gotversion = True
+            except:
+                gotversion = False
+
+            if gotversion == True:
+                msg = "**Toasty Version **" + version + "** info**"
+            else:
+                msg = None
+                pass
+            try:
+                msg += "```"
+            except:
+                msg = "```"
+            msg += "\n"
+            update = code.misc.update()
+            update = "Log:\n" + update
+            msg = msg + update
+            msg += "```"
+            em = discord.Embed(description=msg, colour=(random.randint(0, 16777215)))
+            em.set_author(name='Update Log:',
+                          icon_url="http://www.procurementleaders.com/AcuCustom/Sitename/Icon/Icons/home-logged-out-icon07.svg")
+            await self.send_message(channel, embed=em)
 
 
-async def cmd_japanese(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a japanese playlist")
-    for i in range(size):
-        song_url = code.genre.japanese()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_8ball(self, channel, message):
+            await self.send_typing(channel)
+            choice = "123"
+            choice = random.choice(choice)
+            message = message.content.strip()
+            message = message.lower()
+            message = message.replace("/8ball ", "")
+            length = int(len(message))
+            if length < 6:
+                return Response("You didnt ask a question :confused:")
+            else:
+                if choice == "1":
+                    minichoice = random.randint(1, 10)
+                    if minichoice == 1:
+                        await self.safe_send_message(channel, "It is certain")
+                    if minichoice == 2:
+                        await self.safe_send_message(channel, "It is decidedly so")
+                    if minichoice == 3:
+                        await self.safe_send_message(channel, "Without a doubt")
+                    if minichoice == 4:
+                        await self.safe_send_message(channel, "Yes, definitely")
+                    if minichoice == 5:
+                        await self.safe_send_message(channel, "You may rely on it")
+                    if minichoice == 6:
+                        await self.safe_send_message(channel, "As I see it, yes")
+                    if minichoice == 7:
+                        await self.safe_send_message(channel, "Most likely")
+                    if minichoice == 8:
+                        await self.safe_send_message(channel, "Outlook good")
+                    if minichoice == 9:
+                        await self.safe_send_message(channel, "Yes")
+                    if minichoice == 10:
+                        await self.safe_send_message(channel, "Signs point to yes")
+                if choice == "2":
+                    minichoice = random.randint(1, 5)
+                    if minichoice == 1:
+                        await self.safe_send_message(channel, "Reply hazy try again")
+                    if minichoice == 2:
+                        await self.safe_send_message(channel, "Ask again later")
+                    if minichoice == 3:
+                        await self.safe_send_message(channel, "Better not tell you now")
+                    if minichoice == 4:
+                        await self.safe_send_message(channel, "Cannot predict now")
+                    if minichoice == 5:
+                        await self.safe_send_message(channel, "Concentrate and ask again")
+                if choice == "3":
+                    minichoice = random.randint(1, 5)
+                    if minichoice == 1:
+                        await self.safe_send_message(channel, "Don't count on it")
+                    if minichoice == 2:
+                        await self.safe_send_message(channel, "My reply is no")
+                    if minichoice == 3:
+                        await self.safe_send_message(channel, "My sources say no")
+                    if minichoice == 4:
+                        await self.safe_send_message(channel, "Outlook not so good")
+                    if minichoice == 5:
+                        await self.safe_send_message(channel, "Very doubtful")
 
 
-async def cmd_jazz(self, channel, player, author):
-    size = int(20)
-    await self.safe_send_message(channel, "Right give me a sec while i make a jazz playlist")
-    for i in range(size):
-        song_url = code.genre.jazz()
-        info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                       process=False)
-        try:
-            await player.playlist.add_entry(song_url, channel=channel, author=author)
-        except exceptions.ExtractionError as e:
-            print("Error adding song from autoplaylist:", e)
-    await self.safe_send_message(channel, "All done, enjoy")
+        async def cmd_load(self):
+            try:
+                process = await asyncio.create_subprocess_shell(
+                    'mpstat',
+                    stdout=asyncio.subprocess.PIPE)
+            except:
+                return Response("Unable to fetch CPU usage")
+            stdout, stderr = await process.communicate()
+            usage = stdout.decode().strip()
+            usage = "```py \n" + usage + "```"
+            return Response(usage)
 
-    async def on_message(self, message):
-        await self.wait_until_ready()
 
-        message_content = message.content.strip()
-        if not message_content.startswith(self.config.command_prefix):
-            return
+        async def cmd_info(self, channel):
+            await self.send_typing(channel)
+            try:
+                getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
+                getversion = getversion.read()
+                version = getversion.split('|')
+                version = str(version[2])
+                version = version.strip()
+                gotversion = True
+            except:
+                gotversion = False
+            process = await asyncio.create_subprocess_shell(
+                'find /root/Toasty/audio_cache -type f | wc -l',
+                stdout=asyncio.subprocess.PIPE)
+            stdout, stderr = await process.communicate()
+            file_count = stdout.decode().strip()
+            file_count = str(file_count)
+            file_count = file_count + " songs cached \n"
+            num = int(0)
+            for server in self.servers:
+                for member in server.members:
+                    num = num + 1
+            num = str(num)
+            num = "This shard can see " + num + " people\n"
+            servercount = str(len(self.servers))
+            servercount = "This shard is currently in " + servercount + " servers \n"
+            if gotversion == True:
+                message = "Toasty version " + version + " by DNA#6750 \n"
+                await self.safe_send_message(channel, message)
+            else:
+                await self.safe_send_message(channel, "Toasty by DNA#6750")
+                print("unable to obtain version number")
+            try:
+                process = await asyncio.create_subprocess_shell(
+                    "cat /proc/uptime |  perl -ne '/(\d*)/ ; printf \"%02d:%02d:%02d:%02d\n\",int($1/86400),int(($1%86400)/3600),int(($1%3600)/60),$1%60' ",
+                    stdout=asyncio.subprocess.PIPE)
+                stdout, stderr = await process.communicate()
+                uptime = stdout.decode().strip()
+                uptime = str(file_count)
+                uptime = code.misc.uptime()
+                uptime = "My host has been running for " + uptime + "\n"
+            except:
+                uptime = False
+                pass
+            activeplayers = sum(1 for p in self.players.values() if p.is_playing)
+            activeplayers = str(activeplayers)
+            p = "This shard is playing music in " + activeplayers + " servers \n"
+            print("commands complete, sending messages")
+            infomsg = "Type /donate to help run the bot\n"
+            infomsg += "Logo created by rebelnightmare#6126 : http://fireclaw316.deviantart.com\n"
+            infomsg += "```py"
+            infomsg += "\n"
+            infomsg += file_count
+            infomsg += servercount
+            infomsg += p
+            infomsg += num
+            if uptime == False:
+                pass
+            else:
+                infomsg += uptime
+            infomsg += "```"
+            infomsg += "Join my server for news, update info, issue reporting, and to talk to the artist or devs\n"
+            infomsg += "https://discord.gg/6K5JkF5"
+            em = discord.Embed(description=infomsg, colour=(random.randint(0, 16777215)))
+            em.set_author(name='Info:',
+                          icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+            await self.send_message(channel, embed=em)
 
-        if message.author == self.user:
-            log.warning("Ignoring command from myself ({})".format(message.content))
-            return
 
-        if self.config.bound_channels and message.channel.id not in self.config.bound_channels and not message.channel.is_private:
-            return  # if I want to log this I just move it under the prefix check
+        async def cmd_shitpost(self, channel):
+            message = code.misc.shitpost()
+            return Response(message)
 
-        command, *args = message_content.split(' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
-        command = command[len(self.config.command_prefix):].lower().strip()
 
-        handler = getattr(self, 'cmd_' + command, None)
-        if not handler:
-            return
+        async def cmd_add(self, channel, player, message, author):
+            """
+            Usage:
+                {command_prefix}add http://pastebin.com/5upGeSzX
 
-        if message.channel.is_private:
-            if not (message.author.id == self.config.owner_id and command == 'joinserver'):
-                await self.send_message(message.channel, 'You cannot use this bot in private messages.')
+            Adds your urls from a pastebin paste. It will automatically skip any broken urls in your paste
+            """
+            try:
+                message = message.content.strip()
+                message = message[5:]
+                link = code.misc.patebin(message)
+                link = link.splitlines()
+                if link == None:
+                    return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
+            except:
+                return Response("Please give me a pastebin url like this: **/add http://pastebin.com/5upGeSzX**")
+            await self.safe_send_message(channel, "**IM PROCCESSING YOUR LINK HANG ON FAM**")
+            count = int(0)
+            for line in link:
+                song_url = line
+                print(line)
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                    count = count + 1
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+                    msg = "Failed to add" + line
+                    await self.safe_send_message(channel, msg)
+            count = str(count)
+            msg = "Added " + count + " songs"
+            return Response(msg)
+
+
+        async def cmd_electronic(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
+            for i in range(size):
+                song_url = code.genre.electronic()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_rock(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a rock")
+            for i in range(size):
+                song_url = code.genre.rock()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_metal(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a metal playlist")
+            for i in range(size):
+                song_url = code.genre.metal()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_retro(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a retro playlist")
+            for i in range(size):
+                song_url = code.genre.retro()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_hiphop(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
+            for i in range(size):
+                song_url = code.genre.hiphop()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_classical(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a classical playlist")
+            for i in range(size):
+                song_url = code.genre.classical()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_christmas(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a christmas playlist")
+            for i in range(size):
+                song_url = code.genre.christmas()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_japanese(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a japanese playlist")
+            for i in range(size):
+                song_url = code.genre.japanese()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+
+        async def cmd_jazz(self, channel, player, author):
+            size = int(20)
+            await self.safe_send_message(channel, "Right give me a sec while i make a jazz playlist")
+            for i in range(size):
+                song_url = code.genre.jazz()
+                info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                               process=False)
+                try:
+                    await player.playlist.add_entry(song_url, channel=channel, author=author)
+                except exceptions.ExtractionError as e:
+                    print("Error adding song from autoplaylist:", e)
+            await self.safe_send_message(channel, "All done, enjoy")
+
+        async def on_message(self, message):
+            await self.wait_until_ready()
+
+            message_content = message.content.strip()
+            if not message_content.startswith(self.config.command_prefix):
                 return
 
-        if message.author.id in self.blacklist and message.author.id != self.config.owner_id:
-            log.warning("User blacklisted: {0.id}/{0!s} ({1})".format(message.author, command))
-            return
+            if message.author == self.user:
+                log.warning("Ignoring command from myself ({})".format(message.content))
+                return
 
-        else:
-            log.info("{0.id}/{0!s}: {1}".format(message.author, message_content.replace('\n', '\n... ')))
+            if self.config.bound_channels and message.channel.id not in self.config.bound_channels and not message.channel.is_private:
+                return  # if I want to log this I just move it under the prefix check
 
-        user_permissions = self.permissions.for_user(message.author)
+            command, *args = message_content.split(' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
+            command = command[len(self.config.command_prefix):].lower().strip()
 
-        argspec = inspect.signature(handler)
-        params = argspec.parameters.copy()
+            handler = getattr(self, 'cmd_' + command, None)
+            if not handler:
+                return
 
-        sentmsg = response = None
+            if message.channel.is_private:
+                if not (message.author.id == self.config.owner_id and command == 'joinserver'):
+                    await self.send_message(message.channel, 'You cannot use this bot in private messages.')
+                    return
 
-        # noinspection PyBroadException
-        try:
-            if user_permissions.ignore_non_voice and command in user_permissions.ignore_non_voice:
-                await self._check_ignore_non_voice(message)
+            if message.author.id in self.blacklist and message.author.id != self.config.owner_id:
+                log.warning("User blacklisted: {0.id}/{0!s} ({1})".format(message.author, command))
+                return
 
-            handler_kwargs = {}
-            if params.pop('message', None):
-                handler_kwargs['message'] = message
+            else:
+                log.info("{0.id}/{0!s}: {1}".format(message.author, message_content.replace('\n', '\n... ')))
 
-            if params.pop('channel', None):
-                handler_kwargs['channel'] = message.channel
+            user_permissions = self.permissions.for_user(message.author)
 
-            if params.pop('author', None):
-                handler_kwargs['author'] = message.author
+            argspec = inspect.signature(handler)
+            params = argspec.parameters.copy()
 
-            if params.pop('server', None):
-                handler_kwargs['server'] = message.server
+            sentmsg = response = None
 
-            if params.pop('player', None):
-                handler_kwargs['player'] = await self.get_player(message.channel)
+            # noinspection PyBroadException
+            try:
+                if user_permissions.ignore_non_voice and command in user_permissions.ignore_non_voice:
+                    await self._check_ignore_non_voice(message)
 
-            if params.pop('_player', None):
-                handler_kwargs['_player'] = self.get_player_in(message.server)
+                handler_kwargs = {}
+                if params.pop('message', None):
+                    handler_kwargs['message'] = message
 
-            if params.pop('permissions', None):
-                handler_kwargs['permissions'] = user_permissions
+                if params.pop('channel', None):
+                    handler_kwargs['channel'] = message.channel
 
-            if params.pop('user_mentions', None):
-                handler_kwargs['user_mentions'] = list(map(message.server.get_member, message.raw_mentions))
+                if params.pop('author', None):
+                    handler_kwargs['author'] = message.author
 
-            if params.pop('channel_mentions', None):
-                handler_kwargs['channel_mentions'] = list(map(message.server.get_channel, message.raw_channel_mentions))
+                if params.pop('server', None):
+                    handler_kwargs['server'] = message.server
 
-            if params.pop('voice_channel', None):
-                handler_kwargs['voice_channel'] = message.server.me.voice_channel
+                if params.pop('player', None):
+                    handler_kwargs['player'] = await self.get_player(message.channel)
 
-            if params.pop('leftover_args', None):
-                handler_kwargs['leftover_args'] = args
+                if params.pop('_player', None):
+                    handler_kwargs['_player'] = self.get_player_in(message.server)
 
-            args_expected = []
-            for key, param in list(params.items()):
+                if params.pop('permissions', None):
+                    handler_kwargs['permissions'] = user_permissions
 
-                # parse (*args) as a list of args
-                if param.kind == param.VAR_POSITIONAL:
-                    handler_kwargs[key] = args
-                    params.pop(key)
-                    continue
+                if params.pop('user_mentions', None):
+                    handler_kwargs['user_mentions'] = list(map(message.server.get_member, message.raw_mentions))
 
-                # parse (*, args) as args rejoined as a string
-                # multiple of these arguments will have the same value
-                if param.kind == param.KEYWORD_ONLY and param.default == param.empty:
-                    handler_kwargs[key] = ' '.join(args)
-                    params.pop(key)
-                    continue
+                if params.pop('channel_mentions', None):
+                    handler_kwargs['channel_mentions'] = list(map(message.server.get_channel, message.raw_channel_mentions))
 
-                doc_key = '[{}={}]'.format(key, param.default) if param.default is not param.empty else key
-                args_expected.append(doc_key)
+                if params.pop('voice_channel', None):
+                    handler_kwargs['voice_channel'] = message.server.me.voice_channel
 
-                # Ignore keyword args with default values when the command had no arguments
-                if not args and param.default is not param.empty:
-                    params.pop(key)
-                    continue
+                if params.pop('leftover_args', None):
+                    handler_kwargs['leftover_args'] = args
 
-                # Assign given values to positional arguments
-                if args:
-                    arg_value = args.pop(0)
-                    handler_kwargs[key] = arg_value
-                    params.pop(key)
+                args_expected = []
+                for key, param in list(params.items()):
 
-            if message.author.id != self.config.owner_id:
-                if user_permissions.command_whitelist and command not in user_permissions.command_whitelist:
-                    raise exceptions.PermissionsError(
-                        "This command is not enabled for your group ({}).".format(user_permissions.name),
-                        expire_in=20)
+                    # parse (*args) as a list of args
+                    if param.kind == param.VAR_POSITIONAL:
+                        handler_kwargs[key] = args
+                        params.pop(key)
+                        continue
 
-                elif user_permissions.command_blacklist and command in user_permissions.command_blacklist:
-                    raise exceptions.PermissionsError(
-                        "This command is disabled for your group ({}).".format(user_permissions.name),
-                        expire_in=20)
+                    # parse (*, args) as args rejoined as a string
+                    # multiple of these arguments will have the same value
+                    if param.kind == param.KEYWORD_ONLY and param.default == param.empty:
+                        handler_kwargs[key] = ' '.join(args)
+                        params.pop(key)
+                        continue
 
-            # Invalid usage, return docstring
-            if params:
-                docs = getattr(handler, '__doc__', None)
-                if not docs:
-                    docs = 'Usage: {}{} {}'.format(
-                        self.config.command_prefix,
-                        command,
-                        ' '.join(args_expected)
+                    doc_key = '[{}={}]'.format(key, param.default) if param.default is not param.empty else key
+                    args_expected.append(doc_key)
+
+                    # Ignore keyword args with default values when the command had no arguments
+                    if not args and param.default is not param.empty:
+                        params.pop(key)
+                        continue
+
+                    # Assign given values to positional arguments
+                    if args:
+                        arg_value = args.pop(0)
+                        handler_kwargs[key] = arg_value
+                        params.pop(key)
+
+                if message.author.id != self.config.owner_id:
+                    if user_permissions.command_whitelist and command not in user_permissions.command_whitelist:
+                        raise exceptions.PermissionsError(
+                            "This command is not enabled for your group ({}).".format(user_permissions.name),
+                            expire_in=20)
+
+                    elif user_permissions.command_blacklist and command in user_permissions.command_blacklist:
+                        raise exceptions.PermissionsError(
+                            "This command is disabled for your group ({}).".format(user_permissions.name),
+                            expire_in=20)
+
+                # Invalid usage, return docstring
+                if params:
+                    docs = getattr(handler, '__doc__', None)
+                    if not docs:
+                        docs = 'Usage: {}{} {}'.format(
+                            self.config.command_prefix,
+                            command,
+                            ' '.join(args_expected)
+                        )
+
+                    docs = dedent(docs)
+                    await self.safe_send_message(
+                        message.channel,
+                        '```\n{}\n```'.format(docs.format(command_prefix=self.config.command_prefix)),
+                        expire_in=60
+                    )
+                    return
+
+                response = await handler(**handler_kwargs)
+                if response and isinstance(response, Response):
+                    content = response.content
+                    if response.reply:
+                        content = '{}, {}'.format(message.author.mention, content)
+
+                    sentmsg = await self.safe_send_message(
+                        message.channel, content,
+                        expire_in=response.delete_after if self.config.delete_messages else 0,
+                        also_delete=message if self.config.delete_invoking else None
                     )
 
-                docs = dedent(docs)
+            except (exceptions.CommandError, exceptions.HelpfulError, exceptions.ExtractionError) as e:
+                log.error("Error in {0}: {1.__class__.__name__}: {1.message}".format(command, e), exc_info=True)
+
+                expirein = e.expire_in if self.config.delete_messages else None
+                alsodelete = message if self.config.delete_invoking else None
+
                 await self.safe_send_message(
                     message.channel,
-                    '```\n{}\n```'.format(docs.format(command_prefix=self.config.command_prefix)),
-                    expire_in=60
+                    '```\n{}\n```'.format(e.message),
+                    expire_in=expirein,
+                    also_delete=alsodelete
                 )
+
+            except exceptions.Signal:
+                raise
+
+            except Exception:
+                log.error("Exception in on_message", exc_info=True)
+                if self.config.debug_mode:
+                    await self.safe_send_message(message.channel, '```\n{}\n```'.format(traceback.format_exc()))
+
+            finally:
+                if not sentmsg and not response and self.config.delete_invoking:
+                    await asyncio.sleep(5)
+                    await self.safe_delete_message(message, quiet=True)
+
+        async def on_voice_state_update(self, before, after):
+            if not self.init_ok:
+                return # Ignore stuff before ready
+
+            state = VoiceStateUpdate(before, after)
+
+            if state.broken:
+                log.voicedebug("Broken voice state update")
                 return
 
-            response = await handler(**handler_kwargs)
-            if response and isinstance(response, Response):
-                content = response.content
-                if response.reply:
-                    content = '{}, {}'.format(message.author.mention, content)
+            if state.resuming:
+                log.debug("Resumed voice connection to {0.server.name}/{0.name}".format(state.voice_channel))
 
-                sentmsg = await self.safe_send_message(
-                    message.channel, content,
-                    expire_in=response.delete_after if self.config.delete_messages else 0,
-                    also_delete=message if self.config.delete_invoking else None
-                )
+            if not state.changes:
+                log.voicedebug("Empty voice state update, likely a session id change")
+                return # Session id change, pointless event
 
-        except (exceptions.CommandError, exceptions.HelpfulError, exceptions.ExtractionError) as e:
-            log.error("Error in {0}: {1.__class__.__name__}: {1.message}".format(command, e), exc_info=True)
+            ################################
 
-            expirein = e.expire_in if self.config.delete_messages else None
-            alsodelete = message if self.config.delete_invoking else None
-
-            await self.safe_send_message(
-                message.channel,
-                '```\n{}\n```'.format(e.message),
-                expire_in=expirein,
-                also_delete=alsodelete
-            )
-
-        except exceptions.Signal:
-            raise
-
-        except Exception:
-            log.error("Exception in on_message", exc_info=True)
-            if self.config.debug_mode:
-                await self.safe_send_message(message.channel, '```\n{}\n```'.format(traceback.format_exc()))
-
-        finally:
-            if not sentmsg and not response and self.config.delete_invoking:
-                await asyncio.sleep(5)
-                await self.safe_delete_message(message, quiet=True)
-
-    async def on_voice_state_update(self, before, after):
-        if not self.init_ok:
-            return # Ignore stuff before ready
-
-        state = VoiceStateUpdate(before, after)
-
-        if state.broken:
-            log.voicedebug("Broken voice state update")
-            return
-
-        if state.resuming:
-            log.debug("Resumed voice connection to {0.server.name}/{0.name}".format(state.voice_channel))
-
-        if not state.changes:
-            log.voicedebug("Empty voice state update, likely a session id change")
-            return # Session id change, pointless event
-
-        ################################
-
-        log.voicedebug("Voice state update for {mem.id}/{mem!s} on {ser.name}/{vch.name} -> {dif}".format(
-            mem = state.member,
-            ser = state.server,
-            vch = state.voice_channel,
-            dif = state.changes
-        ))
-
-        if not state.is_about_my_voice_channel:
-            return # Irrelevant channel
-
-        if state.joining or state.leaving:
-            log.info("{0.id}/{0!s} has {1} {2}/{3}".format(
-                state.member,
-                'joined' if state.joining else 'left',
-                state.server,
-                state.my_voice_channel
+            log.voicedebug("Voice state update for {mem.id}/{mem!s} on {ser.name}/{vch.name} -> {dif}".format(
+                mem = state.member,
+                ser = state.server,
+                vch = state.voice_channel,
+                dif = state.changes
             ))
 
-        if not self.config.auto_pause:
-            return
+            if not state.is_about_my_voice_channel:
+                return # Irrelevant channel
 
-        autopause_msg = "{state} in {channel.server.name}/{channel.name} {reason}"
+            if state.joining or state.leaving:
+                log.info("{0.id}/{0!s} has {1} {2}/{3}".format(
+                    state.member,
+                    'joined' if state.joining else 'left',
+                    state.server,
+                    state.my_voice_channel
+                ))
 
-        auto_paused = self.server_specific_data[after.server]['auto_paused']
-        player = await self.get_player(state.my_voice_channel)
+            if not self.config.auto_pause:
+                return
 
-        if state.joining and state.empty() and player.is_playing:
-            log.info(autopause_msg.format(
-                state = "Pausing",
-                channel = state.my_voice_channel,
-                reason = "(joining empty channel)"
-            ).strip())
+            autopause_msg = "{state} in {channel.server.name}/{channel.name} {reason}"
 
-            self.server_specific_data[after.server]['auto_paused'] = True
-            player.pause()
-            return
+            auto_paused = self.server_specific_data[after.server]['auto_paused']
+            player = await self.get_player(state.my_voice_channel)
 
-        if not state.is_about_me:
-            if not state.empty(old_channel=state.leaving):
-                if auto_paused and player.is_paused:
-                    log.info(autopause_msg.format(
-                        state = "Unpausing",
-                        channel = state.my_voice_channel,
-                        reason = ""
-                    ).strip())
+            if state.joining and state.empty() and player.is_playing:
+                log.info(autopause_msg.format(
+                    state = "Pausing",
+                    channel = state.my_voice_channel,
+                    reason = "(joining empty channel)"
+                ).strip())
 
-                    self.server_specific_data[after.server]['auto_paused'] = False
+                self.server_specific_data[after.server]['auto_paused'] = True
+                player.pause()
+                return
+
+            if not state.is_about_me:
+                if not state.empty(old_channel=state.leaving):
+                    if auto_paused and player.is_paused:
+                        log.info(autopause_msg.format(
+                            state = "Unpausing",
+                            channel = state.my_voice_channel,
+                            reason = ""
+                        ).strip())
+
+                        self.server_specific_data[after.server]['auto_paused'] = False
+                        player.resume()
+                else:
+                    if not auto_paused and player.is_playing:
+                        log.info(autopause_msg.format(
+                            state = "Pausing",
+                            channel = state.my_voice_channel,
+                            reason = "(empty channel)"
+                        ).strip())
+
+                        self.server_specific_data[after.server]['auto_paused'] = True
+                        player.pause()
+
+        async def on_server_update(self, before:discord.Server, after:discord.Server):
+            if before.region != after.region:
+                log.warning("Server \"%s\" changed regions: %s -> %s" % (after.name, before.region, after.region))
+
+                await self.reconnect_voice_client(after)
+
+        async def on_server_join(self, server: discord.Server):
+            log.info("Bot has been joined server: {}".format(server.name))
+
+            if not self.user.bot:
+                alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
+
+                if server.id == "81384788765712384" and not server.unavailable:  # Discord API
+                    playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels,
+                                                                                              name='playground') or server
+                    await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368"))  # fake abal
+                    return
+                elif server.id == "129489631539494912" and not server.unavailable:  # Rhino Bot Help
+                    bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels,
+                                                                                                name='bot-testing') or server
+                    await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368"))  # also fake abal
+                    return
+            msg = (
+            "Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
+            msg = msg + "  Give me about 10 seconds to prepare some data for your server"
+            em = discord.Embed(description=msg, colour=65280)
+            em.set_author(name='I just joined :3',
+                          icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+            await self.send_message(server, embed=em)
+
+            pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
+            await asyncio.sleep(8)
+            await self.safe_send_message(server, "All done ^-^")
+
+        async def on_server_remove(self, server: discord.Server):
+            log.info("Bot has been removed from server: {}".format(server.name))
+            log.debug('Updated server list:')
+            [log.debug(' - ' + s.name) for s in self.servers]
+            if server.id in self.players:
+                self.players.pop(server.id).kill()
+
+        async def on_server_available(self, server: discord.Server):
+            if not self.init_ok:
+                return  # Ignore pre-ready events
+
+            log.debug("Server \"{}\" has become available.".format(server.name))
+
+            player = self.get_player_in(server)
+
+            if player and player.is_paused:
+                av_paused = self.server_specific_data[server]['availability_paused']
+
+                if av_paused:
+                    log.debug("Resuming player in \"{}\" due to availability.".format(server.name))
+                    self.server_specific_data[server]['availability_paused'] = False
                     player.resume()
-            else:
-                if not auto_paused and player.is_playing:
-                    log.info(autopause_msg.format(
-                        state = "Pausing",
-                        channel = state.my_voice_channel,
-                        reason = "(empty channel)"
-                    ).strip())
 
-                    self.server_specific_data[after.server]['auto_paused'] = True
-                    player.pause()
+        async def on_server_unavailable(self, server: discord.Server):
+            log.debug("Server \"{}\" has become unavailable.".format(server.name))
 
-    async def on_server_update(self, before:discord.Server, after:discord.Server):
-        if before.region != after.region:
-            log.warning("Server \"%s\" changed regions: %s -> %s" % (after.name, before.region, after.region))
+            player = self.get_player_in(server)
 
-            await self.reconnect_voice_client(after)
-
-    async def on_server_join(self, server: discord.Server):
-        log.info("Bot has been joined server: {}".format(server.name))
-
-        if not self.user.bot:
-            alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
-
-            if server.id == "81384788765712384" and not server.unavailable:  # Discord API
-                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels,
-                                                                                          name='playground') or server
-                await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368"))  # fake abal
-                return
-            elif server.id == "129489631539494912" and not server.unavailable:  # Rhino Bot Help
-                bot_testing = server.get_channel("134771894292316160") or discord.utils.get(server.channels,
-                                                                                            name='bot-testing') or server
-                await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368"))  # also fake abal
-                return
-        msg = (
-        "Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
-        msg = msg + "  Give me about 10 seconds to prepare some data for your server"
-        em = discord.Embed(description=msg, colour=65280)
-        em.set_author(name='I just joined :3',
-                      icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        await self.send_message(server, embed=em)
-
-        pathlib.Path('data/%s/' % server.id).mkdir(exist_ok=True)
-        await asyncio.sleep(8)
-        await self.safe_send_message(server, "All done ^-^")
-
-    async def on_server_remove(self, server: discord.Server):
-        log.info("Bot has been removed from server: {}".format(server.name))
-        log.debug('Updated server list:')
-        [log.debug(' - ' + s.name) for s in self.servers]
-        if server.id in self.players:
-            self.players.pop(server.id).kill()
-
-    async def on_server_available(self, server: discord.Server):
-        if not self.init_ok:
-            return  # Ignore pre-ready events
-
-        log.debug("Server \"{}\" has become available.".format(server.name))
-
-        player = self.get_player_in(server)
-
-        if player and player.is_paused:
-            av_paused = self.server_specific_data[server]['availability_paused']
-
-            if av_paused:
-                log.debug("Resuming player in \"{}\" due to availability.".format(server.name))
-                self.server_specific_data[server]['availability_paused'] = False
-                player.resume()
-
-    async def on_server_unavailable(self, server: discord.Server):
-        log.debug("Server \"{}\" has become unavailable.".format(server.name))
-
-        player = self.get_player_in(server)
-
-        if player and player.is_playing:
-            log.debug("Pausing player in \"{}\" due to unavailability.".format(server.name))
-            self.server_specific_data[server]['availability_paused'] = True
-            player.pause()
+            if player and player.is_playing:
+                log.debug("Pausing player in \"{}\" due to unavailability.".format(server.name))
+                self.server_specific_data[server]['availability_paused'] = True
+                player.pause()

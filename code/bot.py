@@ -93,26 +93,6 @@ class MusicBot(discord.Client):
         except:
             pass
 
-    def owner_only(func):
-        orig_msg= _get_variable('message')
-        if not orig_msg or orig_msg.author.id == self.config.owner_id:
-            return await func(self, *args, **kwargs)
-
-        else:
-            raise exceptions.PermissionsError('Sorry thats an owner only command.')
-        return wrapper
-
-    def dev_only(func):
-        @wraps(func)
-        async def wrapper(self, *args, **kwargs):
-            orig_msg = _get_variable('message')
-            if orig_msg.author.id in self.config.dev_ids:
-                return await func(self, *args, **kwargs)
-            else:
-                raise exceptions.PermissionsError("only dev users can use this command", expire_in=30)
-        wrapper.dev_cmd = True
-        return wrapper
-
     def ensure_appinfo(func):
         @wraps(func)
         async def wrapper(self, *args, **kwargs):
@@ -2175,7 +2155,7 @@ async def on_ready(self):
         await self.send_message(author, '\n'.join(lines))
         return Response("\N{OPEN MAILBOX WITH RAISED FLAG}", delete_after=20)
 
-    @owner_only
+
     async def cmd_setname(self, leftover_args, name):
         """
         Usage:

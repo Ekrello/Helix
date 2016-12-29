@@ -3529,3 +3529,9 @@ https://www.youtube.com/watch?v&#x3D;VWxTrD4L7iY"""
     song_url = (text[random.randint(0, (len(text)))])
     return song_url
 
+def rap():
+    import random
+    text = """"""
+    text = text.splitlines()
+    song_url = (text[random.randint(0, (len(text)))])
+    return song_url

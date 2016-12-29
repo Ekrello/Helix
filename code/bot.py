@@ -2484,6 +2484,35 @@ With Hitler's dick"""
             except:
                 return Response("/weather failed to fetch weather data, check your inputted location if that doesnt work, type /bug")
 
+    async def cmd_knock(self, channel, author):
+        html = urllib.request.urlopen("http://romtypo.com/toasty/knockknock.php").read()
+        soup = soup = BeautifulSoup(html, "lxml")
+
+        text = str(soup.findAll(text=True))
+        text = text.replace("[", "")
+        text = text.replace("]", "")
+        text = text.replace('"', "")
+        text = text.replace("'", "")
+        text = text.replace(".", "")
+        text = text.replace("\\", "'")
+
+        text = text.split(",")
+        await self.safe_send_message(channel, (text[0]))
+        confirm_message = await self.safe_send_message(channel, (text[1]))
+        response_message = await self.wait_for_message(30, author=author, channel=channel, check=check)
+
+
+        if not response_message:
+            await self.safe_delete_message(confirm_message)
+            await self.safe_delete_message()
+            return Response("fine, ignore my joke :tired_face:")
+
+        if response_message.content.lower().startswith('who'):
+            await self.safe_send_message(channel, (text[2]))
+
+        else:
+            return
+
     async def cmd_savage(self, message):
         msg = code.misc.savage()
         try:

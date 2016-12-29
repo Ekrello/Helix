@@ -74,7 +74,9 @@ def helpchat():
     helpmsg4 += "/8ball[question]   <--Magic 8-ball\n"
     helpmsg4 += "/shitpost          <--A random shitpost message\n"
     helpmsg4 += "/flip              <--Flip coins...and something else\n"
+    helpmsg4 += "/knock             <--knock knock\n"
     helpmsg4 += "/weather [location]<--weather where you are\n"
+    helpmsg4 += "/doge [words]      <--generate a doge meme\n"
     helpmsg4 += "```"
     return helpmsg4
 

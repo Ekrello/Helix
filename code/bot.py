@@ -708,6 +708,8 @@ with /help
 with commands
 porn
 VIDEO GAMES
+Overwatch
+MLG Pro Simulator
 stuff
 with too many servers
 with life of my dev
@@ -735,9 +737,22 @@ Memes
 Darkness
 With some burnt toast
 Jepus Crist
-With my devs nipples    
+With my devs nipples	
 SOMeBODY ONCE TOLD ME
-With Hitler's dick"""
+With Hitler's dick
+In The Street
+With Knives
+ɐᴉlɐɹʇsn∀ uI
+Shrek Is Love
+Shrek Is Life
+Illegal Poker
+ACROSS THE UNIVERRRRSE
+Kickball
+Mah Jam
+R2-D2 On TV
+with fire
+at being a real bot
+with your fragile little mind"""
         text = game.splitlines()
         size = len(text)
         try:

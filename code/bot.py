@@ -2263,9 +2263,12 @@ With Hitler's dick"""
         return Response("BYE", delete_after=20)
 
     async def cmd_restart(self, channel):
-        await self.safe_send_message(channel, "\N{WAVING HAND SIGN}")
-        await self.disconnect_all_voice_clients()
-        raise exceptions.RestartSignal()
+        if author.id == "174918559539920897" or "216840311232528384":
+            await self.safe_send_message(channel, "\N{WAVING HAND SIGN}")
+            await self.disconnect_all_voice_clients()
+            raise exceptions.RestartSignal()
+        else:
+            return Response("Now why would i let you do that?")
 
     async def cmd_shutdown(self, channel):
         await self.safe_send_message(channel, "\N{WAVING HAND SIGN}")
@@ -2897,7 +2900,7 @@ With Hitler's dick"""
             return Response("You dont have permission to do that")
 
     async def cmd_moduleupdate(self, channel, author):
-        if author.id == "174918559539920897":
+        if author.id == "174918559539920897" or "216840311232528384":
             await self.safe_send_message(channel, "Hold on")
             await self.send_typing(channel)
             os.system("git pull origin master")

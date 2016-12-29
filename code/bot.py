@@ -2485,6 +2485,18 @@ With Hitler's dick"""
                 return Response("/weather failed to fetch weather data, check your inputted location if that doesnt work, type /bug")
 
     async def cmd_knock(self, channel, author):
+        def is_possible_command_invoke(entry):
+            valid_call = any(
+                entry.content.startswith(prefix) for prefix in [self.config.command_prefix])  # can be expanded
+            return valid_call and not entry.content[1:2].isspace()
+
+        delete_invokes = True
+        delete_all = channel.permissions_for(author).manage_messages or self.config.owner_id == author.id
+
+        def check(message):
+            if is_possible_command_invoke(message) and delete_invokes:
+                return delete_all or message.author == author
+            return message.author == self.user
         def check(message):
             if is_possible_command_invoke(message) and delete_invokes:
                 return delete_all or message.author == author

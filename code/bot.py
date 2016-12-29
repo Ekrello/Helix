@@ -2485,6 +2485,10 @@ With Hitler's dick"""
                 return Response("/weather failed to fetch weather data, check your inputted location if that doesnt work, type /bug")
 
     async def cmd_knock(self, channel, author):
+        def check(message):
+            if is_possible_command_invoke(message) and delete_invokes:
+                return delete_all or message.author == author
+            return message.author == self.user
         html = urllib.request.urlopen("http://romtypo.com/toasty/knockknock.php").read()
         soup = soup = BeautifulSoup(html, "lxml")
 

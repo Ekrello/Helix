@@ -2718,7 +2718,22 @@ With Hitler's dick"""
             await self.safe_send_message(channel, msg + "*shrugs*" + name[::-1])
         else:
             await self.safe_send_message(channel, "*flips a coin and... " + random.choice(["HEADS!*", "TAILS!*"]))
-
+            
+    async def cmd_echo(self, message, channel):
+        msg = message.content.strip()
+        if (len(msg)) > 6:
+            return Response("You need to tell me to say something")
+        msg = message.replace("/echo ", "")
+        msg = message.replace("/ECHO ", "")
+        try:
+            await self.safe_send_message(channel, message)
+            try:
+                await self.safe_delete_message(message)
+            except:
+                pass
+        except:
+            await self.safe_send_message(channel, "I couldnt send that... maybe you should contact my devs")
+            
     async def cmd_toast(self, channel, author, message):
         over = False
         await self.send_typing(channel)

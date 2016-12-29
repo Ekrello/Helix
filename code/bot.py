@@ -2933,7 +2933,7 @@ with your fragile little mind"""
         else:
             return Response("You arent my developer")
 
-    async def cmd_clearbug(self, author,server):
+    async def cmd_clearbug(self, author, server, channel):
         if server.id == "206794668736774155": #Toastys server
             print("Server is correct")
             perms = author.permissions_in(channel)

@@ -2498,7 +2498,7 @@ With Hitler's dick"""
             return (
                 m.content.lower()[0] in 'who' or
                 # hardcoded function name weeee
-                m.content.lower().startswith('{}'.format(self.config.command_prefix))
+                m.content.lower().startswith('{}'.format(self.config.command_prefix)))
             
         html = urllib.request.urlopen("http://romtypo.com/toasty/knockknock.php").read()
         soup = soup = BeautifulSoup(html, "lxml")

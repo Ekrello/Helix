@@ -2409,7 +2409,7 @@ https://soundcloud.com/blngrn/rainy-sreets
 https://www.youtube.com/watch?v&#x3D;6pG_3jZxzlo
 https://youtube.com/watch?v&#x3D;EG9DA-dSu8Y"""
     text = text.splitlines()
-    song_url = (text[random.randint(0, (len(text)))])
+    song_url = (text[random.randint(0, ((len(text) - 1)))])
     return song_url
 
 def classical():
@@ -2685,7 +2685,7 @@ https://www.youtube.com/watch?v&#x3D;Tn4lk8fRskA
 https://www.youtube.com/watch?v&#x3D;bxePLI40Oek
 https://www.youtube.com/watch?v&#x3D;T9u7_WAkAPw"""
     text = text.splitlines()
-    song_url = (text[random.randint(0, (len(text)))])
+    song_url = (text[random.randint(0, ((len(text) - 1)))])
     return song_url
 
 def japanese():
@@ -3526,8 +3526,9 @@ https://www.youtube.com/watch?v&#x3D;jzh4hZOxZyY
 https://www.youtube.com/watch?v&#x3D;xAmOdmYwu38
 https://www.youtube.com/watch?v&#x3D;VWxTrD4L7iY"""
     text = text.splitlines()
-    song_url = (text[random.randint(0, (len(text)))])
+    song_url = (text[random.randint(0, ((len(text) - 1)))])
     return song_url
+
 
 def rap():
     import random
@@ -3693,5 +3694,5 @@ https://www.youtube.com/watch?v=tBznAvIGIZ0&index=164&list=PL9RiXq3CWn9rqDe-4vKi
 https://www.youtube.com/watch?v=7IGxt_noG9M&list=PL9RiXq3CWn9rqDe-4vKilPgeFzbStaxr-&index=165
 """
     text = text.splitlines()
-    song_url = (text[random.randint(0, (len(text)))])
+    song_url = (text[random.randint(0, ((len(text) - 1)))])
     return song_url

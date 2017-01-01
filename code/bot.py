@@ -1199,7 +1199,7 @@ with your fragile little mind"""
             await player.playlist.add_entry(song_url, channel=channel, author=author)
         return Response(":thumbsup:")
 
-    async def cmd_blacklist(self, message, user_mentions, option, something):
+    async def cmd_blacklist(self, message, user_mentions, option, something, author, channel):
         if server.id == "206794668736774155": #Toastys server
             print("Server is correct")
             perms = author.permissions_in(channel)
@@ -2277,7 +2277,7 @@ with your fragile little mind"""
         await self.disconnect_voice_client(server)
         return Response("BYE", delete_after=20)
 
-    async def cmd_restart(self, channel):
+    async def cmd_restart(self, channel, author):
         if author.id == "174918559539920897" or "216840311232528384":
             await self.safe_send_message(channel, "\N{WAVING HAND SIGN}")
             await self.disconnect_all_voice_clients()
@@ -2537,14 +2537,14 @@ with your fragile little mind"""
 
         if not response_message:
             await self.safe_delete_message(confirm_message)
-            await self.safe_delete_message()
             return Response("fine, ignore my joke :tired_face:")
 
         if response_message.content.lower().startswith('who'):
             await self.safe_send_message(channel, (text[2]))
 
         else:
-            return
+            await self.safe_delete_message(confirm_message)
+            return Response("fine, ignore my joke :tired_face:")
 
     async def cmd_savage(self, message):
         msg = code.misc.savage()
@@ -3394,8 +3394,7 @@ with your fragile little mind"""
         for line in link:
             song_url = line
             print(line)
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
                 count = count + 1
@@ -3412,8 +3411,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
         for i in range(size):
             song_url = code.genre.electronic()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3425,8 +3423,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")
         for i in range(size):
             song_url = code.genre.rock()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3438,8 +3435,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a metal playlist")
         for i in range(size):
             song_url = code.genre.metal()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3451,8 +3447,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a retro playlist")
         for i in range(size):
             song_url = code.genre.retro()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3464,8 +3459,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
         for i in range(size):
             song_url = code.genre.hiphop()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3477,8 +3471,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a classical playlist")
         for i in range(size):
             song_url = code.genre.classical()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3490,8 +3483,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a christmas playlist")
         for i in range(size):
             song_url = code.genre.christmas()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3503,8 +3495,7 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a japanese playlist")
         for i in range(size):
             song_url = code.genre.japanese()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3516,8 +3507,20 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a jazz playlist")
         for i in range(size):
             song_url = code.genre.jazz()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
-                                                           process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            try:
+                await player.playlist.add_entry(song_url, channel=channel, author=author)
+            except exceptions.ExtractionError as e:
+                print("Error adding song from autoplaylist:", e)
+        await self.safe_send_message(channel, "All done, enjoy")
+
+
+    async def cmd_rap(self, channel, player, author):
+        size = int(20)
+        await self.safe_send_message(channel, "Right give me a sec while i make a rap playlist")
+        for i in range(size):
+            song_url = code.genre.rap()
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3789,13 +3792,14 @@ with your fragile little mind"""
 
     async def on_server_join(self, server: discord.Server):
         log.info("Bot has been joined server: {}".format(server.name))
-
+        if server.id == "name":
+            await self.leave_server(server)
+            await self.safe_send_message(server, "This server has been blacklisted, if you feel this is a mistake, go argue your case in my server, https://discord.gg/WJG7a")
         if not self.user.bot:
             alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
 
             if server.id == "81384788765712384" and not server.unavailable:  # Discord API
-                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels,
-                                                                                          name='playground') or server
+                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels, name='playground') or server
                 await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368"))  # fake abal
                 return
             elif server.id == "129489631539494912" and not server.unavailable:  # Rhino Bot Help

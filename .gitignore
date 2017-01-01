@@ -4,5 +4,6 @@ data/
 audio_cache/
 logs/
 __pycache__/
+code/__pycache__/
 .idea/
 audio_cache/

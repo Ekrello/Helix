@@ -1,8 +1,9 @@
-key
 logmein.py
 gateway.py
 data/
 audio_cache/
-discord.log
-musicbot.log
-musicbot.log.last
+logs/
+__pycache__/
+.idea/
+audio_cache/
+s

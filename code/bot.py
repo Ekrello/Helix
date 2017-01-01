@@ -2744,7 +2744,7 @@ with your fragile little mind"""
         msg = str(msg)
         msg = msg[:6]
         try:
-            await self.safe_send_message(channel, message)
+            await self.safe_send_message(channel, msg)
             try:
                 await self.safe_delete_message(message)
             except:

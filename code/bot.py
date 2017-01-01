@@ -2742,7 +2742,7 @@ with your fragile little mind"""
         if (len(msg)) < 6:
             return Response("You need to tell me to say something")
         msg = str(msg)
-        msg = msg[:6]
+        msg = msg[6:]
         try:
             await self.safe_send_message(channel, msg)
             try:

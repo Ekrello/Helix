@@ -7,10 +7,3 @@ python.twitter
 bs4
 colorlog
 lxml
-cffi==1.6.0; sys_platform == 'win32'
-giphypop
-cleverbot
-python.twitter
-bs4
-logging
-colorlog

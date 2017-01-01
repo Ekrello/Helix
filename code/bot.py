@@ -2739,10 +2739,9 @@ with your fragile little mind"""
             
     async def cmd_echo(self, message, channel):
         msg = message.content.strip()
-        if (len(msg)) > 6:
+        if (len(msg)) < 6:
             return Response("You need to tell me to say something")
-        msg = message.replace("/echo ", "")
-        msg = message.replace("/ECHO ", "")
+        msg = message[:6]
         try:
             await self.safe_send_message(channel, message)
             try:

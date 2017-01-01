@@ -609,20 +609,13 @@ class MusicBot(discord.Client):
                 newmsg = '%s - your song **%s** is now playing in %s!' % (
                     entry.meta['author'].mention, entry.title, player.voice_client.channel.name)
             else:
-                newmsg = str(entry.title)
+                newmsg = 'Now playing in %s: **%s**' % (
+                    player.voice_client.channel.name, entry.title)
 
             if self.server_specific_data[channel.server]['last_np_msg']:
-                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_edit_message(last_np_msg,
-                                                                                                        newmsg,
-                                                                                                        send_if_fail=True)
+                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_edit_message(last_np_msg, newmsg, send_if_fail=True)
             else:
-                title = "Now playing in " + str(player.voice_client.channel.name) + ":"
-                em = discord.Embed(description=newmsg, colour=(random.randint(0, 16777215)))
-                em.set_author(name=title, icon_url="http://www.cifor.org/fileadmin/subsites/fire/play.png")
-                await self.send_message(channel, embed=em)
-                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_send_message(channel, embed = em)
-
-                # TODO: Check channel voice state?
+                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_send_message(channel, newmsg)
 
     async def on_player_resume(self, player, entry, **_):
         await self.update_now_playing_status(entry)
@@ -1458,7 +1451,7 @@ with your fragile little mind"""
 
                 return await self.cmd_play(player, channel, author, permissions, leftover_args, e.use_url)
 
-            reply_text = "Enqueued **%s** to be played. Position in queue: %s"
+            reply_text = "**Song:** %s\n Position in queue: %s"
             btext = entry.title
 
         if position == 1 and player.is_stopped:
@@ -1474,9 +1467,11 @@ with your fragile little mind"""
                 time_until = ''
 
             reply_text %= (btext, position, ftimedelta(time_until))
-
-        return Response(reply_text, delete_after=30)
-
+        title = "Added song in " + str(player.voice_client.channel.name) + ":"
+        em = discord.Embed(description=reply_text, colour=(random.randint(0, 16777215)))
+        em.set_author(name=title, icon_url="http://www.cifor.org/fileadmin/subsites/fire/play.png")
+        await self.send_message(channel, embed=em)
+        
     async def _cmd_play_playlist_async(self, player, channel, author, permissions, playlist_url, extractor_type):
         """
         Secret handler to use the async wizardry to make playlist queuing non-"blocking"

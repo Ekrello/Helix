@@ -593,8 +593,9 @@ class MusicBot(discord.Client):
         await self.serialize_queue(player.voice_client.channel.server)
 
         channel = entry.meta.get('channel', None)
+        author = entry.meta.get('author', None)
 
-        if channel:
+        if channel and author:
             last_np_msg = self.server_specific_data[channel.server]['last_np_msg']
             if last_np_msg and last_np_msg.channel == channel:
 
@@ -2928,7 +2929,7 @@ with your fragile little mind"""
         if author.id == "174918559539920897" or "216840311232528384":
             await self.safe_send_message(channel, "Hold on")
             await self.send_typing(channel)
-            os.system("git pull")
+            os.system("git pull origin master")
             await asyncio.sleep(2)
             try:
                 reload(code.misc)

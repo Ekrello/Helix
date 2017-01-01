@@ -17,6 +17,7 @@ def helpmusic():
     helpmsg1 += "/supported         <--All the links Toasty supports\n"
     helpmsg1 += "/electronic        <--Creates a playlist of electronic songs\n"
     helpmsg1 += "/rock              <--Creates a playlist of rock songs\n"
+    helpmsg1 +- "/rap               <--Creates a playlist of rap songs\n"
     helpmsg1 += "/retro             <--Creates a playlist of retro songs\n"
     helpmsg1 += "/metal             <--Creates a playlist of metal songs\n"
     helpmsg1 += "/jazz              <--Creates a playlist of jazz songs\n"

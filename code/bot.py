@@ -2928,7 +2928,7 @@ with your fragile little mind"""
         if author.id == "174918559539920897" or "216840311232528384":
             await self.safe_send_message(channel, "Hold on")
             await self.send_typing(channel)
-            os.system("git pull origin master")
+            os.system("git pull")
             await asyncio.sleep(2)
             try:
                 reload(code.misc)

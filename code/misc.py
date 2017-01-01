@@ -78,6 +78,7 @@ def helpchat():
     helpmsg4 += "/knock             <--knock knock\n"
     helpmsg4 += "/weather [location]<--weather where you are\n"
     helpmsg4 += "/doge [words]      <--generate a doge meme\n"
+    helpmsg4 += "/echo [text]       <--echo what you said\n"
     helpmsg4 += "```"
     return helpmsg4
 

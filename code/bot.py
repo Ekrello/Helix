@@ -609,15 +609,18 @@ class MusicBot(discord.Client):
                 newmsg = '%s - your song **%s** is now playing in %s!' % (
                     entry.meta['author'].mention, entry.title, player.voice_client.channel.name)
             else:
-                newmsg = 'Now playing in %s: **%s**' % (
-                    player.voice_client.channel.name, entry.title)
+                newmsg = str(entry.title)
 
             if self.server_specific_data[channel.server]['last_np_msg']:
                 self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_edit_message(last_np_msg,
                                                                                                         newmsg,
                                                                                                         send_if_fail=True)
             else:
-                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_send_message(channel, newmsg)
+                title = "Now playing in " + str(player.voice_client.channel.name) + ":"
+                em = discord.Embed(description=newmsg, colour=(random.randint(0, 16777215)))
+                em.set_author(name=title, icon_url="http://www.cifor.org/fileadmin/subsites/fire/play.png")
+                await self.send_message(channel, embed=em)
+                self.server_specific_data[channel.server]['last_np_msg'] = await self.safe_send_message(channel, embed = em)
 
                 # TODO: Check channel voice state?
 
@@ -764,12 +767,16 @@ with your fragile little mind"""
         if null == None or null == "":
             null = text[2]
         name = str(null)
-        game = discord.Game(name=name)
+        game = discord.Game(name=name, type=0)
         await self.change_status(game)
 
     async def update_now_playing_message(self, server, message, *, channel=None):
         lnp = self.server_specific_data[server]['last_np_msg']
         m = None
+
+        em = discord.Embed(description=message, colour=(random.randint(0, 16777215)))
+        em.set_author(name='Song:', icon_url="http://images.clipartpanda.com/help-clipart-11971487051948962354zeratul_Help.svg.med.png")
+        await self.send_message(channel, embed=em)
 
         if message is None and lnp:
             await self.safe_delete_message(lnp, quiet=True)
@@ -781,20 +788,20 @@ with your fragile little mind"""
                 async for lmsg in self.logs_from(channel, limit=1):
                     if lmsg != lnp and lnp:  # If we need to resend it
                         await self.safe_delete_message(lnp, quiet=True)
-                        m = await self.safe_send_message(channel, message, quiet=True)
+                        m = await self.safe_send_message(channel, embed=em, quiet=True)
                     else:
                         m = await self.safe_edit_message(lnp, message, send_if_fail=True, quiet=False)
 
             elif channel:  # If we have a new channel to send it to
                 await self.safe_delete_message(lnp, quiet=True)
-                m = await self.safe_send_message(channel, message, quiet=True)
+                m = await self.safe_send_message(channel, embed=em, quiet=True)
 
             else:  # we just resend it in the old channel
                 await self.safe_delete_message(lnp, quiet=True)
-                m = await self.safe_send_message(oldchannel, message, quiet=True)
+                m = await self.safe_send_message(oldchannel, embed=em, quiet=True)
 
         elif channel:  # No previous message
-            m = await self.safe_send_message(channel, message, quiet=True)
+            m = await self.safe_send_message(channel, embed=em, quiet=True)
 
         self.server_specific_data[server]['last_np_msg'] = m
 
@@ -1146,7 +1153,7 @@ with your fragile little mind"""
         # maybe option to leave the ownerid blank and generate a random command for the owner to use
         # wait_for_message is pretty neato
 
-            
+
 
         # t-t-th-th-that's all folks!
 
@@ -1200,12 +1207,12 @@ with your fragile little mind"""
         return Response(":thumbsup:")
 
     async def cmd_blacklist(self, message, user_mentions, option, something, author, channel):
-        if server.id == "206794668736774155": #Toastys server
+        if server.id == "206794668736774155":  # Toastys server
             print("Server is correct")
             perms = author.permissions_in(channel)
             for role in author.roles:
                 try:
-                    if perms.administrator or perms.manage_server or perms.manage_channels: #Devs, Tech support
+                    if perms.administrator or perms.manage_server or perms.manage_channels:  # Devs, Tech support
                         usage = True
                     else:
                         return Response("You cant use this command")
@@ -1734,14 +1741,18 @@ with your fragile little mind"""
                     url=player.current_entry.url
                 )
             else:
-                np_text = "Now {action}: **{title}** {progress}\n\N{WHITE RIGHT POINTING BACKHAND INDEX} <{url}>".format(
+                np_text = "**{title}** {progress}\n\N{WHITE RIGHT POINTING BACKHAND INDEX} <{url}>".format(
                     action=action_text,
                     title=player.current_entry.title,
                     progress=prog_str,
                     url=player.current_entry.url
                 )
 
-            self.server_specific_data[server]['last_np_msg'] = await self.safe_send_message(channel, np_text)
+            title = "Now " + action_text + " in " + str(player.voice_client.channel.name) + ":"
+            em = discord.Embed(description=np_text, colour=(random.randint(0, 16777215)))
+            em.set_author(name=title, icon_url="http://www.cifor.org/fileadmin/subsites/fire/play.png")
+
+            self.server_specific_data[server]['last_np_msg'] = await self.send_message(channel, embed=em)
             await self._manual_delete_check(message)
         else:
             return Response(
@@ -2500,10 +2511,11 @@ with your fragile little mind"""
                 if msg == "location error":
                     return Response("Something was wrong with the location you gave me :confused:")
             except:
-                return Response("/weather failed to fetch weather data, check your inputted location if that doesnt work, type /bug")
+                return Response(
+                    "/weather failed to fetch weather data, check your inputted location if that doesnt work, type /bug")
 
     async def cmd_knock(self, channel, author):
-        
+
         def is_possible_command_invoke(entry):
             valid_call = any(
                 entry.content.startswith(prefix) for prefix in [self.config.command_prefix])  # can be expanded
@@ -2517,7 +2529,7 @@ with your fragile little mind"""
                 m.content.lower()[0] in 'who' or
                 # hardcoded function name weeee
                 m.content.lower().startswith('{}'.format(self.config.command_prefix)))
-            
+
         html = urllib.request.urlopen("http://romtypo.com/toasty/knockknock.php").read()
         soup = soup = BeautifulSoup(html, "lxml")
 
@@ -2533,7 +2545,6 @@ with your fragile little mind"""
         await self.safe_send_message(channel, (text[0]))
         confirm_message = await self.safe_send_message(channel, (text[1]))
         response_message = await self.wait_for_message(30, author=author, channel=channel, check=check)
-
 
         if not response_message:
             await self.safe_delete_message(confirm_message)
@@ -2736,7 +2747,7 @@ with your fragile little mind"""
             await self.safe_send_message(channel, msg + "*shrugs*" + name[::-1])
         else:
             await self.safe_send_message(channel, "*flips a coin and... " + random.choice(["HEADS!*", "TAILS!*"]))
-            
+
     async def cmd_echo(self, message, channel):
         msg = message.content.strip()
         if (len(msg)) < 6:
@@ -2751,7 +2762,7 @@ with your fragile little mind"""
                 pass
         except:
             await self.safe_send_message(channel, "I couldnt send that... maybe you should contact my devs")
-            
+
     async def cmd_toast(self, channel, author, message):
         over = False
         await self.send_typing(channel)
@@ -2861,8 +2872,8 @@ with your fragile little mind"""
     async def cmd_alert(self, channel, author, message):
         if author.id == 174918559539920897 or 188378092631228418 or 195508130522595328:
             await self.send_typing(channel)
-            message = message.content.strip() 
-            message = message.replace("/alert ","Message from the devs: ")
+            message = message.content.strip()
+            message = message.replace("/alert ", "Message from the devs: ")
             servercount = str(len(self.servers))
             info = "Notifying " + servercount + " servers... This may take a while"
             await self.send_message(channel, info)
@@ -2871,7 +2882,7 @@ with your fragile little mind"""
                 try:
                     await self.send_message(s, message)
                     count = count + 1
-                    test = int(count%50)
+                    test = int(count % 50)
                     if test == 0:
                         msg = count + " messages sent"
                         await self.send_message(author, msg)
@@ -2934,12 +2945,12 @@ with your fragile little mind"""
             return Response("You arent my developer")
 
     async def cmd_clearbug(self, author, server, channel):
-        if server.id == "206794668736774155": #Toastys server
+        if server.id == "206794668736774155":  # Toastys server
             print("Server is correct")
             perms = author.permissions_in(channel)
             for role in author.roles:
                 try:
-                    if perms.administrator or perms.manage_server or perms.manage_channels: #Devs, Tech support
+                    if perms.administrator or perms.manage_server or perms.manage_channels:  # Devs, Tech support
                         usage = True
                     else:
                         return Response("You cant use this command")
@@ -3096,7 +3107,7 @@ with your fragile little mind"""
     async def cmd_doge(self, message):
         msg = message.content.strip()
         msg = msg.replace("/doge", "")
-        if msg ==  " " or "" or None:
+        if msg == " " or "" or None:
             return Response("You need to say something after /doge")
         else:
             text = msg.split(", ")
@@ -3114,7 +3125,7 @@ with your fragile little mind"""
             url = "http://dogr.io/" + inputs + ".png"
 
             return Response(url)
-    
+
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
         return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
@@ -3394,7 +3405,8 @@ with your fragile little mind"""
         for line in link:
             song_url = line
             print(line)
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
                 count = count + 1
@@ -3411,7 +3423,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make an electronic playlist")
         for i in range(size):
             song_url = code.genre.electronic()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3423,7 +3436,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a rock")
         for i in range(size):
             song_url = code.genre.rock()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3435,7 +3449,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a metal playlist")
         for i in range(size):
             song_url = code.genre.metal()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3447,7 +3462,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a retro playlist")
         for i in range(size):
             song_url = code.genre.retro()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False, process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3459,7 +3475,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a hip hop playlist")
         for i in range(size):
             song_url = code.genre.hiphop()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3471,7 +3488,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a classical playlist")
         for i in range(size):
             song_url = code.genre.classical()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3483,7 +3501,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a christmas playlist")
         for i in range(size):
             song_url = code.genre.christmas()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3495,7 +3514,8 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a japanese playlist")
         for i in range(size):
             song_url = code.genre.japanese()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3507,20 +3527,21 @@ with your fragile little mind"""
         await self.safe_send_message(channel, "Right give me a sec while i make a jazz playlist")
         for i in range(size):
             song_url = code.genre.jazz()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
                 print("Error adding song from autoplaylist:", e)
         await self.safe_send_message(channel, "All done, enjoy")
 
-
     async def cmd_rap(self, channel, player, author):
         size = int(20)
         await self.safe_send_message(channel, "Right give me a sec while i make a rap playlist")
         for i in range(size):
             song_url = code.genre.rap()
-            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,process=False)
+            info = await self.downloader.safe_extract_info(player.playlist.loop, song_url, download=False,
+                                                           process=False)
             try:
                 await player.playlist.add_entry(song_url, channel=channel, author=author)
             except exceptions.ExtractionError as e:
@@ -3541,7 +3562,8 @@ with your fragile little mind"""
         if self.config.bound_channels and message.channel.id not in self.config.bound_channels and not message.channel.is_private:
             return  # if I want to log this I just move it under the prefix check
 
-        command, *args = message_content.split(' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
+        command, *args = message_content.split(
+            ' ')  # Uh, doesn't this break prefixes with spaces in them (it doesn't, config parser already breaks them)
         command = command[len(self.config.command_prefix):].lower().strip()
 
         handler = getattr(self, 'cmd_' + command, None)
@@ -3705,7 +3727,7 @@ with your fragile little mind"""
                     await self.safe_delete_message(message, quiet=True)
             except:
                 pass
-                
+
     async def on_voice_state_update(self, before, after):
         if not self.init_ok:
             return  # Ignore stuff before ready
@@ -3794,12 +3816,14 @@ with your fragile little mind"""
         log.info("Bot has been joined server: {}".format(server.name))
         if server.id == "name":
             await self.leave_server(server)
-            await self.safe_send_message(server, "This server has been blacklisted, if you feel this is a mistake, go argue your case in my server, https://discord.gg/WJG7a")
+            await self.safe_send_message(server,
+                                         "This server has been blacklisted, if you feel this is a mistake, go argue your case in my server, https://discord.gg/WJG7a")
         if not self.user.bot:
             alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
 
             if server.id == "81384788765712384" and not server.unavailable:  # Discord API
-                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels, name='playground') or server
+                playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels,
+                                                                                          name='playground') or server
                 await self.safe_send_message(playground, alertmsg.format(uid="98295630480314368"))  # fake abal
                 return
             elif server.id == "129489631539494912" and not server.unavailable:  # Rhino Bot Help
@@ -3808,7 +3832,7 @@ with your fragile little mind"""
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368"))  # also fake abal
                 return
         msg = (
-        "Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
+            "Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
         msg = msg + "  Give me about 10 seconds to prepare some data for your server"
         em = discord.Embed(description=msg, colour=65280)
         em.set_author(name='I just joined :3',

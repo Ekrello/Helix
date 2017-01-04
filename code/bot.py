@@ -2765,20 +2765,20 @@ with your fragile little mind"""
         await self.send_typing(channel)
         message = message.content.strip()
         message = message.lower()
-        if message == "/toast":
+        if message == "/helix":
             message = message.replace("/", "")
             pass
         else:
-            message = message.replace("/toast", "")
+            message = message.replace("/helix", "")
         if "hitler" in message:
             over = True
             await self.safe_send_message(channel,
                                          "Hitler was the best guy wasnt he? I mean Hitler made 6 million Jews toast.")
         if "toast" in message:
             over = True
-            Toast = "Toast "
+            Toast = "DNA "
             Toast = Toast * 100
-            Toast = Toast + " I like toast :3"
+            Toast = Toast + " I like biology :3"
             return Response(Toast)
         time.sleep(0.5)
         cb = Cleverbot()

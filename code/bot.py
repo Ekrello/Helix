@@ -96,7 +96,7 @@ class MusicBot(discord.Client):
 
         super().__init__()
         self.aiosession = aiohttp.ClientSession(loop=self.loop)
-        self.http.user_agent += ' Toasty/%s' % BOTVERSION
+        self.http.user_agent += ' Helix/%s' % BOTVERSION
 
     def __del__(self):
         # These functions return futures but it doesn't matter
@@ -1030,7 +1030,7 @@ with your fragile little mind"""
         await self._on_ready_sanity_checks()
         print()
 
-        log.info('Connected!  Toasty v{}\n'.format(BOTVERSION))
+        log.info('Connected!  Helix v{}\n'.format(BOTVERSION))
 
         self.init_ok = True
 
@@ -1200,7 +1200,7 @@ with your fragile little mind"""
         return Response(":thumbsup:")
 
     async def cmd_blacklist(self, message, user_mentions, option, something, author, channel):
-        if server.id == "206794668736774155":  # Toastys server
+        if server.id == "206794668736774155":  # Helixs server
             print("Server is correct")
             perms = author.permissions_in(channel)
             for role in author.roles:
@@ -2758,7 +2758,7 @@ with your fragile little mind"""
         except:
             await self.safe_send_message(channel, "I couldnt send that... maybe you should contact my devs")
 
-    async def cmd_toast(self, channel, author, message):
+    async def cmd_helix(self, channel, author, message):
         over = False
         await self.send_typing(channel)
         message = message.content.strip()
@@ -2841,6 +2841,7 @@ with your fragile little mind"""
             "http://orig09.deviantart.net/006a/f/2016/025/1/7/_undertale____goat_mom_by_the_drawing_weirdo-d9pc854.jpg")
 
     async def cmd_update(self, channel, author):
+        return Response("This command was disabled by **DNA** to reduce all server spam")
         await self.safe_send_message(channel, "Better start coding then, hold on a sec :computer:")
         os.system("git pull origin dev")
         servercount = str(len(self.servers))
@@ -2915,6 +2916,7 @@ with your fragile little mind"""
         if author.id == "174918559539920897" or "216840311232528384":
             await self.safe_send_message(channel, "Better start coding then, hold on a sec :computer:")
             os.system("git pull origin dev")
+            await self.safe_send_message(channel, "Update downloaded\n\n **APPLYING**")
             await self.disconnect_all_voice_clients()
             raise exceptions.TerminateSignal
         else:
@@ -3199,14 +3201,15 @@ with your fragile little mind"""
             return Response("I can't purge, did you change my permissions?")
 
     async def cmd_donate(self, author):
-        await self.safe_send_message(author, "Thanks for considering donating to this project")
-        await self.safe_send_message(author,
-                                     "Your donation will be used to help pay for our servers, maintanence, and some pizza to keep the dev alive while trying to fix the bot xD")
-        await self.safe_send_message(author,
-                                     "If patreon isnt your thing, send it to Music Toasters **PayPal** and itll go directly to the server fund")
-        await self.safe_send_message(author, "PayPal email: **mtoasty16@gmail.com**")
-        await self.safe_send_message(author, "Patreon: **https://www.patreon.com/musictoaster**")
-        await self.safe_send_message((discord.Object(id='206794668736774155')), ("Holy shit, someone donated"))
+
+        message = "**Thanks for considering donating**\n\nYour donation will be used to help pay for our servers, which are pretty expensive (we need a lot of power to run the music commands.\n\n You have two options in regards to donation method, **Patreon** and **Paypal**"
+    `   paypal = "mtoasty16@gmail.com"
+        patreon = "https://www.patreon.com/musictoaster"
+        message += "\n\n**Paypal:**" + paypal
+        message += "\n**Patreon**" + patreon
+        await self.safe_send_message(author, message)
+        message = "**" + author.name + "** just used the donate comamand"
+        await self.safe_send_message((discord.Object(id='174918559539920897')), (message))
 
     async def cmd_updatelog(self, channel):
         try:
@@ -3306,6 +3309,8 @@ with your fragile little mind"""
         stdout, stderr = await process.communicate()
         usage = stdout.decode().strip()
         usage = "```py \n" + usage + "```"
+        usage = usage.replace("%", "% ")
+
         return Response(usage)
 
     async def cmd_info(self, channel):
@@ -3335,10 +3340,10 @@ with your fragile little mind"""
         servercount = str(len(self.servers))
         servercount = "This shard is currently in " + servercount + " servers \n"
         if gotversion == True:
-            message = "Toasty version " + version + " by DNA#6750 \n"
+            message = "Helix version " + version + " by DNA#6750 \n"
             await self.safe_send_message(channel, message)
         else:
-            await self.safe_send_message(channel, "Toasty by DNA#6750")
+            await self.safe_send_message(channel, "Helix by DNA#6750")
             print("unable to obtain version number")
         try:
             process = await asyncio.create_subprocess_shell(
@@ -3814,7 +3819,7 @@ with your fragile little mind"""
             await self.safe_send_message(server,
                                          "This server has been blacklisted, if you feel this is a mistake, go argue your case in my server, https://discord.gg/WJG7a")
         if not self.user.bot:
-            alertmsg = "<@{uid}> Hi I'm a Toasty please mute me."
+            alertmsg = "<@{uid}> Hi I'm a Helix please mute me."
 
             if server.id == "81384788765712384" and not server.unavailable:  # Discord API
                 playground = server.get_channel("94831883505905664") or discord.utils.get(server.channels,
@@ -3827,7 +3832,7 @@ with your fragile little mind"""
                 await self.safe_send_message(bot_testing, alertmsg.format(uid="98295630480314368"))  # also fake abal
                 return
         msg = (
-            "Hi there, Im Toasty. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
+            "Hi there, Im Helix. Type /help to see what i can do, and remember to join my server for news and updates: https://discord.gg/6K5JkF5 or follow my official twitter: https://twitter.com/mtoastyofficial")
         msg = msg + "  Give me about 10 seconds to prepare some data for your server"
         em = discord.Embed(description=msg, colour=65280)
         em.set_author(name='I just joined :3',

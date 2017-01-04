@@ -3205,7 +3205,7 @@ with your fragile little mind"""
     async def cmd_donate(self, author):
 
         message = "**Thanks for considering donating**\n\nYour donation will be used to help pay for our servers, which are pretty expensive (we need a lot of power to run the music commands.\n\n You have two options in regards to donation method, **Patreon** and **Paypal**"
-    `   paypal = "mtoasty16@gmail.com"
+        paypal = "mtoasty16@gmail.com"
         patreon = "https://www.patreon.com/musictoaster"
         message += "\n\n**Paypal:**" + paypal
         message += "\n**Patreon**" + patreon

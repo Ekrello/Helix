@@ -3202,17 +3202,18 @@ with your fragile little mind"""
         except:
             return Response("I can't purge, did you change my permissions?")
 
-    async def cmd_donate(self, author):
-
-        message = "**Thanks for considering donating**\n\nYour donation will be used to help pay for our servers, which are pretty expensive (we need a lot of power to run the music commands.\n\n You have two options in regards to donation method, **Patreon** and **Paypal**"
+    async def cmd_donate(self, author, message, channel):
+        msg = "**Thanks for considering donating**\n\nYour donation will be used to help pay for our servers, which are pretty expensive (we need a lot of power to run the music commands.\n\n You have two options in regards to donation method, **Patreon** and **Paypal**"
         paypal = "mtoasty16@gmail.com"
         patreon = "https://www.patreon.com/musictoaster"
-        message += "\n\n**Paypal:**" + paypal
-        message += "\n**Patreon**" + patreon
-        await self.safe_send_message(author, message)
-        message = "**" + author.name + "** just used the donate comamand"
-        await self.safe_send_message((discord.Object(id='174918559539920897')), (message))
-
+        msg += "\n\n**Paypal:**" + paypal
+        msg += "\n**Patreon**" + patreon
+        await self.safe_send_message(author, msg)
+        try:
+            await self.safe_delete_message(message)
+        except:
+            await self.safe_send_message(channel, ":thumbsup:")
+            
     async def cmd_updatelog(self, channel):
         try:
             getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')

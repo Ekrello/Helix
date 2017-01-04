@@ -3206,8 +3206,8 @@ with your fragile little mind"""
         msg = "**Thanks for considering donating**\n\nYour donation will be used to help pay for our servers, which are pretty expensive (we need a lot of power to run the music commands.\n\n You have two options in regards to donation method, **Patreon** and **Paypal**"
         paypal = "mtoasty16@gmail.com"
         patreon = "https://www.patreon.com/musictoaster"
-        msg += "\n\n**Paypal:**" + paypal
-        msg += "\n**Patreon**" + patreon
+        msg += "\n\n**Paypal:** " + paypal
+        msg += "\n**Patreon** " + patreon
         await self.safe_send_message(author, msg)
         try:
             await self.safe_delete_message(message)

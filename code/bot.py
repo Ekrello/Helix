@@ -1175,10 +1175,12 @@ with your fragile little mind"""
         await self.safe_send_message(author, "Rememer to donate (**/donate**) it really helps us out")
         content = "Ive sent my commands to you ^-^"
         em = discord.Embed(description=content, colour=(random.randint(0, 16777215)))
-        em.set_author(name='Help:',
-                      icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        await self.send_message(channel, embed=em)
-
+        em.set_author(name='Help:',icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
+        try:
+            await self.send_message(channel, embed=em)
+        except:
+            await self.safe_send_message(channel, "Ive sent my commands to you ^-^")
+            
     async def cmd_loop(self, message, player, channel, author):
         await self.send_typing(channel)
         message = message.content.strip()

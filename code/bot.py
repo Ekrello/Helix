@@ -3113,7 +3113,7 @@ with your fragile little mind"""
             count = 0
             for i in range(len(text)):
                 variable = ((text[count]) + "/")
-                variable = variable.replace(" ", "")
+                variable = variable.replace(" ", "_")
                 try:
                     inputs += variable
                 except:
@@ -3121,13 +3121,15 @@ with your fragile little mind"""
                 count = count + 1
             inputs = inputs.rstrip('/')
 
-            url = "http://dogr.io/" + inputs + ".png"
+            url = "http://romtypo.com/helix/doge/" + inputs
 
             return Response(url)
 
     async def cmd_feature(self, channel):
         await self.safe_send_message(channel, "You can suggest features here:")
-        return Response("https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
+        await self.safe_send_message(channel, "https://goo.gl/forms/Oi9wg9lTiT8ej2T92")
+        await self.safe_send_message(channel, "You can also request features here:")
+        return Response("https://trello.com/b/vl1CRatX/toasty-dev")
 
     async def cmd_apocalypse(self, channel, author):
         perms = author.permissions_in(channel)

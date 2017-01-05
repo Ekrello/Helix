@@ -2772,8 +2772,7 @@ with your fragile little mind"""
             message = message.replace("/helix", "")
         if "hitler" in message:
             over = True
-            await self.safe_send_message(channel,
-                                         "Hitler was the best guy wasnt he? I mean Hitler made 6 million Jews toast.")
+            await self.safe_send_message(channel,"Hitler was the best guy wasnt he? I mean Hitler made 6 million Jews toast.")
         if "toast" in message:
             over = True
             Toast = "DNA "

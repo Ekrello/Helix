@@ -3569,7 +3569,33 @@ with your fragile little mind"""
 
     async def on_message(self, message):
         await self.wait_until_ready()
-
+        if os.path.exists("xpdbs/" + message.server.id + '.json'):
+                with open("xpdbs/" + message.server.id + '.json', 'r+') as f:
+                    lvldb = json.load(f)
+                    lookup = message.author.id
+                    if lookup in lvldb:
+                        lvldb[message.author.id]['XP'] = str(int(lvldb[message.author.id]['XP']) + 1)
+                        f.seek(0)
+                        f.write(json.dumps(lvldb))
+                        f.truncate()
+                        if (int(lvldb[message.author.id]['XP']) >= int(lvldb[message.author.id]['Level']) * 20):
+                            rawrlmao = str(int(lvldb[message.author.id]['Level']) + 1) 
+                            await bot.send_message(message.channel, "Congrats " + message.author.mention  + ", you leveled up! \nYou are now level " + rawrlmao)
+                            lvldb[message.author.id]['Level'] = str(int(lvldb[message.author.id]['Level']) + 1)
+                            lvldb[message.author.id]['XP'] = "0"
+                            f.seek(0)
+                            f.write(json.dumps(lvldb))
+                            f.truncate()    
+                    else:
+                        with open("xpdbs/" + message.server.id + '.json', 'w+') as r:
+                            entry = {message.author.id: {'Rank': 'User', 'XP': "0", 'Level': "1", "Money": "0"}}
+                            lvldb.update(entry)
+                            r.write(json.dumps(lvldb))
+                            r.truncate()
+            else:
+                with open("xpdbs/" + message.server.id + '.json', 'w') as r:
+                        entry = {message.author.id: {'Rank': 'User', 'XP': "0", 'Level': "1", "Money": "0"}}
+                        json.dump(entry, r)
         message_content = message.content.strip()
         if not message_content.startswith(self.config.command_prefix):
             return

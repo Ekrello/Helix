@@ -1727,35 +1727,46 @@ with your fragile little mind"""
             prog_str = ('`[{progress}]`' if streaming else '`[{progress}/{total}]`').format(
                 progress=song_progress, total=song_total
             )
+            prog_bar_str = ''
+
+            # percentage shows how much of the current song has already been played
+            percentage = 0.0
+            if player.current_entry.duration > 0:
+                percentage = player.progress / player.current_entry.duration
+            """
+            This for loop adds  empty or full squares to prog_bar_str (it could look like
+            ■■■■■■■■■■□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□
+            if for example the song has already played 25% of the songs duration
+            """
+            progress_bar_length = 30
+            for i in range(progress_bar_length):
+                if (percentage < 1 / progress_bar_length * i):
+                    prog_bar_str += '□'
+                else:
+                    prog_bar_str += '■'
+
             action_text = 'Streaming' if streaming else 'Playing'
 
             if player.current_entry.meta.get('channel', False) and player.current_entry.meta.get('author', False):
-                np_text = "Now {action}: **{title}** added by **{author}** {progress}\n\N{WHITE RIGHT POINTING BACKHAND INDEX} <{url}>".format(
+                np_text = "{action}: **{title}** added by **{author}**\nProgress: {progress_bar} {progress}\n\N{WHITE RIGHT POINTING BACKHAND INDEX} <{url}>".format(
                     action=action_text,
                     title=player.current_entry.title,
                     author=player.current_entry.meta['author'].name,
+                    progress_bar=prog_bar_str,
                     progress=prog_str,
                     url=player.current_entry.url
                 )
             else:
-                np_text = "**{title}** {progress}\n\N{WHITE RIGHT POINTING BACKHAND INDEX} <{url}>".format(
+                np_text = "{action}: **{title}**\nProgress: {progress_bar} {progress}\n\N{WHITE RIGHT POINTING BACKHAND INDEX} <{url}>".format(
                     action=action_text,
                     title=player.current_entry.title,
+                    progress_bar=prog_bar_str,
                     progress=prog_str,
                     url=player.current_entry.url
                 )
 
-            title = "Now " + action_text + " in " + str(player.voice_client.channel.name) + ":"
-            em = discord.Embed(description=np_text, colour=(random.randint(0, 16777215)))
-            em.set_author(name=title, icon_url="http://www.cifor.org/fileadmin/subsites/fire/play.png")
-
-            self.server_specific_data[server]['last_np_msg'] = await self.send_message(channel, embed=em)
+            self.server_specific_data[server]['last_np_msg'] = await self.safe_send_message(channel, np_text)
             await self._manual_delete_check(message)
-        else:
-            return Response(
-                'There are no songs queued! Queue something with {}play.'.format(self.config.command_prefix),
-                delete_after=30
-            )
 
     async def cmd_spawn(self, channel, server, author, voice_channel):
         """
@@ -2031,11 +2042,15 @@ with your fragile little mind"""
             lines.append(
                 'no songs queued! Queue something with {}play.'.format(self.config.command_prefix))
 
-        message = '\n'.join(lines)
+        message = str('\n'.join(lines))
         em = discord.Embed(description=message, colour=(random.randint(0, 16777215)))
         em.set_author(name='Playlist:',
                       icon_url="https://cdn.discordapp.com/attachments/217237051140079617/257274119446462464/Toasty_normal..png")
-        await self.send_message(channel, embed=em)
+        try:
+            await self.send_message(channel, embed=em)
+        except:
+            await self.safe_send_message(channel, message)
+
 
     async def cmd_clean(self, message, channel, server, author, search_range=50):
         """

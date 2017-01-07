@@ -3588,13 +3588,13 @@ with your fragile little mind"""
                             f.truncate()    
                     else:
                         with open("xpdbs/" + message.server.id + '.json', 'w+') as r:
-                            entry = {message.author.id: {'Rank': 'User', 'XP': "0", 'Level': "1", "Money": "0"}}
+                            entry = {message.author.id: {'Rank': 'User', 'XP': "0", 'Level': "1"}}
                             lvldb.update(entry)
                             r.write(json.dumps(lvldb))
                             r.truncate()
             else:
                 with open("xpdbs/" + message.server.id + '.json', 'w') as r:
-                        entry = {message.author.id: {'Rank': 'User', 'XP': "0", 'Level': "1", "Money": "0"}}
+                        entry = {message.author.id: {'Rank': 'User', 'XP': "0", 'Level': "1"}}
                         json.dump(entry, r)
         message_content = message.content.strip()
         if not message_content.startswith(self.config.command_prefix):

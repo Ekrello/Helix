@@ -48,6 +48,7 @@ def helputility():
     helpmsg2 += "/cat               <--I want to see cats, and i want them now\n"
     helpmsg2 += "/dog               <--Give me my doggo\n"
     helpmsg2 += "/server            <--Server Info\n"
+    helpmsg2 += "/rank              <--Tells you your rank/n"
     helpmsg2 += "```"
     return helpmsg2
 
